@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Browse{% endblock %}
+{% block nav %} 
+	<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+			<li><a href="/Project/">Home</a></li>
+			<li><a href="/Project/browse">Browse</a></li>
+			<li id="current"><a href="/Project/search">Search</a></li>
+			<li><a href="/Project/downloads">Downloads</a></li>
+			<li><a href="/Project/contact">Support</a></li>
+			<li><a href="/Project/about">About</a></li>		
+		</ul>
+	<!-- navigation ends-->	
+	</div>					
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+		<div id="main">
+            <h1>Search</h1>	
+			<form action="#" class="searchform">
+				<p>
+				<input name="search_query" class="textbox" type="text" />
+  				<input name="search" class="button" value="Search" type="submit" />
+				</p>  
+            </form>
+		<!-- main ends -->	
+		</div>
+{% endblock %}

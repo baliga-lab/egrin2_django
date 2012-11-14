@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}Contact us{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+			<li><a href="{% url 'index' %}">Home</a></li>
+			<li><a href="{% url 'browse' %}">Browse</a></li>
+			<li><a href="{% url 'search' %}">Search</a></li>
+			<li><a href="{% url 'downloads' %}">Downloads</a></li>
+			<li id="current"><a href="{% url 'contact' %}">Support</a></li>
+			<li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}	
+    <!-- content-wrap starts -->
+	<div id="content-wrap">
+	
+		<div id="main">
+			<h3>Contact us</h3>
+			<form action="mailto:brooksan@uw.edu">			
+			<p>			
+			<label>Name</label>
+			<input name="dname" value="Your Name" type="text" size="30" />
+			<label>Email</label>
+			<input name="demail" value="Your Email" type="text" size="30" />
+			<label>Your Comments</label>
+			<textarea rows="5" cols="5"></textarea>
+			<br />	
+			<input class="button" type="submit" />		
+			</p>		
+			</form>				
+			<br />	
+
+		<!-- main ends -->	
+		</div>
+{% endblock %}	

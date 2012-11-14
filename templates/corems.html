@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}Corems{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+        <li><a href="{% url 'search' %}">Search</a></li>
+        <li><a href="{% url 'downloads' %}">Downloads</a></li>
+        <li><a href="{% url 'contact' %}">Support</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+		<div id="main">
+        {% for o in out %}	
+            <script>
+                $(document).ready(function() {
+                $("#corem{{forloop.counter}}")
+                .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[1,0]]})
+                .tablesorterPager({container: $("#pager_corem{{forloop.counter}}"), positionFixed: false});
+                });
+            </script>
+            <blockquote><p>{{ o.species.name }} corem information</p></blockquote>
+                <table id="corem{{forloop.counter|stringformat:"s"}}" class="table">
+                    <thead>
+                        <tr>
+                            <th class="first">Organism</th>
+                            <th>Corems</th>
+                            <th>Genes</th>
+                            <th>Conditions</th>
+                            <th>GREs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for corem in o.corems %}
+                        <tr class="{% cycle 'row-a' 'row-b' %}">
+                            <td class="first"><a href="{% url 'species' %}{{ o.species.ncbi_taxonomy_id }}">{{ o.species.name }}</a></td>
+                            <td><a href="{% url 'corems' %}{{ o.species.ncbi_taxonomy_id }}/{{ corem.corem_id }}">{{ corem.corem_id }}</a></td>
+                            <td>{{ corem.genes.count }}</td>
+                            <td>{{ corem.conditions.count }}</td>
+                            <td>{{ corem.gre_ids.count }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pager_corem{{forloop.counter|stringformat:"s"}}">
+                {% include 'pager.html' %}
+        {% endfor %}
+
+		<!-- main ends -->	
+		</div>
+{% endblock %}

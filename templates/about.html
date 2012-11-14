@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}About us{% endblock %}
+{% block nav %} 
+	<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+			<li><a href="{% url 'index' %}">Home</a></li>
+			<li><a href="{% url 'browse' %}">Browse</a></li>
+			<li><a href="{% url 'search' %}">Search</a></li>
+			<li><a href="{% url 'downloads' %}">Downloads</a></li>
+			<li><a href="{% url 'contact' %}">Support</a></li>
+			<li id="current"><a href="{% url 'about' %}">About</a></li>		
+		</ul>
+	<!-- navigation ends-->	
+	</div>					
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+	
+		<div id="main">
+            <h2>Who are we?</h2>
+            <p> EGRIN2.0 is a collaborative project of the Baliga lab at ISB </p>
+            <div>
+                <p><img src="/static/aaron.jpeg" width=70px height=60px alt="firefox" class="float-left" />
+                <a href = "http://baliga.systemsbiology.net/drupal/users/abrooks">Aaron Brooks</a> is a graduate student in the <a href = "http://depts.washington.edu/mcb/">Molecular and Cellular Biology Program</a> at the University of Washington				
+                </p>
+            </div>
+            <br>
+            <div>
+            <p><img src="/static/david.jpeg" width=85px height=57px alt="firefox" class="float-left" /><a href = "http://baliga.systemsbiology.net/drupal/users/dreiss">David Reiss</a>, PhD is a Senior Research Scientist at ISB</p>
+            </div>
+            <br>
+            <div>
+            <p><img src="/static/nitin.jpeg" width=64px height=85px alt="firefox" class="float-left" /><a href = "https://www.systemsbiology.org/baliga-group">Nitin Baliga</a>, PhD MSc is a Professor and Director of Integrative Biology at ISB</p>
+            </div>
+				
+		<!-- main ends -->	
+		</div>
+{% endblock %}

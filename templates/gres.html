@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}Species{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+        <li><a href="{% url 'search' %}">Search</a></li>
+        <li><a href="{% url 'downloads' %}">Downloads</a></li>
+        <li><a href="{% url 'contact' %}">Support</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+	
+		<div id="main">
+				
+			<blockquote><p>Species GRE statistics</p></blockquote>
+				
+			<table>
+				<tr>
+					<th class="first">Species Name</th>
+					<th>NCBI Taxonomy ID</th>
+                    <th>NCBI RefSeq Accession</th>
+                    <th>Network Version</th>
+                    <th>GREs Discovered</th>
+				</tr>
+                {% for s in out.values %}
+                <tr class="{% cycle 'row-a' 'row-b' %}">
+                    <td class="first"><a href="{% url 'species' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.species.name }}</a></td>
+                    <td><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ s.species.ncbi_taxonomy_id }}">{{ s.species.ncbi_taxonomy_id }}</a></td>
+					<td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ s.species.ucsc_id }}">{{ s.species.ucsc_id }}</a></td>
+                    <td><a href="{% url 'corems' %}{{ s.species.ncbi_taxonomy_id }}/{{ s.network.version_id }}">{{ s.network.version_id }}</a></td>
+                    <td><a href="{% url 'gres_s' s.species.ncbi_taxonomy_id %}">{{ s.gres }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+                								
+			<br />	
+
+		<!-- main ends -->	
+		</div>
+{% endblock %}

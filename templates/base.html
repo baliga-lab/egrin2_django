@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load url from future %}
+<head>
+
+<title>{% block title %}{% endblock %}</title>
+
+<meta name="copyright" content="&copy; 2011 Institute for Systems Biology" />
+<meta name="Description" content="Gene regulatory network inference in E. coli and Halobacterium." />
+<meta name="Keywords" content="gene regulatory network, biology, motif" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="Distribution" content="Global" />
+<meta name="Author" content="Brooks, Aaron - brooksan@uw.edu" />
+<meta name="Robots" content="index,follow" />
+
+<link rel="stylesheet" href="/static/HigherGround.css" type="text/css" />
+<!-- javascript starts here -->
+<script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-28298738-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+</script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="/static/javascripts/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="/static/javascripts/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="/static/javascripts/jquery.tablesorter.pager.js"></script>
+<script type="text/javascript" src="/static/javascripts/endless.js" charset="utf-8"></script>
+
+{% block javascript %}{% endblock %}
+<!-- javascript ends here -->
+
+</head>
+
+<body>
+<!-- wrap starts here -->
+<div id="wrap">
+
+	<div id="top-bg"></div>
+				
+	<!--header -->
+	<div id="header">			
+				
+		<h1 id="logo-text"><a href="/Project" title="">EGRIN<span>2.0</span></a></h1>		
+		<p id="slogan">ensemble network inference</p>		
+			
+		<div id="header-links">
+		<p>
+			<a href="{% url 'index' %}">Home</a> | 
+            <a href="http://baliga.systemsbiology.net/drupal/">Baliga lab @ ISB</a> |
+			<a href="{% url 'contact' %}">Contact</a> | 
+			<a href="{% url 'sitemap' %}">Site Map</a>			
+		</p>		
+		</div>		
+	<!--header ends-->					
+	</div>
+		
+	<div id="header-photo"></div>		
+		
+	{% block nav %} {% endblock %}
+    {% block content %} {% endblock %}
+
+	<!-- content-wrap ends-->	
+	</div>
+		
+	<!-- footer starts -->		
+	<div id="footer-wrap">
+		<div id="footer-columns">
+	
+			<div class="col3">
+				<h3>Tincidunt</h3>
+				<ul>
+					<li><a href="index.html">consequat molestie</a></li>
+					<li><a href="index.html">sem justo</a></li>
+					<li><a href="index.html">semper</a></li>
+					<li><a href="index.html">magna sed purus</a></li>
+					<li><a href="index.html">tincidunt</a></li>
+				</ul>
+			</div>
+
+			<div class="col3-center">
+				<h3>Sed purus</h3>
+				<ul>
+					<li><a href="index.html">consequat molestie</a></li>
+					<li><a href="index.html">sem justo</a></li>
+					<li><a href="index.html">semper</a></li>
+					<li><a href="index.html">magna sed purus</a></li>
+					<li><a href="index.html">tincidunt</a></li>
+				</ul>
+			</div>
+
+			<div class="col3">
+				<h3>Praesent</h3>
+				<ul>
+					<li><a href="index.html">consequat molestie</a></li>
+					<li><a href="index.html">sem justo</a></li>
+					<li><a href="index.html">semper</a></li>
+					<li><a href="index.html">magna sed purus</a></li>
+					<li><a href="index.html">tincidunt</a></li>					
+				</ul>
+			</div>
+		<!-- footer-columns ends -->
+		</div>	
+	
+		<div id="footer-bottom">		
+			
+			<p>
+			    &copy; 2012 Institute for Systems Biology
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+			    <a href="http://www.bluewebtemplates.com/" title="Website Templates">website templates</a> by <a href="http://www.styleshout.com/">styleshout</a>
+
+			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			
+			    <a href="index.html">Home</a> |
+                <a href="http://baliga.systemsbiology.net/drupal/">Baliga lab</a> |
+   		        <a href="index.html">Sitemap</a> |
+                <a href="http://validator.w3.org/check?uri=referer">XHTML</a> |
+			    <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>
+   		    </p>
+			
+		</div>	
+
+<!-- footer ends-->
+</div>
+<!-- wrap ends here -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}EGRIN2.0{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+			<li id="current"><a href="{% url 'index' %}">Home</a></li>
+			<li><a href="{% url 'browse' %}">Browse</a></li>
+			<li><a href="{% url 'search' %}">Search</a></li>
+			<li><a href="{% url 'downloads' %}">Downloads</a></li>
+			<li><a href="{% url 'contact' %}">Support</a></li>
+			<li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+	
+		<div id="main">
+				
+			<a name="What is EGRIN2.0?"></a>
+			<h2><a href="index" title="">What is EGRIN2.0?</a></h2>
+					
+            <p>A foremost challenge in systems biology is to understand how, with just a few transcription factors (TFs), a simple prokaryote is able to tailor responses to complex and varying environmental challenges.  <strong>EGRIN2.0</strong> is a single nucleotide resolution model that describes how the genome-wide distribution of gene regulatory elements (GREs; i.e. binding sites for TFs) encodes sophisticated regulatory programs for environmental responses. Currently, we have comprehesive models for two prokaryotic organisms: a bacterium (Escherichia coli K-12) and an archaeon (Halobacterium salinarum NRC-1). The complex organization of GREs within intergenic and intragenic promoters encodes combinatorial influences of TFs to dynamically split regulons and even operons, regrouping genes into conditionally co-regulated modules or <strong>‘corems’</strong> that stitch together distinct processes into environment-specific responses.  Corems accurately predict similarities in fitness contributions of genes across diverse environments, while simultaneously revealing active regulatory mechanisms responsible for the operational state of a TRN in each environment. </p>
+            <p><code>This website's aim is to faciliate <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+			
+			<blockquote><p>EGRIN2.0 statistics</p></blockquote>
+				
+			<table>
+				<tr>
+					<th class="first">attribute</th>
+					<th>value</th>
+					<th>description</th>
+				</tr>
+                <tr class="row-a">
+					<td class="first">Species</td>
+					<td><a href="{% url 'species' %}">{{ species }}</a></td>
+					<td>Species modeled</td>
+				</tr>
+                <tr class="row-b">
+					<td class="first">Networks</td>
+					<td><a href="{% url 'networks' %}">{{ networks }}</a></td>
+					<td>Networks inferred</td>
+				</tr>
+                <tr class="row-a">
+					<td class="first">Corems</td>
+					<td><a href="{% url 'corems' %}">{{ corems }}</a></td>
+					<td>Corems discovered</td>
+				</tr>
+				<tr class="row-b">
+					<td class="first">Genes</td>
+					<td><a href="{% url 'genes' %}">{{ genes }}</a></td>
+					<td>Genes modeled</td>
+				</tr>
+				<tr class="row-b">
+					<td class="first">Conditions</td>
+					<td><a href="{% url 'conditions' %}">{{ conditions }}</a></td>
+					<td>Conditions in the models</td>
+				</tr>
+				<tr class="row-a">
+					<td class="first">GREs</td>
+					<td><a href="{% url 'gres' %}">{{ gres }}</a></td>
+					<td>GREs discovered</td>
+				</tr>
+                <tr class="row-b">
+					<td class="first">Biclusters</td>
+					<td><a href="{% url 'biclusters' %}">{{ biclusters }}</a></td>
+					<td>Biclusters in the models</td>
+				</tr>
+                <tr class="row-a">
+					<td class="first">Known Regulators</td>
+					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
+					<td>Mapping to TFs (E. coli only)</td>
+				</tr>
+			</table>
+								
+			<br />		
+		<!-- main ends -->	
+		</div>
+        <div id="sidebar">
+			
+			<h3>Search</h3>	
+			<form action="#" class="searchform">
+				<p>
+				<input name="search_query" class="textbox" type="text" />
+  				<input name="search" class="button" value="Search" type="submit" />
+				</p>			
+			</form>	
+			
+            <h3>Updates</h3>
+            <p>In development</p>
+            <p class="post-info">Posted by <a href="/aaron">Aaron</a></p><br/>
+                    		
+			<h3>Links Out</h3>
+			<ul class="sidemenu">				
+				<li><a href="https://www.systemsbiology.org/">Institute for Systems Biology</a></li>
+                <li><a href="http://www.microbesonline.org/">MicrobesOnline</a></li>
+            </ul>	
+						
+		<!-- sidebar ends -->		
+		</div>		
+{% endblock %}
+        

@@ -1,0 +1,27 @@
+{% load endless %}
+<table id="gres" class="table">
+    <thead>
+        <tr>
+            <th class="first">Organism</th>
+            <th>GRE ID</th>
+            <th>CRMs</th>
+            <th>PSSM</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% paginate 25 objects %}
+        {% for object in objects %}
+            <tr class="{% cycle 'row-a' 'row-b' %}">
+                <td class="first"><a href="{% url /Project/species/{{ object.species.ncbi_taxonomy_id }}">{{ object.species.name }}</a></td>
+                <td><a href="/Project/gres/{{ object.species.ncbi_taxonomy_id }}/{{ object.gre_id }}">{{ object.gre_id }}</td>
+                <td>{{ object.cres }}</td>
+                <td><img src="/static/gres/{{ object.species.ncbi_taxonomy_id }}/{{ object.gre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
+                <!-- <td><span id="previewcanvas_{{ object.gre_id }}"></span></td> -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- {% include 'motif_helper.html' %} -->
+
+{% show_more %}
+

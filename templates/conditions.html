@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}Conditions{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+        <li><a href="{% url 'search' %}">Search</a></li>
+        <li><a href="{% url 'downloads' %}">Downloads</a></li>
+        <li><a href="{% url 'contact' %}">Support</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}			
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+		<div id="main">
+        {% for o in out %}	
+        <script>
+            {% include 'sciparse.html' %}
+            $(document).ready(function() {
+            
+            $("#conds{{forloop.counter}}")
+            .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[1,0]] })
+            .tablesorterPager({container: $("#pager_conds{{forloop.counter}}"), positionFixed: false});
+            });
+        </script>
+        <blockquote><p>{{ o.species.name }} Condition Information</p></blockquote>
+            <table id="conds{{forloop.counter|stringformat:"s"}}" class="table">
+                <thead>
+                    <tr>
+                        <th class="first">Organism</th>
+                        <th>Condition ID</th>
+                        <th>Condition Name</th>
+                        <th>Corems</th>
+                        <th>Genes</th>
+                        <th>GREs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cond in o.conds %}
+                        <tr class="{% cycle 'row-a' 'row-b' %}">
+                            <td class="first"><a href="{% url 'species' %}{{ o.species.ncbi_taxonomy_id }}">{{ o.species.name }}</a></td>
+                            <td><a href="{% url 'conditions' %}{{ o.species.ncbi_taxonomy_id }}/{{ cond.cond_id }}">{{ cond.cond_id }}</a></td>
+                            <td>{{ cond.cond_name }}</td>
+                            <td>{{ cond.corems.count }}</td>
+                            <td>{{ cond.genes.count }}</td>
+                            <td>{{ cond.gres.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div id="pager_conds{{forloop.counter|stringformat:"s"}}">
+            {% include 'pager.html' %}
+        {% endfor %}
+		<!-- main ends -->	
+		</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block javascript %}
+    {{ block.super }}
+    <script src="http://code.jquery.com/jquery-latest.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/javascripts/endless.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/javascripts/endless_on_scroll.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/javascripts/isblogo_mod_ab.js"></script>
+
+{% endblock %}
+{% block title %}Biclusters{% endblock %}
+{% block nav %}
+<!-- navigation starts-->	
+	<div  id="nav">
+		<ul>
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+        <li><a href="{% url 'search' %}">Search</a></li>
+        <li><a href="{% url 'downloads' %}">Downloads</a></li>
+        <li><a href="{% url 'contact' %}">Support</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>	
+		</ul>
+	<!-- navigation ends-->	
+	</div>	
+{% endblock %}
+{% block content %}		
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+		<div id="main">
+            <blockquote><p>Bicluster Information</p></blockquote>
+            <div class="endless_page_template">
+                {% include "biclusters_page.html" %}
+            </div>
+        <!-- main ends -->
+		</div>
+{% endblock %}

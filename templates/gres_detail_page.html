@@ -1,0 +1,26 @@
+{% load endless %}
+<table id="cres" class="table">
+    <thead>
+        <tr>
+            <th class="first">CRE ID</th>
+            <th>Bicluster</th>
+            <th>PSSM</th>
+            <th>eval</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% paginate 4 cre_dict %}
+        {% for o in cre_dict %}
+            <tr class="{% cycle 'row-a' 'row-b' %}">
+                <td class="first">{{ o.cre_id }}</td>
+                <td><a href="/Project/biclusters/{{ s.ncbi_taxonomy_id }}/{{ o.bcs }}">{{ o.bcs }}</a></td>
+                <td><span id="previewcanvas_{{ o.cre_id }}"></span></td>
+                <td>{{ o.eval }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include 'motif_helper_cre.html' %}
+
+{% show_more %}
+
