@@ -5,6 +5,7 @@ import psycopg2
 import rsat
 import re
 import os
+import traceback
 
 # This prefix is used in the Postgres database, Django prepends that to the
 # model class name. If you named your application differently, this
@@ -150,7 +151,7 @@ def add_conditions(organism, conn):
 ### Import gene expressions
 ######################################################################
 
-def add_gene_expressions(organism, conn):
+def add_gene_expressions(organism, conn, check_missing=False):
     print "Importing gene expressions for ", organism
     query = "insert into " + APP_PREFIX + "expression (gene_id, condition_id, value) values (%s,%s,%s)"
     with open(BASE_PATH[organism] + "exp.txt") as infile:
@@ -159,25 +160,25 @@ def add_gene_expressions(organism, conn):
         lines = infile.readlines()
         count = 0
         tot = len(lines)
-        """
-        print "calculate sys names..."
-        sys_names = [line.split('\t')[0] for line in lines]
-        print "done..."
-        print "determine missing genes in gene expressions..."
-        missing = set()
-        for sys_name in sys_names:
-            if sys_name not in missing and sys_name not in genes:
-                missing.add(sys_name)
-        print "done..."
-        print "insert missing dummy genes.."
-        cur = conn.cursor()
-        for sys_name in missing:
-            insert_gene(cur, SPECIES[organism], '', '', 0, 0, '+', sys_name, '', '',
-                        DEFAULT_CHROMOSOME[organism])
-        conn.commit()
-        cur.close()
-        print "done..."
-        """
+        if check_missing:
+            print "calculate sys names..."
+            sys_names = [line.split('\t')[0] for line in lines]
+            print "done..."
+            print "determine missing genes in gene expressions..."
+            missing = set()
+            for sys_name in sys_names:
+                if sys_name not in missing and sys_name not in genes:
+                    missing.add(sys_name)
+            print "done..."
+            print "insert missing dummy genes.."
+            cur = conn.cursor()
+            for sys_name in missing:
+                insert_gene(cur, SPECIES[organism], '', '', 0, 0, '+', sys_name, '', '',
+                            DEFAULT_CHROMOSOME[organism])
+            conn.commit()
+            cur.close()
+            print "done..."
+
         gene_map = get_gene_map(conn, organism)
         conditions_map = get_conditions_map(conn, organism)
         cur = conn.cursor()
@@ -192,6 +193,37 @@ def add_gene_expressions(organism, conn):
         conn.commit()
         cur.close()
             
+######################################################################
+### Import GRE
+######################################################################
+
+def add_gre(organism, conn):
+    pssm_query = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
+    row_query = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
+    gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,p_val) values (%s,%s,%s,'')"
+    print "Importing GRE for ", organism
+    with open(BASE_PATH[organism] + "gre.txt") as infile:
+        cur = conn.cursor()
+        infile.readline()
+        try:
+            for line in infile.readlines():
+                row = line.strip("\n").split("\t")
+                parent_id = "%s_%s" % (organism, row[0])
+                cur.execute(pssm_query, [parent_id])
+                pssm_id = cur.fetchone()[0]
+                pssm = row[1].split(":")
+                for pssm_row in pssm:
+                    pssm_cols = pssm_row.split(",")
+                    cur.execute(row_query, [pssm_id, pssm_cols[0],
+                                            pssm_cols[1], pssm_cols[2], pssm_cols[3],
+                                            pssm_cols[4]])
+                gre_id = "%s_%s" % (organism, pssm_cols[0])
+                cur.execute(gre_query, [NETWORK[organism], gre_id, pssm_id])
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+        cur.close()
 
 
 if __name__ == '__main__':
@@ -202,5 +234,6 @@ if __name__ == '__main__':
         #add_microbes_online_genes(organism, conn)
         #add_rsat_genes(organism, conn)
         #add_conditions(organism, conn)
-        add_gene_expressions(organism, conn)
+        #add_gene_expressions(organism, conn)
+        add_gre(organism, conn)
     conn.close()
