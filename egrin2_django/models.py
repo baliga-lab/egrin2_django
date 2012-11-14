@@ -47,7 +47,7 @@ class Gene(models.Model):
     strand = models.CharField(max_length=128)
     sys_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
-    desc = models.CharField(max_length=256)
+    description = models.CharField(max_length=256)
     bcs = models.ManyToManyField('Bicluster', verbose_name = "bicluster membership")
     corems = models.ManyToManyField('Corem', verbose_name = "corem membership")
     conditions = models.ManyToManyField('Condition', verbose_name = "condition membership")
