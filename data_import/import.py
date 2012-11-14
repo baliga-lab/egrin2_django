@@ -30,6 +30,9 @@ RSAT_BASE_URL = 'http://rsat.ccb.sickkids.ca'
 RSAT_NAME = { 'eco': 'Escherichia_coli_K12', 'hal': 'Halobacterium_sp'}
 RSAT_GENE_PATTERN = { 'eco': re.compile(r'^b[0-9]+'), 'hal': re.compile(r'^VNG[0-9]+[CGH]$') }
 
+PSSM_QUERY = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
+ROW_QUERY = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
+
 ######################################################################
 ### Import Microbes Online genome data
 ######################################################################
@@ -45,6 +48,14 @@ def get_gene_map(conn, organism):
 def get_conditions_map(conn, organism):
     cur = conn.cursor()
     query = "select id, cond_id from " + APP_PREFIX + "condition where network_id = %s"
+    cur.execute(query, [NETWORK[organism]])
+    result = { row[1]: row[0] for row in cur.fetchall() }
+    cur.close()
+    return result
+
+def get_gre_map(conn, organism):
+    cur = conn.cursor()
+    query = "select id, gre_id from " + APP_PREFIX + "gre where network_id = %s"
     cur.execute(query, [NETWORK[organism]])
     result = { row[1]: row[0] for row in cur.fetchall() }
     cur.close()
@@ -198,8 +209,6 @@ def add_gene_expressions(organism, conn, check_missing=False):
 ######################################################################
 
 def add_gre(organism, conn):
-    pssm_query = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
-    row_query = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
     gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,p_val) values (%s,%s,%s,'')"
     print "Importing GRE for ", organism
     with open(BASE_PATH[organism] + "gre.txt") as infile:
@@ -209,16 +218,49 @@ def add_gre(organism, conn):
             for line in infile.readlines():
                 row = line.strip("\n").split("\t")
                 parent_id = "%s_%s" % (organism, row[0])
-                cur.execute(pssm_query, [parent_id])
+                cur.execute(PSSM_QUERY, [parent_id])
                 pssm_id = cur.fetchone()[0]
                 pssm = row[1].split(":")
                 for pssm_row in pssm:
                     pssm_cols = pssm_row.split(",")
-                    cur.execute(row_query, [pssm_id, pssm_cols[0],
+                    cur.execute(ROW_QUERY, [pssm_id, pssm_cols[0],
                                             pssm_cols[1], pssm_cols[2], pssm_cols[3],
                                             pssm_cols[4]])
-                gre_id = "%s_%s" % (organism, pssm_cols[0])
+                gre_id = "%s_%s" % (organism, row[0])
                 cur.execute(gre_query, [NETWORK[organism], gre_id, pssm_id])
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+        cur.close()
+
+######################################################################
+### Import CRE
+######################################################################
+
+def add_cre(organism, conn):
+    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id_id,pssm_id,eval) values (%s,%s,%s,%s,%s)"
+    print "Importing CRE for ", organism
+    with open(BASE_PATH[organism] + "cre.txt") as infile:
+        gre_map = get_gre_map(conn, organism)
+        cur = conn.cursor()
+        infile.readline()
+        try:
+            for line in infile.readlines():
+                row = line.strip("\n").split("\t")
+                parent_id = "%s_%s" % (organism, row[0])
+                cur.execute(PSSM_QUERY, [parent_id])
+                pssm_id = cur.fetchone()[0]
+                pssm = row[3].split(":")
+                for pssm_row in pssm:
+                    pssm_cols = pssm_row.split(",")
+                    cur.execute(ROW_QUERY, [pssm_id, pssm_cols[0],
+                                            pssm_cols[1], pssm_cols[2], pssm_cols[3],
+                                            pssm_cols[4]])
+                cre_id = "%s_%s" % (organism, row[0])
+                gre_id = "%s_%s" % (organism, row[1])
+                cur.execute(cre_query, [NETWORK[organism], cre_id, gre_map[gre_id],
+                                        pssm_id, row[2]])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -235,5 +277,6 @@ if __name__ == '__main__':
         #add_rsat_genes(organism, conn)
         #add_conditions(organism, conn)
         #add_gene_expressions(organism, conn)
-        add_gre(organism, conn)
+        #add_gre(organism, conn)
+        add_cre(organism, conn)
     conn.close()
