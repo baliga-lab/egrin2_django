@@ -1,0 +1,96 @@
+[
+    {
+        "model": "egrin2_django.species",
+        "pk": 1,
+        "fields": {
+            "name": "Escherichia coli K-12 MG1655",
+            "short_name": "eco",
+            "ncbi_taxonomy_id": 511145,
+            "ucsc_id": "NC_000913",
+            "created_at": "2012-11-14T00:00:00-08:00"
+        }
+    },
+    {
+        "model": "egrin2_django.species",
+        "pk": 2,
+        "fields": {
+            "name": "Halobacterium salinarum sp. NRC-1",
+            "short_name": "hal",
+            "ncbi_taxonomy_id": 64091,
+            "ucsc_id": "NC_002607",
+            "created_at": "2012-11-14T00:00:00-08:00"
+        }
+    },
+    {
+        "model": "egrin2_django.chromosome",
+        "pk": 1,
+        "fields": {
+            "species": 1,
+            "name": "chromosome",
+            "length": 4639675,
+            "topology": "circular",
+            "refseq": "NC_000913.2",
+            "scaffoldId": 7023
+        }
+    },
+    {
+        "model": "egrin2_django.chromosome",
+        "pk": 2,
+        "fields": {
+            "species": 2,
+            "name": "chr",
+            "length": 2014239,
+            "topology": "circular",
+            "refseq": "NC_002607.1",
+            "scaffoldId": 69
+        }
+    },
+    {
+        "model": "egrin2_django.chromosome",
+        "pk": 3,
+        "fields": {
+            "species": 2,
+            "name": "pNRC100",
+            "length": 191346,
+            "topology": "circular",
+            "refseq": "NC_001869.1",
+            "scaffoldId": 48
+        }
+    },
+    {
+        "model": "egrin2_django.chromosome",
+        "pk": 4,
+        "fields": {
+            "species": 2,
+            "name": "pNRC200",
+            "length": 365425,
+            "topology": "circular",
+            "refseq": "NC_002608.1",
+            "scaffoldId": 70
+        }
+    },
+    {
+        "model": "egrin2_django.network",
+        "pk": 1,
+        "fields": {
+            "species": 1,
+            "name": "Eco_ensemble_1",
+            "data_source": "cMonkey_4_9_0",
+            "description": "First ensemble model for E coli K-12",
+            "version_id": "eco_4213x868",
+            "created_at": "2012-11-14T00:00:00-08:00"
+        }
+    },
+    {
+        "model": "egrin2_django.network",
+        "pk": 2,
+        "fields": {
+            "species": 2,
+            "name": "Hal_ensemble_1",
+            "data_source": "cMonkey_4_6_2",
+            "description": "First ensemble model for Halobacterium",
+            "version_id": "hal_2400x1495",
+            "created_at": "2012-11-14T00:00:00-08:00"
+        }
+    }
+]
