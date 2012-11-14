@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 {% load url from future %}
 <head>
@@ -42,38 +41,33 @@
 <body>
 <!-- wrap starts here -->
 <div id="wrap">
-
 	<div id="top-bg"></div>
-				
+
 	<!--header -->
-	<div id="header">			
-				
-		<h1 id="logo-text"><a href="/Project" title="">EGRIN<span>2.0</span></a></h1>		
-		<p id="slogan">ensemble network inference</p>		
-			
+	<div id="header">
+		<h1 id="logo-text"><a href="{% url 'index' %}" title="">EGRIN<span>2.0</span></a></h1>
+		<p id="slogan">ensemble network inference</p>
 		<div id="header-links">
 		<p>
 			<a href="{% url 'index' %}">Home</a> | 
             <a href="http://baliga.systemsbiology.net/drupal/">Baliga lab @ ISB</a> |
-			<a href="{% url 'contact' %}">Contact</a> | 
-			<a href="{% url 'sitemap' %}">Site Map</a>			
-		</p>		
-		</div>		
-	<!--header ends-->					
+			<a href="{% url 'contact' %}">Contact</a> |
+			<a href="{% url 'sitemap' %}">Site Map</a>
+		</p>
+		</div>
+	<!--header ends-->
 	</div>
-		
-	<div id="header-photo"></div>		
-		
+	<div id="header-photo"></div>
 	{% block nav %} {% endblock %}
     {% block content %} {% endblock %}
 
-	<!-- content-wrap ends-->	
+	<!-- content-wrap ends-->
 	</div>
-		
-	<!-- footer starts -->		
+
+	<!-- footer starts -->
 	<div id="footer-wrap">
 		<div id="footer-columns">
-	
+
 			<div class="col3">
 				<h3>Tincidunt</h3>
 				<ul>
@@ -95,7 +89,6 @@
 					<li><a href="index.html">tincidunt</a></li>
 				</ul>
 			</div>
-
 			<div class="col3">
 				<h3>Praesent</h3>
 				<ul>
@@ -103,31 +96,24 @@
 					<li><a href="index.html">sem justo</a></li>
 					<li><a href="index.html">semper</a></li>
 					<li><a href="index.html">magna sed purus</a></li>
-					<li><a href="index.html">tincidunt</a></li>					
+					<li><a href="index.html">tincidunt</a></li>
 				</ul>
 			</div>
 		<!-- footer-columns ends -->
-		</div>	
-	
-		<div id="footer-bottom">		
-			
+		</div>
+		<div id="footer-bottom">
 			<p>
 			    &copy; 2012 Institute for Systems Biology
-
                 &nbsp;&nbsp;&nbsp;&nbsp;
-
 			    <a href="http://www.bluewebtemplates.com/" title="Website Templates">website templates</a> by <a href="http://www.styleshout.com/">styleshout</a>
-
 			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			
 			    <a href="index.html">Home</a> |
                 <a href="http://baliga.systemsbiology.net/drupal/">Baliga lab</a> |
    		        <a href="index.html">Sitemap</a> |
                 <a href="http://validator.w3.org/check?uri=referer">XHTML</a> |
 			    <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>
    		    </p>
-			
-		</div>	
+		</div>
 
 <!-- footer ends-->
 </div>
