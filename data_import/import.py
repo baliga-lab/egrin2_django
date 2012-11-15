@@ -65,6 +65,23 @@ def get_cre_map(conn, organism):
     cur.close()
     return result
 
+def get_bicluster_map(conn, organism):
+    cur = conn.cursor()
+    query = "select id, bc_id from " + APP_PREFIX + "bicluster where network_id = %s"
+    cur.execute(query, [NETWORK[organism]])
+    result = { row[1]: row[0] for row in cur.fetchall() }
+    cur.close()
+    return result
+
+def get_corem_map(conn, organism):
+    cur = conn.cursor()
+    query = "select id, corem_id from " + APP_PREFIX + "corem where network_id = %s"
+    cur.execute(query, [NETWORK[organism]])
+    result = { row[1]: row[0] for row in cur.fetchall() }
+    cur.close()
+    return result
+
+
 ######################################################################
 ### Import Microbes Online genome data
 ######################################################################
@@ -247,7 +264,7 @@ def add_gre(organism, conn):
 ######################################################################
 
 def add_cre(organism, conn):
-    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id_id,pssm_id,eval) values (%s,%s,%s,%s,%s)"
+    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,eval) values (%s,%s,%s,%s,%s)"
     print "Importing CRE for ", organism
     with open(BASE_PATH[organism] + "cre.txt") as infile:
         gre_map = get_gre_map(conn, organism)
@@ -281,6 +298,10 @@ def add_cre(organism, conn):
 
 def add_biclusters(organism, conn):
     bicluster_query = "insert into " + APP_PREFIX + "bicluster (network_id,bc_id,residual) values (%s,%s,%s) returning id"
+    bicluster_gene_query = "insert into " + APP_PREFIX + "bicluster_genes (bicluster_id,gene_id) values (%s,%s)"
+    bicluster_cond_query = "insert into " + APP_PREFIX + "bicluster_conditions (bicluster_id,condition_id) values (%s,%s)"
+    bicluster_cre_query = "insert into " + APP_PREFIX + "bicluster_cres (bicluster_id,cre_id) values (%s,%s)"
+    bicluster_gre_query = "insert into " + APP_PREFIX + "bicluster_gres (bicluster_id,gre_id) values (%s,%s)"
 
     print "Importing biclusters for ", organism
     with open(BASE_PATH[organism] + "biclusters.txt") as infile:
@@ -301,19 +322,169 @@ def add_biclusters(organism, conn):
                     print "%d %% done" % ( (float(count) / tot) * 100.0)
                 row = line.strip('\n').split('\t')
                 bc_id = "%s_%s" % (organism, row[0])
-                genes = row[2].split(",")
-                conditions = ['%s_%s' % (organism, cond) for cond in  row[3].split(",")]
-                cres = ['%s_%s' % (organism, cre) for cre in row[4].split(",")]
-                gres = ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL']
+                gene_ids = set([gene_map[sys_name] for sys_name in row[2].split(",")])
+                condition_ids = set([cond_map[cond_id]
+                                     for cond_id in ['%s_%s' % (organism, cond) for cond in  row[3].split(",")]])
+                cre_ids = set([cre_map[cre_id]
+                               for cre_id in ['%s_%s' % (organism, cre) for cre in row[4].split(",")]])
+                gre_ids = set([gre_map[gre_id]
+                               for gre_id in ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL']])
+                # create bicluster record
                 cur.execute(bicluster_query, [NETWORK[organism], bc_id, float(row[1])])
                 bicluster_id = cur.fetchone()[0]
-                #print "saving bicluster ", bc_id, " genes: ", genes, " conds: ", conditions, " cres: ", cres, " gres: ", gres
+                # establish membership associations
+                for gene_id in gene_ids:
+                    cur.execute(bicluster_gene_query, [bicluster_id, gene_id])
+                for condition_id in condition_ids:
+                    cur.execute(bicluster_cond_query, [bicluster_id, condition_id])
+                for cre_id in cre_ids:
+                    cur.execute(bicluster_cre_query, [bicluster_id, cre_id])
+                for gre_id in gre_ids:
+                    cur.execute(bicluster_gre_query, [bicluster_id, gre_id])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
             conn.rollback()
 
         cur.close()
+
+######################################################################
+### Import Corems
+######################################################################
+def get_bicluster_ids(conn, biclusters):
+    if len(biclusters) == 0:
+        return []
+    query = "select id from " + APP_PREFIX + "bicluster where bc_id in (" + ','.join(["'%s'" % bicluster for bicluster in biclusters]) + ')'
+    cur = conn.cursor()
+    cur.execute(query)
+    ids = [row[0] for row in cur.fetchall()]
+    cur.close()
+    return ids
+
+def add_corems(organism, conn):
+    corem_query = "insert into " + APP_PREFIX + "corem (network_id,corem_id) values (%s,%s) returning id"
+    corem_gene_query = "insert into " + APP_PREFIX + "corem_genes (corem_id,gene_id) values (%s,%s)"
+    bicl_corem_query = "insert into " + APP_PREFIX + "bicluster_corems (bicluster_id,corem_id) values (%s,%s)"
+    corem_gre_query = "insert into " + APP_PREFIX + "grecoremmembership (gre_id,corem_id,pval) values (%s,%s,%s)"
+
+    print "Importing corems for ", organism
+    with open(BASE_PATH[organism] + "corems.txt") as infile:
+        gene_map = get_gene_map(conn, organism)
+        gre_map = get_gre_map(conn, organism)
+
+        cur = conn.cursor()
+        infile.readline()  # skip header
+        try:
+            for line in infile.readlines():
+                row = line.strip("\n").split("\t")
+                corem_id_str = '%s_%s' % (organism, row[0])
+                cur.execute(corem_query, [NETWORK[organism], corem_id_str])
+                corem_id = cur.fetchone()[0]
+                gene_ids = set([gene_map[sys_name] for sys_name in row[1].split(",")])
+                for gene_id in gene_ids:
+                    cur.execute(corem_gene_query, [corem_id, gene_id])
+
+                biclusters = set(['%s_%s' % (organism, bicl) for bicl in row[2].split(',')])
+                bicluster_ids = get_bicluster_ids(conn, biclusters)
+                for bicluster_id in bicluster_ids:
+                    cur.execute(bicl_corem_query, [bicluster_id, corem_id])
+
+                gre_ids = [gre_map[gre_name]
+                           for gre_name in ['%s_%s' % (organism, gre) for gre in row[3].split(",") if len(row[3]) > 0]]
+                pvals = [pval for pval in row[4].split(',') if len(row[4]) > 0]
+                for index in xrange(len(gre_ids)):
+                    if index < len(pvals):
+                        pval = pvals[index]
+                    else:
+                        pval = '0.0'
+                    cur.execute(corem_gre_query, [gre_ids[index], corem_id, pval])
+
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+        cur.close()
+
+######################################################################
+### Conditions, second pass
+######################################################################
+
+def augment_conditions(organism, conn, check_biclusters=False,
+                       check_corems=True):
+    """establish condition-bicluster and condition-corem relationship"""
+    print "augmenting condition information for ", organism
+    with open(BASE_PATH[organism] + "conditions.txt") as infile:
+        infile.readline()
+        lines = infile.readlines()
+        tot = len(lines)
+        counter = 0
+        cond_map = get_conditions_map(conn, organism)
+        gene_map = get_gene_map(conn, organism)
+        gre_map = get_gre_map(conn, organism)
+
+        if check_biclusters:
+            bicluster_map = get_bicluster_map(conn, organism)
+        if check_corems:
+            corem_map = get_corem_map(conn, organism)
+
+        cur = conn.cursor()
+        for line in lines:
+            counter += 1
+            if counter % 100 == 0:
+                print "%d %% done" % ((float(counter) / tot) * 100)
+            row = line.strip("\n").split("\t")
+            # get condition
+            condition_id = cond_map['%s_%s' % (organism, row[0])]
+
+            # just as a consistency check, we should have those relationship recorded and checking
+            # takes a long time, so it's optional
+            if check_biclusters:
+                biclusters = ['%s_%s' % (organism, bicluster) for bicluster in row[2].split(',') if len(row[2]) > 0]
+                # bicluster_ids = get_bicluster_ids(conn, biclusters)
+                bicluster_ids = [bicluster_map[bicluster] for bicluster in biclusters]
+                #print "bicluster_ids: ", bicluster_ids
+                for bicluster_id in bicluster_ids:
+                    cur.execute('select count(*) from ' + APP_PREFIX + 'bicluster_conditions where bicluster_id = %s and condition_id = %s',
+                                [bicluster_id, condition_id])
+                    num = cur.fetchone()[0]
+                    if num == 0:
+                        print "missing condition-bicluster relation, condition: %d and bicluster: %d" % (condition_id, bicluster_id)
+        
+            if check_corems:
+                corems = ['%s_%s' % (organism, corem) for corem in row[3].split(',')
+                          if len(row[3]) > 0]
+                corem_ids = [corem_map[corem] for corem in corems]
+                for corem_id in corem_ids:
+                    pass
+            if False:
+                gene_ids = [gene_map[gene] for gene in row[5].split(',') if len(row[5]) > 0]
+                pvals = [pval for pval in row[6].split(',')]
+                if len(row[7]) > 0:
+                    gre_ids = [gre_map[gre]
+                               for gre in ['%s_%s' % (organism,gre_name)
+                                           for gre_name in row[7].split(',')]]
+            else:
+                gre_ids = []
+        cur.close()
+
+######################################################################
+### Genes, second pass
+######################################################################
+def augment_genes(organism, conn):
+    """establish gene relationships"""
+    print "augmenting gene information for ", organism
+    with open(BASE_PATH[organism] + "genes_2.txt") as infile:
+        infile.readline()
+        lines = infile.readlines()
+
+######################################################################
+### add eco GRE-->regulator matches
+######################################################################
+def add_gre_regulator(organism, conn):
+    print "augmenting gre regulator information for ", organism
+    with open(BASE_PATH[organism] + "gre_matches.txt") as infile:
+        infile.readline()
+        lines = infile.readlines()
 
 if __name__ == '__main__':
     print "EGRIN2 data import"
@@ -323,9 +494,14 @@ if __name__ == '__main__':
         add_microbes_online_genes(organism, conn)
         add_rsat_genes(organism, conn)
         add_conditions(organism, conn)
-        #add_gene_expressions(organism, conn, check_missing=True)
-        #add_gre(organism, conn)
-        #add_cre(organism, conn)
-        #add_biclusters(organism, conn)
+        add_gene_expressions(organism, conn, check_missing=True)
+        add_gre(organism, conn)
+        add_cre(organism, conn)
+        add_biclusters(organism, conn)
+        add_corems(organism, conn)
+        #augment_conditions(organism, conn)
+        #if organism == 'eco':
+        # add_gre_regulator(organism, conn)
+        #    pass
 
     conn.close()

@@ -48,11 +48,11 @@ class Gene(models.Model):
     sys_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=256)
-    #bcs = models.ManyToManyField('Bicluster', verbose_name = "bicluster membership")
-    #corems = models.ManyToManyField('Corem', verbose_name = "corem membership")
-    #conditions = models.ManyToManyField('Condition', verbose_name = "condition membership")
-    #gres = models.ManyToManyField('Gre', verbose_name = "GRE membership")
     chromosome = models.ForeignKey(Chromosome)
+
+    # attributed many-to-many
+    conditions = models.ManyToManyField('Condition', verbose_name = "condition membership",
+                                        through='GeneConditionMembership')
     
     class Meta:
         ordering = ['sys_name']
@@ -64,58 +64,14 @@ class Condition(models.Model):
     network = models.ForeignKey(Network)
     cond_id = models.CharField(max_length=255)
     cond_name = models.CharField(max_length=128)
-    #bcs = models.ManyToManyField('Bicluster', verbose_name = "bicluster membership")
-    #corems = models.ManyToManyField('Corem', verbose_name = "corem membership")
-    #genes = models.ManyToManyField(Gene, verbose_name = "gene membership")
-    #gres = models.ManyToManyField('Gre', verbose_name = "gene membership")
+    corems = models.ManyToManyField('Corem', verbose_name="corem membership",
+                                    through='CoremConditionMembership')
     
     class Meta:
         ordering = ['cond_id']
     
     def __unicode__(self):
         return str(self.cond_id)
-    
-class CoremConditionPval(models.Model):
-    cond_id = models.ForeignKey(Condition, verbose_name = "condition parent")
-    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
-    p_val = models.CharField(max_length=128)
-    
-    class Meta:
-        ordering = ['cond_id']
-        
-    def return_pval(self):
-        return float(self.p_val)
-    
-    def __unicode__(self):
-        return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
-
-class GeneConditionPval(models.Model):
-    cond_id = models.ForeignKey(Condition, verbose_name = "condition parent")
-    gene = models.ForeignKey(Gene, verbose_name = "gene parent")
-    p_val = models.CharField(max_length=128)
-    
-    class Meta:
-        ordering = ['cond_id']
-        
-    def return_pval(self):
-        return float(self.p_val)
-    
-    def __unicode__(self):
-        return '%s : %s : %s' % (self.cond_id,self.gene,self.p_val)
-    
-class GreConditionPval(models.Model):
-    cond_id = models.ForeignKey(Condition, verbose_name = "condition parent")
-    gre = models.ForeignKey('Gre', verbose_name = "gre parent")
-    p_val = models.CharField(max_length=128)
-    
-    class Meta:
-        ordering = ['cond_id']
-        
-    def return_pval(self):
-        return float(self.p_val)
-    
-    def __unicode__(self):
-        return '%s : %s : %s' % (self.cond_id,self.gre,self.p_val)
     
 class Expression(models.Model):
     gene = models.ForeignKey(Gene, verbose_name = "expressed gene")
@@ -212,52 +168,24 @@ class Gre(models.Model):
     gre_id = models.CharField(max_length=255)
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
     p_val = models.CharField(max_length=128)
-    #bcs = models.ManyToManyField('Bicluster', verbose_name = "Bicluster parent")
-    #corems = models.ManyToManyField('Corem', verbose_name = "Corem parent")
-    conditions = models.ManyToManyField(Condition, verbose_name = "Conditions members")
-    genes = models.ManyToManyField(Gene, verbose_name = "Genes members")
+
+    conditions = models.ManyToManyField(Condition, verbose_name = "Conditions members",
+                                        through='GreConditionMembership')
+    genes = models.ManyToManyField(Gene, verbose_name = "Genes members",
+                                   through='GreGeneMembership')
     
     def return_pval(self):
         return float(self.p_val)
     
     def __unicode__(self):
         return '%s' % self.gre_id
-    
-class GreCoremPval(models.Model):
-    gre_id = models.ForeignKey(Gre, verbose_name = "GRE parent")
-    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
-    p_val = models.CharField(max_length=128)
-    
-    class Meta:
-        ordering = ['gre_id']
-        
-    def return_pval(self):
-        return float(self.p_val)
-    
-    def __unicode__(self):
-        return '%s : %s : %s' % (self.gre_id,self.corem,self.p_val)
-    
-class GreGenePval(models.Model):
-    gre_id = models.ForeignKey(Gre, verbose_name = "GRE parent")
-    gene = models.ForeignKey(Gene, verbose_name = "gene parent")
-    p_val = models.CharField(max_length=128)
-    
-    class Meta:
-        ordering = ['gre_id']
-        
-    def return_pval(self):
-        return float(self.p_val)
-    
-    def __unicode__(self):
-        return '%s : %s : %s' % (self.gre_id,self.gene,self.p_val)
-    
+
 class Cre(models.Model):
     network = models.ForeignKey(Network)
     cre_id = models.CharField(max_length=128)
-    gre_id = models.ForeignKey(Gre, verbose_name = "GRE parent")
+    gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
     eval = models.CharField(max_length=128)
-    #bcs = models.ManyToManyField('Bicluster', verbose_name = "Bicluster parent")
     
     def return_eval(self):
         return float(self.eval)
@@ -269,11 +197,13 @@ class Bicluster(models.Model):
     network = models.ForeignKey(Network)
     bc_id = models.CharField(max_length=255)
 
+    residual = models.DecimalField(max_digits=8,decimal_places=5)
+    
+    # Many-to-many relationships
     genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
     conditions = models.ManyToManyField(Condition, verbose_name = "Condition members")
     cres = models.ManyToManyField(Cre, verbose_name = "CRE members")
     gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
-    residual = models.DecimalField(max_digits=8,decimal_places=5)
     corems = models.ManyToManyField("Corem", verbose_name = "Corem")
     
     def expMatrix(self):
@@ -290,13 +220,18 @@ class Bicluster(models.Model):
 class Corem(models.Model):
     network = models.ForeignKey(Network)
     corem_id = models.CharField(max_length=255)
-    genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
-    conditions = models.ManyToManyField(Condition, verbose_name = "Condition members")
-    gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
-    expression = models.ManyToManyField(Expression, verbose_name = "gene expression")
+
     #top_bcs = models.ManyToManyField(Bicluster, verbose_name = "top biclusters")
     # need a separate table for this
     #go_enrichment = models.CharField(max_length=128)
+    genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
+    expression = models.ManyToManyField(Expression, verbose_name = "gene expression")
+
+    # attributed many-to-many
+    gres = models.ManyToManyField(Gre, verbose_name="GRE members",
+                                  through='GreCoremMembership')
+    conditions = models.ManyToManyField(Condition, verbose_name="Condition members",
+                                        through='CoremConditionMembership')
     
     def expMatrix(self):
         m = [ [ 0 for i in range(len(self.genes)) ] for j in range(len(self.conditions)) ]
@@ -312,12 +247,85 @@ class Corem(models.Model):
 class greTF(models.Model):
     network = models.ForeignKey(Network)
     tf = models.CharField(max_length=255)
-    gre_id = models.ForeignKey(Gre, verbose_name = "GRE members")
+    gre = models.ForeignKey(Gre, verbose_name = "GRE members")
     score = models.CharField(max_length=255)
     
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
+
+######################################################################
+####  Many-to-many relationships with attributes
+######################################################################
+
+class GreGeneMembership(models.Model):
+    gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
+    gene = models.ForeignKey(Gene, verbose_name = "gene parent")
+    p_val = models.CharField(max_length=128)
     
+    class Meta:
+        ordering = ['gre']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.gre_id,self.gene,self.p_val)
+    
+class GeneConditionMembership(models.Model):
+    cond = models.ForeignKey(Condition, verbose_name = "condition parent")
+    gene = models.ForeignKey(Gene, verbose_name = "gene parent")
+    p_val = models.CharField(max_length=128)
+    
+    class Meta:
+        ordering = ['cond']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.cond_id,self.gene,self.p_val)
+
+class CoremConditionMembership(models.Model):
+    cond = models.ForeignKey(Condition, verbose_name = "condition parent")
+    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
+    p_val = models.CharField(max_length=128)
+    
+    class Meta:
+        ordering = ['cond']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
+
+class GreConditionMembership(models.Model):
+    cond = models.ForeignKey(Condition, verbose_name = "condition parent")
+    gre = models.ForeignKey('Gre', verbose_name = "gre parent")
+    p_val = models.CharField(max_length=128)
+    
+    class Meta:
+        ordering = ['cond']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.cond_id,self.gre,self.p_val)
+
+class GreCoremMembership(models.Model):
+    gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
+    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
+    p_val = models.CharField(max_length=128)
+    
+    class Meta:
+        ordering = ['gre']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.gre_id,self.corem,self.p_val)
 
 # These are not implemented at the moment. For future use
 #class Cog(models.Model):
