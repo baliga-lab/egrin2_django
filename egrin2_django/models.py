@@ -213,7 +213,7 @@ class Gre(models.Model):
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
     p_val = models.CharField(max_length=128)
     #bcs = models.ManyToManyField('Bicluster', verbose_name = "Bicluster parent")
-    corems = models.ManyToManyField('Corem', verbose_name = "Corem parent")
+    #corems = models.ManyToManyField('Corem', verbose_name = "Corem parent")
     conditions = models.ManyToManyField(Condition, verbose_name = "Conditions members")
     genes = models.ManyToManyField(Gene, verbose_name = "Genes members")
     
@@ -271,8 +271,8 @@ class Bicluster(models.Model):
 
     genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
     conditions = models.ManyToManyField(Condition, verbose_name = "Condition members")
-    cre_ids = models.ManyToManyField(Cre, verbose_name = "CRE members")
-    gre_ids = models.ManyToManyField(Gre, verbose_name = "GRE members")
+    cres = models.ManyToManyField(Cre, verbose_name = "CRE members")
+    gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
     residual = models.DecimalField(max_digits=8,decimal_places=5)
     corems = models.ManyToManyField("Corem", verbose_name = "Corem")
     
@@ -292,7 +292,7 @@ class Corem(models.Model):
     corem_id = models.CharField(max_length=255)
     genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
     conditions = models.ManyToManyField(Condition, verbose_name = "Condition members")
-    gre_ids = models.ManyToManyField(Gre, verbose_name = "GRE members")
+    gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
     expression = models.ManyToManyField(Expression, verbose_name = "gene expression")
     #top_bcs = models.ManyToManyField(Bicluster, verbose_name = "top biclusters")
     # need a separate table for this
