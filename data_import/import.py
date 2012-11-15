@@ -33,10 +33,6 @@ RSAT_GENE_PATTERN = { 'eco': re.compile(r'^b[0-9]+'), 'hal': re.compile(r'^VNG[0
 PSSM_QUERY = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
 ROW_QUERY = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
 
-######################################################################
-### Import Microbes Online genome data
-######################################################################
-
 def get_gene_map(conn, organism):
     cur = conn.cursor()
     query = "select id, sys_name from " + APP_PREFIX + "gene where species_id = %s"
@@ -60,6 +56,18 @@ def get_gre_map(conn, organism):
     result = { row[1]: row[0] for row in cur.fetchall() }
     cur.close()
     return result
+
+def get_cre_map(conn, organism):
+    cur = conn.cursor()
+    query = "select id, cre_id from " + APP_PREFIX + "cre where network_id = %s"
+    cur.execute(query, [NETWORK[organism]])
+    result = { row[1]: row[0] for row in cur.fetchall() }
+    cur.close()
+    return result
+
+######################################################################
+### Import Microbes Online genome data
+######################################################################
 
 def make_gene_description(desc):
     return desc.rstrip("(NCBI)").rstrip("(VIMSS").rstrip("(RefSeq").rstrip("(NCBI ptt fil")
@@ -267,6 +275,45 @@ def add_cre(organism, conn):
             conn.rollback()
         cur.close()
 
+######################################################################
+### Import Biclusters
+######################################################################
+
+def add_biclusters(organism, conn):
+    bicluster_query = "insert into " + APP_PREFIX + "bicluster (network_id,bc_id,residual) values (%s,%s,%s) returning id"
+
+    print "Importing biclusters for ", organism
+    with open(BASE_PATH[organism] + "biclusters.txt") as infile:
+        gene_map = get_gene_map(conn, organism)
+        cond_map = get_conditions_map(conn, organism)
+        gre_map = get_gre_map(conn, organism)
+        cre_map = get_cre_map(conn, organism)
+
+        cur = conn.cursor()
+        try:
+            infile.readline()  # skip header
+            lines = infile.readlines()
+            tot = len(lines)
+            count = 0
+            for line in lines:
+                count += 1
+                if count % 1000 == 0:
+                    print "%d %% done" % ( (float(count) / tot) * 100.0)
+                row = line.strip('\n').split('\t')
+                bc_id = "%s_%s" % (organism, row[0])
+                genes = row[2].split(",")
+                conditions = ['%s_%s' % (organism, cond) for cond in  row[3].split(",")]
+                cres = ['%s_%s' % (organism, cre) for cre in row[4].split(",")]
+                gres = ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL']
+                cur.execute(bicluster_query, [NETWORK[organism], bc_id, float(row[1])])
+                bicluster_id = cur.fetchone()[0]
+                #print "saving bicluster ", bc_id, " genes: ", genes, " conds: ", conditions, " cres: ", cres, " gres: ", gres
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+
+        cur.close()
 
 if __name__ == '__main__':
     print "EGRIN2 data import"
@@ -278,5 +325,7 @@ if __name__ == '__main__':
         #add_conditions(organism, conn)
         #add_gene_expressions(organism, conn)
         #add_gre(organism, conn)
-        add_cre(organism, conn)
+        #add_cre(organism, conn)
+        add_biclusters(organism, conn)
+
     conn.close()
