@@ -323,9 +323,9 @@ if __name__ == '__main__':
         #add_microbes_online_genes(organism, conn)
         #add_rsat_genes(organism, conn)
         #add_conditions(organism, conn)
-        #add_gene_expressions(organism, conn)
-        #add_gre(organism, conn)
-        #add_cre(organism, conn)
-        add_biclusters(organism, conn)
+        add_gene_expressions(organism, conn, check_missing=True)
+        add_gre(organism, conn)
+        add_cre(organism, conn)
+        #add_biclusters(organism, conn)
 
     conn.close()
