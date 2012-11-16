@@ -372,12 +372,7 @@ def biclusters_s(request, species=None):
             self.network = Network.objects.filter(species=self.species)
             self.bc = bicluster
 
-    objects = []
-    n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
-    biclusters = Bicluster.objects.filter(network__in=n)[0:100]
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
-
-    objects = [bcObject(species_obj, bicluster) for bicluster in biclusters]
     return render_to_response('biclusters_s.html', locals())
 
 def biclusters_json(request, species=None):
