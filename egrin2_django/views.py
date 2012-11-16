@@ -118,24 +118,22 @@ def corem_detail(request, species=None, corem=None):
         def __init__(self,species,gre):
             self.species = Species.objects.get(ncbi_taxonomy_id=species)
             self.gre_id = gre.gre_id
-            self.corem_pval = GreCoremPval.objects.get(corem=corem,gre_id=gre).p_val
-            self.pssm = gre.pssm.matrix()
+            self.corem_pval = GreCoremMembership.objects.get(corem=corem,gre_id=gre).p_val
+            #self.pssm = gre.pssm.matrix()
     # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
     network = Network.objects.filter(species=s)
-    corem = Corem.objects.get(corem_id = corem,network__species__ncbi_taxonomy_id=species)
-    genes = Gene.objects.filter(corems=corem,species=s)
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    genes = Gene.objects.filter(corem=corem,species=s)
     conds = Condition.objects.filter(corems=corem)
-    conds_pval = CoremConditionPval.objects.filter(corem=corem, 
-                                                  cond_id__in = conds)
+    conds_pval = CoremConditionMembership.objects.filter(corem=corem, 
+                                                         cond_id__in=conds)
     conds_pval_dict = {}
     for i in conds_pval:
-        d = {"cond_id":i.cond_id.cond_id,"cond_name":Condition.objects.get(cond_id = i.cond_id.cond_id).cond_name,"p_val":i.p_val}
+        d = {"cond_id":i.cond.cond_id,"cond_name":Condition.objects.get(cond_id = i.cond.cond_id).cond_name,"p_val":i.p_val}
         conds_pval_dict[i] = d
-    gres = Gre.objects.filter(corems=corem)
-    gre_obj = []
-    for i in gres:
-        gre_obj.append(greObject(species,i))
+    gres = Gre.objects.filter(corem=corem)
+    gre_obj = [greObject(species, gre) for gre in gres]
     biclusters = Bicluster.objects.filter(corems=corem,network__in=network)
     return render_to_response('corem_detail.html', locals())
 
