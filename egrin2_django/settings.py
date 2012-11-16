@@ -68,6 +68,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/home/weiju/Projects/ISB/egrin2_django/static',
+    '/home/weiju/Projects/ISB/egrin2_static_data',
 )
 
 # List of finder classes that know how to find static files in
@@ -122,6 +123,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'egrin2_django',  # for connecting the model classes
+    "endless_pagination"  # put the endless pagination packages into the search path
 )
 
 # A sample logging configuration. The only tangible logging

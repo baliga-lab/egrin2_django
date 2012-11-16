@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 from endless_pagination.decorators import page_template
+from django.template import RequestContext
 from models import *
 
 def index(request):
@@ -23,18 +24,29 @@ def browse(request):
 def conditions(request, species=None):
     # Return info about conditions
     class ConditionInfo:
+        def __init__(self, condition):
+            self.cond_id = condition.cond_id
+            self.cond_name = condition.cond_name
+            self.corem_count = condition.corems.count
+            self.gene_count = condition.gene_set.count
+            self.gre_count = condition.gre_set.count
+
+    class SpeciesConditionInfo:
         def __init__(self,species):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-            self.conds = Condition.objects.filter(network__in=self.network)
+            species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+            self.species_name = species_obj.name
+            self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
+            network = Network.objects.filter(species__ncbi_taxonomy_id=species)
+            self.conds = [ConditionInfo(cond)
+                          for cond in Condition.objects.filter(network__in=network)[0:10]]
     if species:
         out = []
-        out.append(ConditionInfo(species))
+        out.append(SpeciesConditionInfo(species))
     else:
         species = [i.ncbi_taxonomy_id for i in Species.objects.all()]
         out = []
         for i in species:
-            out.append(ConditionInfo(i))
+            out.append(SpeciesConditionInfo(i))
     return render_to_response('conditions.html', locals())
 
 def condition_detail(request, species=None, condition=None):
