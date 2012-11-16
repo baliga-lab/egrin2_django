@@ -364,23 +364,43 @@ def biclusters(request, species=None):
     out = [BCInfo(network) for network in networks]
     return render_to_response('biclusters.html', locals())
 
-@page_template("biclusters_page.html")
-def biclusters_s(request, template = "biclusters_s.html",species=None,extra_context=None):
+def biclusters_s(request, species=None):
     # Return info about biclusters
     class bcObject:
-        def __init__(self,species,bc):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
+        def __init__(self,species, bicluster):
+            self.species = species
             self.network = Network.objects.filter(species=self.species)
-            self.bc = Bicluster.objects.get(network__in=self.network,bc_id=bc)
+            self.bc = bicluster
+
     objects = []
     n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
-    bcs = Bicluster.objects.filter(network__in=n)
-    for j in bcs:
-        objects.append(bcObject(species=species,bc=j.bc_id))
-    context = {'objects':objects}
-    if extra_context is not None:
-        context.update(extra_context)
-    return render_to_response(template, context,context_instance=RequestContext(request))
+    biclusters = Bicluster.objects.filter(network__in=n)[0:100]
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+
+    objects = [bcObject(species_obj, bicluster) for bicluster in biclusters]
+    return render_to_response('biclusters_s.html', locals())
+
+def biclusters_json(request, species=None):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
+    num_biclusters_total = Bicluster.objects.filter(network__in=n).count()
+    bicluster_objs = Bicluster.objects.filter(network__in=n)[display_start:display_end]
+    biclusters = [[b.network.version_id, b.bc_id,
+                   b.genes.count(), b.conditions.count(), b.cres.count(),
+                   b.corems.count(), b.gres.count()]
+                  for b in bicluster_objs]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'aaData': biclusters
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 def bicluster_detail(request, species=None, bicluster=None):
     # Return info about bicluster
