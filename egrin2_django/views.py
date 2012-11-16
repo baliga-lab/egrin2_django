@@ -316,14 +316,10 @@ def gres(request):
     for i in species:
         s = i
         n = Network.objects.get(species__name=s.name)
-        g = len(Gene.objects.filter(species__name=s.name))
-        cond = len(Condition.objects.filter(network__name=n.name))
-        corems = len(Corem.objects.filter(network__name=n.name))
-        gres = len(Gre.objects.filter(network__name=n.name))
-        out[s.short_name] = {"species":s,"network":n,"genes":g,"conditions":cond,"corems":corems,"gres":gres}
+        gres = Gre.objects.filter(network__name=n.name).count()
+        out[s.short_name] = {"species":s,"network":n,"gres":gres}
     return render_to_response('gres.html', locals())
-    
-    
+
 @page_template("gres_page.html")
 def gres_s(request, template = "gres_s.html",species=None,extra_context=None):
     # Return info about gres
