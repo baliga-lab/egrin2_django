@@ -39,7 +39,8 @@ def conditions_json(request, species):
              for c in conds_batch]
     #print conds
     data = {
-        'sEcho': sEcho, 'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
+        'sEcho': sEcho,
+        'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
         'aaData': conds
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -86,23 +87,32 @@ def condition_detail(request, species=None, condition=None):
 def contact(request):
     return render_to_response('contact.html', locals())
 
+def corems_json(request, species):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    network = Network.objects.filter(species__ncbi_taxonomy_id=species)
+    num_corems_total = Corem.objects.filter(network__in=network).count()
+    corems_batch = Corem.objects.filter(network__in=network)[display_start:display_end]
+    corems = [[c.corem_id, c.genes.count(), c.conditions.count(), c.gres.count()]
+              for c in corems_batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_corems_total, 'iTotalDisplayRecords': num_corems_total,
+        'aaData': corems
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 def corems(request, species=None):
-    # Return info about corems
-    class CoremInfo:
-        def __init__(self, corem):
-            self.corem_id = corem.corem_id
-            self.gene_count = corem.genes.count
-            self.condition_count = corem.conditions.count
-            self.gre_count = corem.gres.count
-            
+    # Return info about corems            
     class SpeciesCoremInfo:
         def __init__(self,species):
             species_obj = Species.objects.get(ncbi_taxonomy_id=species)
             self.species_name = species_obj.name
             self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
-            network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-            self.corems = [CoremInfo(corem)
-                           for corem in Corem.objects.filter(network__in=network)]
+
     if species:
         out = []
         out.append(SpeciesCoremInfo(species))
@@ -168,7 +178,6 @@ def genes(request, species=None):
             species_obj = Species.objects.get(ncbi_taxonomy_id=species)
             self.species_name = species_obj.name
             self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
-            self.genes = Gene.objects.filter(species__ncbi_taxonomy_id=species)[0:10]
 
     if species:
         out = []

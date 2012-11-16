@@ -47,18 +47,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for g in o.genes %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td><a href="{% url 'genes' %}{{ o.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.sys_name }}</a></td>
-          <td>{{ g.name }}</td>
-          <td><a href="http://www.ncbi.nlm.nih.gov/protein/{{ g.accession }}">{{ g.accession }}</a></td>
-          <td>{{ g.description }}</td>
-          <td>{{ g.start }}</td>
-          <td>{{ g.stop }}</td>
-          <td>{{ g.strand }}</td>
-          <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.chromosome.refseq }}">{{ g.chromosome.refseq }}</a></td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
     <div id="pager_gene{{forloop.counter|stringformat:"s"}}">

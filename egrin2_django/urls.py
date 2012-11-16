@@ -38,6 +38,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^corems/(?P<species>[^/]*)/?$', 'corems',name='corems'),
     url(r'^corems/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$', 'corem_detail',name='corem_detail'),
 
+    # filling genes tables with JSON data
+    url(r'^corems_json/$', 'corems_json',name='corems_json'),
+    url(r'^corems_json/(?P<species>[^/]*)/?$', 'corems_json', name='corems_json'),
+
     url(r'^downloads/$', 'downloads',name='downloads'),
 
     url(r'^genes/$', 'genes',name='genes'),

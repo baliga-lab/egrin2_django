@@ -22,9 +22,13 @@
       {% for o in out %}	
       <script>
         $(document).ready(function() {
-          $("#corem{{forloop.counter}}")
-          .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[1,0]]})
-          .tablesorterPager({container: $("#pager_corem{{forloop.counter}}"), positionFixed: false});
+          $("#corem{{forloop.counter}}").dataTable({
+            'bFilter': false,
+            'bSort': false,
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "{% url 'corems_json' %}{{o.ncbi_taxonomy_id}}"
+          });
         });
       </script>
       <blockquote><p>{{ o.species_name }} corem information</p></blockquote>
@@ -38,19 +42,9 @@
           </tr>
         </thead>
         <tbody>
-          {% for corem in o.corems %}
-          <tr class="{% cycle 'row-a' 'row-b' %}">
-            <td><a href="{% url 'corems' %}{{ o.ncbi_taxonomy_id }}/{{ corem.corem_id }}">{{ corem.corem_id }}</a></td>
-            <td>{{ corem.gene_count }}</td>
-            <td>{{ corem.condition_count }}</td>
-            <td>{{ corem.gre_count }}</td>
-          </tr>
-          {% endfor %}
         </tbody>
       </table>
-      <div id="pager_corem{{forloop.counter|stringformat:"s"}}">
-        {% include 'pager.html' %}
-        {% endfor %}
+    {% endfor %}
 		    <!-- main ends -->
 		</div>
 {% endblock %}
