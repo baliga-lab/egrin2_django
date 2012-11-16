@@ -28,6 +28,7 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^conditions/(?P<species>[^/]*)/?$', 'conditions',name='conditions'),
     url(r'^conditions/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$', 'condition_detail',name='condition_detail'),
 
+    # filling condition tables with JSON data
     url(r'^conditions_json/$', 'conditions_json',name='conditions_json'),
     url(r'^conditions_json/(?P<species>[^/]*)/?$', 'conditions_json', name='conditions_json'),
 
@@ -42,6 +43,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^genes/$', 'genes',name='genes'),
     url(r'^genes/(?P<species>[^/]*)/?$', 'genes',name='genes'),
     url(r'^genes/(?P<species>[^/]*)/(?P<gene>[^/]*)/?$', 'gene_detail',name='gene_detail'),
+
+    # filling genes tables with JSON data
+    url(r'^genes_json/$', 'genes_json',name='genes_json'),
+    url(r'^genes_json/(?P<species>[^/]*)/?$', 'genes_json', name='genes_json'),
 
     url(r'^gres/$', 'gres',name='gres'),
     url(r'^gres/(?P<species>[^/]*)/?$', 'gres_s',name='gres_s'),

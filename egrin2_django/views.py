@@ -22,7 +22,6 @@ def about(request):
 def browse(request):
     return render_to_response('browse.html', locals())
 
-
 def conditions_json(request, species):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
@@ -145,13 +144,31 @@ def downloads(request):
     s = Species.objects.all()
     return render_to_response('downloads.html', locals())
 
+def genes_json(request, species):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
+    genes_batch = Gene.objects.filter(species__ncbi_taxonomy_id=species)[display_start:display_end]
+    genes = [[g.sys_name, g.name, g.accession, g.description, g.start, g.stop,
+              g.strand, g.chromosome.refseq] for g in genes_batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
+        'aaData': genes
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 def genes(request, species=None):
     # Return info about the genes
     class GeneInfo:
         def __init__(self,species):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.genes = Gene.objects.filter(species__ncbi_taxonomy_id=species)
+            species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+            self.species_name = species_obj.name
+            self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
+            self.genes = Gene.objects.filter(species__ncbi_taxonomy_id=species)[0:10]
 
     if species:
         out = []
@@ -221,9 +238,9 @@ def regulators(request,species=None):
             self.s = Species.objects.get(ncbi_taxonomy_id=species)
             self.tf = tf
             self.gres = list(set([o.gre_id for o in greTF.objects.filter(tf=tf,score__gte=self.CUTOFF)]))
-            self.corems = list(set(Corem.objects.filter(gre_ids__in=self.gres)))
-            self.genes = list(set(Gene.objects.filter(gres__in=self.gres)))
-            self.conds = list(set(Condition.objects.filter(gres__in=self.gres)))
+            self.corems = list(set(Corem.objects.filter(gres__in=self.gres)))
+            self.genes = list(set(Gene.objects.filter(gre__in=self.gres)))
+            self.conds = list(set(Condition.objects.filter(gre__in=self.gres)))
     tfs = list(set([o.tf for o in greTF.objects.all()]))
     s = Species.objects.get(ncbi_taxonomy_id=species)
     out = []

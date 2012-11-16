@@ -4,64 +4,66 @@
 {% block javascript %}{% endblock %}
 {% block nav %}
 <!-- navigation starts-->
-	<div  id="nav">
-		<ul>
-        <li><a href="{% url 'index' %}">Home</a></li>
-        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
-        <li><a href="{% url 'search' %}">Search</a></li>
-        <li><a href="{% url 'downloads' %}">Downloads</a></li>
-        <li><a href="{% url 'contact' %}">Support</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>
-		</ul>
+<div  id="nav">
+	<ul>
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+    <li><a href="{% url 'search' %}">Search</a></li>
+    <li><a href="{% url 'downloads' %}">Downloads</a></li>
+    <li><a href="{% url 'contact' %}">Support</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+	</ul>
 	<!-- navigation ends-->
-	</div>	
+</div>	
 {% endblock %}
 {% block content %}
-	<!-- content-wrap starts -->
-	<div id="content-wrap">
-		<div id="main">
-        {% for o in out %}
-            <script>
-                $(document).ready(function() {
-                $("#gene{{forloop.counter}}")
-                .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[1,0]]})
-                .tablesorterPager({container: $("#pager_gene{{forloop.counter}}"), positionFixed: false});
-                });
-            </script>
-            <blockquote><p>{{ o.species.name }} gene information</p></blockquote>
-                <table id="gene{{forloop.counter|stringformat:"s"}}" class="table">
-                  <thead>
-                    <tr>
-                        <th class="first">Organism</th>
-                        <th>Gene name</th>
-                        <th>Common name</th>
-                        <th>Accession</th>
-                        <th>Description</th>
-                        <th>Start</th>
-                        <th>Stop</th>
-                        <th>Strand</th>
-                        <th>Chromosome</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for g in o.genes %}
-                        <tr class="{% cycle 'row-a' 'row-b' %}">
-                            <td class="first"><a href="{% url 'species' %}{{ o.species.ncbi_taxonomy_id }}">{{ o.species.name }}</a></td>
-                            <td><a href="{% url 'genes' %}{{ o.species.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.sys_name }}</a></td>
-                            <td>{{ g.name }}</td>
-                            <td><a href="http://www.ncbi.nlm.nih.gov/protein/{{ g.accession }}">{{ g.accession }}</a></td>
-                            <td>{{ g.description }}</td>
-                            <td>{{ g.start }}</td>
-                            <td>{{ g.stop }}</td>
-                            <td>{{ g.strand }}</td>
-                            <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.chromosome.refseq }}">{{ g.chromosome.refseq }}</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
-            <div id="pager_gene{{forloop.counter|stringformat:"s"}}">
-            {% include 'pager.html' %}
+<!-- content-wrap starts -->
+<div id="content-wrap">
+	<div id="main">
+    {% for o in out %}
+    <script>
+      $(document).ready(function() {
+        $("#gene{{forloop.counter}}").dataTable({
+          "bFilter": false,
+          "bSort": false,
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'genes_json' %}{{o.ncbi_taxonomy_id}}"
+        });
+      });
+    </script>
+    <blockquote><p>{{ o.species_name }} gene information</p></blockquote>
+    <table id="gene{{forloop.counter|stringformat:"s"}}" class="table">
+      <thead>
+        <tr>
+          <th class="first">Gene name</th>
+          <th>Common name</th>
+          <th>Accession</th>
+          <th>Description</th>
+          <th>Start</th>
+          <th>Stop</th>
+          <th>Strand</th>
+          <th>Chromosome</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in o.genes %}
+        <tr class="{% cycle 'row-a' 'row-b' %}">
+          <td><a href="{% url 'genes' %}{{ o.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.sys_name }}</a></td>
+          <td>{{ g.name }}</td>
+          <td><a href="http://www.ncbi.nlm.nih.gov/protein/{{ g.accession }}">{{ g.accession }}</a></td>
+          <td>{{ g.description }}</td>
+          <td>{{ g.start }}</td>
+          <td>{{ g.stop }}</td>
+          <td>{{ g.strand }}</td>
+          <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.chromosome.refseq }}">{{ g.chromosome.refseq }}</a></td>
+        </tr>
         {% endfor %}
+      </tbody>
+    </table>
+    <div id="pager_gene{{forloop.counter|stringformat:"s"}}">
+      {% include 'pager.html' %}
+    {% endfor %}
 		<!-- main ends -->
-    </div>
-{% endblock %}
+  </div>
+  {% endblock %}
