@@ -21,40 +21,34 @@
 		<div id="main">
         {% for o in out %}	
         <script>
-            {% include 'sciparse.html' %}
-            $(document).ready(function() {
-            
-            $("#conds{{forloop.counter}}")
-            .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[1,0]] })
-            .tablesorterPager({container: $("#pager_conds{{forloop.counter}}"), positionFixed: false});
-            });
+          $(document).ready(function() {  
+            $("#conds{{forloop.counter}}").dataTable();
+          });
         </script>
         <blockquote><p>{{ o.species_name }} Condition Information</p></blockquote>
-            <table id="conds{{forloop.counter|stringformat:"s"}}" class="table">
-                <thead>
-                    <tr>
-                        <th class="first">Condition ID</th>
-                        <th>Condition Name</th>
-                        <th>Corems</th>
-                        <th>Genes</th>
-                        <th>GREs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cond in o.conds %}
-                        <tr class="{% cycle 'row-a' 'row-b' %}">
-                            <td><a href="{% url 'conditions' %}{{ o.ncbi_taxonomy_id }}/{{ cond.cond_id }}">{{ cond.cond_id }}</a></td>
-                            <td>{{ cond.cond_name }}</td>
-                            <td>{{ cond.corem_count }}</td>
-                            <td>{{ cond.gene_count }}</td>
-                            <td>{{ cond.gre_count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div id="pager_conds{{forloop.counter|stringformat:"s"}}">
-            {% include 'pager.html' %}
+        <table id="conds{{forloop.counter|stringformat:"s"}}" class="dataTable" width="80%">
+          <thead>
+            <tr>
+              <th class="first">Condition ID</th>
+              <th>Condition Name</th>
+              <th>Corems</th>
+              <th>Genes</th>
+              <th>GREs</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cond in o.conds %}
+            <tr class="{% cycle 'row-a' 'row-b' %}">
+              <td><a href="{% url 'conditions' %}{{ o.ncbi_taxonomy_id }}/{{ cond.cond_id }}">{{ cond.cond_id }}</a></td>
+              <td>{{ cond.cond_name }}</td>
+              <td>{{ cond.corem_count }}</td>
+              <td>{{ cond.gene_count }}</td>
+              <td>{{ cond.gre_count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
         {% endfor %}
-		<!-- main ends -->
+		    <!-- main ends -->
 		</div>
-{% endblock %}
+ {% endblock %}
