@@ -2,7 +2,7 @@
 {% load url from future %}
 {% block title %}Corems{% endblock %}
 {% block nav %}
-<!-- navigation starts-->	
+<!-- navigation starts-->
 	<div  id="nav">
 		<ul>
         <li><a href="{% url 'index' %}">Home</a></li>
@@ -10,12 +10,12 @@
         <li><a href="{% url 'search' %}">Search</a></li>
         <li><a href="{% url 'downloads' %}">Downloads</a></li>
         <li><a href="{% url 'contact' %}">Support</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>	
+        <li><a href="{% url 'about' %}">About</a></li>
 		</ul>
-	<!-- navigation ends-->	
+	<!-- navigation ends-->
 	</div>	
 {% endblock %}
-{% block content %}			
+{% block content %}
 	<!-- content-wrap starts -->
 	<div id="content-wrap">
 		<div id="main">
@@ -27,12 +27,11 @@
                 .tablesorterPager({container: $("#pager_corem{{forloop.counter}}"), positionFixed: false});
                 });
             </script>
-            <blockquote><p>{{ o.species.name }} corem information</p></blockquote>
+            <blockquote><p>{{ o.species_name }} corem information</p></blockquote>
                 <table id="corem{{forloop.counter|stringformat:"s"}}" class="table">
                     <thead>
                         <tr>
-                            <th class="first">Organism</th>
-                            <th>Corems</th>
+                            <th class="first">Corems</th>
                             <th>Genes</th>
                             <th>Conditions</th>
                             <th>GREs</th>
@@ -41,11 +40,10 @@
                     <tbody>
                     {% for corem in o.corems %}
                         <tr class="{% cycle 'row-a' 'row-b' %}">
-                            <td class="first"><a href="{% url 'species' %}{{ o.species.ncbi_taxonomy_id }}">{{ o.species.name }}</a></td>
-                            <td><a href="{% url 'corems' %}{{ o.species.ncbi_taxonomy_id }}/{{ corem.corem_id }}">{{ corem.corem_id }}</a></td>
-                            <td>{{ corem.genes.count }}</td>
-                            <td>{{ corem.conditions.count }}</td>
-                            <td>{{ corem.gre_ids.count }}</td>
+                            <td><a href="{% url 'corems' %}{{ o.ncbi_taxonomy_id }}/{{ corem.corem_id }}">{{ corem.corem_id }}</a></td>
+                            <td>{{ corem.gene_count }}</td>
+                            <td>{{ corem.condition_count }}</td>
+                            <td>{{ corem.gre_count }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -53,7 +51,6 @@
                 <div id="pager_corem{{forloop.counter|stringformat:"s"}}">
                 {% include 'pager.html' %}
         {% endfor %}
-
-		<!-- main ends -->	
+		<!-- main ends -->
 		</div>
 {% endblock %}

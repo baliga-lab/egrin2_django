@@ -56,9 +56,9 @@ def condition_detail(request, species=None, condition=None):
     condition = Condition.objects.get(cond_id = condition,network__species=s)
     genes = Gene.objects.filter(conditions=condition)
     corems = Corem.objects.filter(conditions=condition)
-    corem_pval = CoremConditionPval.objects.filter(cond_id=condition, 
-                                                  corem__in = corems)
-    gres_pval =GreConditionPval.objects.filter(cond_id=condition)
+    corem_pval = CoremConditionMembership.objects.filter(cond_id=condition, 
+                                                         corem__in=corems)
+    gres_pval = GreConditionMembership.objects.filter(cond_id=condition)
     biclusters = Bicluster.objects.filter(conditions=condition)
     return render_to_response('condition_detail.html', locals())
 
@@ -67,20 +67,29 @@ def contact(request):
 
 def corems(request, species=None):
     # Return info about corems
-    # Return info about the genes
     class CoremInfo:
+        def __init__(self, corem):
+            self.corem_id = corem.corem_id
+            self.gene_count = corem.genes.count
+            self.condition_count = corem.conditions.count
+            self.gre_count = corem.gres.count
+            
+    class SpeciesCoremInfo:
         def __init__(self,species):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-            self.corems = Corem.objects.filter(network__in=self.network)
+            species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+            self.species_name = species_obj.name
+            self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
+            network = Network.objects.filter(species__ncbi_taxonomy_id=species)
+            self.corems = [CoremInfo(corem)
+                           for corem in Corem.objects.filter(network__in=network)]
     if species:
         out = []
-        out.append(CoremInfo(species))
+        out.append(SpeciesCoremInfo(species))
     else:
         species = [i.ncbi_taxonomy_id for i in Species.objects.all()]
         out = []
         for i in species:
-            out.append(CoremInfo(i))
+            out.append(SpeciesCoremInfo(i))
     return render_to_response('corems.html', locals())
 
 def corem_detail(request, species=None, corem=None):
@@ -121,6 +130,7 @@ def genes(request, species=None):
         def __init__(self,species):
             self.species = Species.objects.get(ncbi_taxonomy_id=species)
             self.genes = Gene.objects.filter(species__ncbi_taxonomy_id=species)
+
     if species:
         out = []
         out.append(GeneInfo(species))
@@ -322,10 +332,13 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
 def biclusters(request, species=None):
     # Return info about biclusters
     class BCInfo:
-        def __init__(self,network):
-            self.network = Network.objects.get(version_id=network)
-            self.species = self.network.species
-            self.bcs = Bicluster.objects.filter(network=self.network)
+        def __init__(self, network):
+            network_obj = Network.objects.get(version_id=network)
+            self.network_version = network_obj.version_id
+            self.species_name = network_obj.species.name
+            self.ncbi_taxonomy_id = network_obj.species.ncbi_taxonomy_id
+            self.bcs_count = Bicluster.objects.filter(network=network_obj).count
+
     if species:
         networks = [i.version_id for i in Network.objects.filter(species__ncbi_taxonomy_id=species)]
         out = []

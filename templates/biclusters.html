@@ -2,7 +2,7 @@
 {% load url from future %}
 {% block title %}Biclusters{% endblock %}
 {% block nav %}
-<!-- navigation starts-->	
+<!-- navigation starts-->
 	<div  id="nav">
 		<ul>
         <li><a href="{% url 'index' %}">Home</a></li>
@@ -10,12 +10,12 @@
         <li><a href="{% url 'search' %}">Search</a></li>
         <li><a href="{% url 'downloads' %}">Downloads</a></li>
         <li><a href="{% url 'contact' %}">Support</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>	
+        <li><a href="{% url 'about' %}">About</a></li>
 		</ul>
-	<!-- navigation ends-->	
+	<!-- navigation ends-->
 	</div>	
 {% endblock %}
-{% block content %}			
+{% block content %}
 	<!-- content-wrap starts -->
 	<div id="content-wrap">
 		<div id="main">
@@ -41,15 +41,15 @@
             <tbody>
                 {% for o in out %}
                     <tr class="{% cycle 'row-a' 'row-b' %}">
-                        <td class="first"><a href="{% url 'species' o.species.ncbi_taxonomy_id %}">{{ o.species.name }}</a></td>
-                        <td>{{ o.network.version_id }}</td>
-                        <td><a href="{% url 'biclusters_s' o.species.ncbi_taxonomy_id %}">{{ o.bcs|length }}</a></td>
+                        <td class="first"><a href="{% url 'species' o.ncbi_taxonomy_id %}">{{ o.species_name }}</a></td>
+                        <td>{{ o.network_version }}</td>
+                        <td><a href="{% url 'biclusters_s' o.ncbi_taxonomy_id %}">{{ o.bcs_count }}</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
         <div id="pager_bcs">
         {% include 'pager.html' %}
-		<!-- main ends -->	
+		<!-- main ends -->
 		</div>
 {% endblock %}
