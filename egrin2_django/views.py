@@ -266,7 +266,7 @@ def search(request):
 def sitemap(request):
     return render_to_response('sitemap.html', locals())
 
-def species(request,species=None):
+def species(request, species=None):
     # Return info about the organism
     if species:
         species_objs = [Species.objects.get(ncbi_taxonomy_id=species)]
@@ -294,25 +294,24 @@ def gres(request):
     return render_to_response('gres.html', locals())
 
 @page_template("gres_page.html")
-def gres_s(request, template = "gres_s.html",species=None,extra_context=None):
+def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
     # Return info about gres
     class greObject:
-        def __init__(self,species,gre):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
+        def __init__(self, species, gre):
+            self.species = species
             self.gre_id = gre.gre_id
-            self.cres = len(Cre.objects.filter(gre_id = gre))
-            self.pssm = gre.pssm.matrix()
-    objects = []
-    n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
+            self.cres = Cre.objects.filter(gre_id = gre).count()
+            #self.pssm = gre.pssm.matrix()
+
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+    n = Network.objects.filter(species=species_obj)
+
     gres = Gre.objects.filter(network__in=n)
-    for j in gres:
-        objects.append(greObject(species=species,gre=j))
-    context = {'objects':objects}
+    objects = [greObject(species_obj, gre) for gre in gres]
+    context = {'objects': objects}
     if extra_context is not None:
         context.update(extra_context)
     return render_to_response(template, context,context_instance=RequestContext(request))
-
-
 
 @page_template("gres_detail_page.html")
 def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extra_context=None):
