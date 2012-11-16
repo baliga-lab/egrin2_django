@@ -534,10 +534,34 @@ def augment_genes(organism, conn):
 ### add eco GRE-->regulator matches
 ######################################################################
 def add_gre_regulator(organism, conn):
+    gre_tf_query = "insert into " + APP_PREFIX + "gretf (network_id,tf,gre_id,score) values (%s,%s,%s,%s)"
     print "augmenting gre regulator information for ", organism
     with open(BASE_PATH[organism] + "gre_matches.txt") as infile:
-        infile.readline()
+        gre_map = get_gre_map(conn, organism)
+        infile.readline()  # skip header
         lines = infile.readlines()
+        tot = len(lines)
+        counter = 0
+        cur = conn.cursor()
+        try:
+            for line in lines:
+                counter += 1
+                if counter % 1000 == 0:
+                    print "%d %% done" % ((float(counter) / tot) * 100)
+
+                # gene, gre_id, pval
+                row = line.strip("\n").split("\t")
+                gre_id = gre_map['%s_%s' % (organism, row[0])]
+                regulators = [regulator for regulator in row[1].split(",") if len(regulator) > 0]
+                scores = [score for score in row[2].split(',') if len(score) > 0]
+                for index in xrange(len(regulators)):
+                    cur.execute(gre_tf_query, [NETWORK[organism], regulators[index],
+                                               gre_id, scores[index]])
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+        cur.close()
 
 if __name__ == '__main__':
     print "EGRIN2 data import"
@@ -555,9 +579,8 @@ if __name__ == '__main__':
         #augment_conditions(organism, conn, check_biclusters=False,
         #                   connect_corems=False, connect_genes=False,
         #                   connect_gres=True)
-        augment_genes(organism, conn)
-        #if organism == 'eco':
-        # add_gre_regulator(organism, conn)
-        #    pass
+        #augment_genes(organism, conn)
+        if organism == 'eco':
+            add_gre_regulator(organism, conn)
 
     conn.close()
