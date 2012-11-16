@@ -497,10 +497,38 @@ def augment_conditions(organism, conn, check_biclusters=False,
 ######################################################################
 def augment_genes(organism, conn):
     """establish gene relationships"""
+    gre_gene_query = "insert into " + APP_PREFIX + "gregenemembership (gre_id,gene_id,p_val) values (%s,%s,%s)"
     print "augmenting gene information for ", organism
     with open(BASE_PATH[organism] + "genes_2.txt") as infile:
+        gene_map = get_gene_map(conn, organism)
+        gre_map = get_gre_map(conn, organism)
+
         infile.readline()
         lines = infile.readlines()
+        tot = len(lines)
+        counter = 0
+        cur = conn.cursor()
+
+        try:
+            for line in lines:
+                counter += 1
+                if counter % 1000 == 0:
+                    print "%d %% done" % ((float(counter) / tot) * 100)
+
+                # gene, gre_id, pval
+                row = line.strip("\n").split("\t")
+                gene_id = gene_map[row[0]]
+                gre_ids = [gre_map[gre]
+                           for gre in ['%s_%s' % (organism, gre)
+                                       for gre in row[1].split(',') if len(gre) > 0]]
+                pvals = [pval for pval in row[2].split(',') if len(pval) > 0]
+                for index in range(len(gre_ids)):
+                    cur.execute(gre_gene_query, [gre_ids[index], gene_id, pvals[index]])
+            conn.commit()
+        except:
+            traceback.print_exc(file=sys.stdout)
+            conn.rollback()
+        cur.close()
 
 ######################################################################
 ### add eco GRE-->regulator matches
@@ -524,9 +552,10 @@ if __name__ == '__main__':
         #add_cre(organism, conn)
         #add_biclusters(organism, conn)
         #add_corems(organism, conn)
-        augment_conditions(organism, conn, check_biclusters=False,
-                           connect_corems=False, connect_genes=True,
-                           connect_gres=False)
+        #augment_conditions(organism, conn, check_biclusters=False,
+        #                   connect_corems=False, connect_genes=False,
+        #                   connect_gres=True)
+        augment_genes(organism, conn)
         #if organism == 'eco':
         # add_gre_regulator(organism, conn)
         #    pass
