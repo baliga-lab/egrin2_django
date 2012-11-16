@@ -181,24 +181,26 @@ def gene_detail(request, species=None, gene=None):
         def __init__(self,species,gre):
             self.species = Species.objects.get(ncbi_taxonomy_id=species)
             self.gre_id = gre.gre_id
-            self.gene_pval = GreGenePval.objects.get(gene=g,gre_id=gre).p_val
+            self.gene_pval = GreGeneMembership.objects.get(gene=g,gre_id=gre).p_val
             self.pssm = gre.pssm.matrix()
-    g = Gene.objects.get(sys_name = gene)
+
+    g = Gene.objects.get(sys_name=gene)
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    corems = Corem.objects.filter(genes__sys_name = g.sys_name)
-    conds = Condition.objects.filter(genes__sys_name = g.sys_name)
-    conds_pval = GeneConditionPval.objects.filter(gene__sys_name = g.sys_name, 
-                                                  cond_id__in = conds)
+    corems = Corem.objects.filter(genes__sys_name=g.sys_name)
+    conds = Condition.objects.filter(gene__sys_name = g.sys_name)
+    conds_pval = GeneConditionMembership.objects.filter(gene__sys_name=g.sys_name, 
+                                                        cond_id__in = conds)
     # add cond name to conds_pval
     conds_pval_dict = {}
     for i in conds_pval:
-        d = {"cond_id":i.cond_id.cond_id,"cond_name":Condition.objects.get(cond_id = i.cond_id.cond_id).cond_name,"p_val":i.p_val}
+        d = {"cond_id":i.cond.cond_id,
+             "cond_name":Condition.objects.get(cond_id = i.cond.cond_id).cond_name,
+             "p_val":i.p_val}
         conds_pval_dict[i] = d
     gres = Gre.objects.filter(genes=g)
-    gre_obj = []
-    for i in gres:
-        gre_obj.append(greObject(species,i))
-    biclusters = Bicluster.objects.filter(genes__sys_name = g.sys_name)
+    gre_obj = [greObject(species, gre) for gre in gres]
+    biclusters = Bicluster.objects.filter(genes__sys_name=g.sys_name)
+
     return render_to_response('gene_detail.html', locals())
 
 def networks(request, species=None):
@@ -322,27 +324,27 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
             self.cre_id = cre.cre_id
             self.bcs = cre.cre_id.split("_")[0]+"_"+cre.cre_id.split("_")[1]
             self.eval = cre.eval
-            self.pssm = cre.pssm.matrix()
+            #self.pssm = cre.pssm.matrix()
     # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    gre = Gre.objects.get(gre_id = gre,network__species__ncbi_taxonomy_id=species)
+    gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
     pssm = gre.pssm.matrix()
-    genes = Gene.objects.filter(gres=gre)
-    corems = Corem.objects.filter(gre_ids=gre)
-    corem_pval = GreCoremPval.objects.filter(gre_id=gre, 
+    genes = Gene.objects.filter(gre=gre)
+    corems = Corem.objects.filter(gres=gre)
+    corem_pval = GreCoremMembership.objects.filter(gre=gre, 
                                                   corem__in = corems)
-    conds = Condition.objects.filter(gres=gre)
-    conds_pval = GreConditionPval.objects.filter(gre_id=gre, 
-                                                  cond_id__in = conds)
+    conds = Condition.objects.filter(gre=gre)
+    conds_pval = GreConditionMembership.objects.filter(gre=gre, 
+                                                       cond_id__in = conds)
     conds_pval_dict = {}
     for i in conds_pval:
-        d = {"cond_id":i.cond_id.cond_id,"cond_name":Condition.objects.get(cond_id = i.cond_id.cond_id).cond_name,"p_val":i.return_pval()}
+        d = {"cond_id":i.cond.cond_id,
+             "cond_name":Condition.objects.get(cond_id=i.cond.cond_id).cond_name,
+             "p_val":i.return_pval()}
         conds_pval_dict[i] = d
-    biclusters = Bicluster.objects.filter(gre_ids=gre)
+    biclusters = Bicluster.objects.filter(gres=gre)
     cres = Cre.objects.filter(gre_id=gre)
-    cre_dict = []
-    for i in cres:
-        cre_dict.append(creObject(species,i))
+    cre_dict = [creObject(species, cre) for cre in cres]
     return render_to_response(template, locals(),context_instance=RequestContext(request))
 
 def biclusters(request, species=None):
@@ -401,9 +403,9 @@ def bicluster_detail(request, species=None, bicluster=None):
     # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
     bc = Bicluster.objects.get(bc_id = bicluster,network__species=s)
-    genes = Gene.objects.filter(bcs=bc)
-    conds = Condition.objects.filter(bcs=bc)
-    corems = Corem.objects.filter(top_bcs=bc)
-    cres = Cre.objects.filter(bcs=bc)
-    gres = Gre.objects.filter(bcs=bc)
+    genes = Gene.objects.filter(bicluster=bc)
+    conds = Condition.objects.filter(bicluster=bc)
+    corems = Corem.objects.filter(bicluster=bc)
+    cres = Cre.objects.filter(bicluster=bc)
+    gres = Gre.objects.filter(bicluster=bc)
     return render_to_response('bicluster_detail.html', locals())

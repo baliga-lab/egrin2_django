@@ -50,7 +50,7 @@
 		</script>
         <blockquote><p>GRE {{ gre.gre_id }}</p></blockquote>
         <div>
-            <img src="/static/gres/{{ s.ncbi_taxonomy_id }}/{{ gre.gre_id }}.png" background-color="black" width=440 height=240 class="float-center" />
+            <img src="/static/images/gres/{{ s.ncbi_taxonomy_id }}/{{ gre.gre_id }}.png" background-color="black" width=440 height=240 class="float-center" />
         </div>
         <!-- <p><span id="previewcanvas_{{ gre.gre_id }}"></p> -->
         <blockquote><p>Corems</p></blockquote>
@@ -78,24 +78,24 @@
               <thead>
 				<tr>
 					<th class="first">Organism</th>
-                    <th>Gene name</th>
+          <th>Gene name</th>
 					<th>Common name</th>
 					<th>Accession</th>
-                    <th>Description</th>
-                    <th>Start</th>
-                    <th>Stop</th>
-                    <th>Strand</th>
-                    <th>Chromosome</th>
+          <th>Description</th>
+          <th>Start</th>
+          <th>Stop</th>
+          <th>Strand</th>
+          <th>Chromosome</th>
 				</tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
                 {% for g in genes %}
                     <tr class="{% cycle 'row-a' 'row-b' %}">
                         <td class="first"><a href="{% url 'species' %}{{ s.ncbi_taxonomy_id }}">{{ s.name }}</a></td>
                         <td><a href="{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.sys_name }}</a></td>
                         <td>{{ g.name }}</td>
                         <td><a href="http://www.ncbi.nlm.nih.gov/protein/{{ g.accession }}">{{ g.accession }}</a></td>
-                        <td>{{ g.desc }}</td>
+                        <td>{{ g.description }}</td>
                         <td>{{ g.start }}</td>
                         <td>{{ g.stop }}</td>
                         <td>{{ g.strand }}</td>
@@ -168,7 +168,7 @@
                         <tr class="{% cycle 'row-a' 'row-b' %}">
                             <td class="first">{{ o.cre_id }}</td>
                             <td><a href="{% url 'biclusters' %}{{ s.ncbi_taxonomy_id }}/{{ o.bcs }}">{{ o.bcs }}</a></td>
-                            <td><img src="/static/cres/{{ s.ncbi_taxonomy_id }}/{{ o.cre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
+                            <td><img src="/static/images/cres/{{ s.ncbi_taxonomy_id }}/{{ o.cre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
                             <!-- <td><span id="previewcanvas_{{ o.cre_id }}"></span></td> -->
                             <td>{{ o.eval }}</td>
                         </tr>

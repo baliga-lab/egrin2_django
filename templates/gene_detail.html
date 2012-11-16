@@ -75,7 +75,7 @@
             {% endfor %}
             </ul>
         <blockquote><p>Promoter Architecture</p></blockquote>
-        <img id = "promoterarch" src="/static/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
+        <img id = "promoterarch" src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
         <blockquote><p>GREs</p></blockquote>
 			<table id="gres" class="table">
                 <thead>
@@ -90,7 +90,7 @@
                     <tr class="{% cycle 'row-a' 'row-b' %}">
                         <td class="first"><a href="{% url 'gre_detail' s.ncbi_taxonomy_id o.gre_id %}">{{ o.gre_id }}</a></td>
                         <td>{{ o.gene_pval }}</td>
-                        <td><img src="/static/gres/{{ s.ncbi_taxonomy_id }}/{{ o.gre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
+                        <td><img src="/static/images/gres/{{ s.ncbi_taxonomy_id }}/{{ o.gre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
                         <!-- <td><span id="previewcanvas_{{ o.gre_id }}"></span></td> -->
                     </tr>
                 {% endfor %}
@@ -178,7 +178,7 @@
 <script type='text/javascript'>
 
 MagnifImage.setup(  
-"promoterarch", "/static/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
+"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
 );
 
 </script>      
