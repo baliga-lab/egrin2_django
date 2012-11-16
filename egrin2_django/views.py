@@ -1,6 +1,8 @@
 from django.shortcuts import render_to_response
 from endless_pagination.decorators import page_template
 from django.template import RequestContext
+from django.http import HttpResponse
+from django.utils import simplejson
 from models import *
 
 def index(request):
@@ -21,6 +23,28 @@ def browse(request):
     return render_to_response('browse.html', locals())
 
 
+def conditions_json(request, species):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    #sort_col = int(request.GET['iSortCol_0'])
+    #sort_dir = request.GET['sSortDir_0']
+    #print "sort col: ", sort_col, ' sort_dir: ', sort_dir
+
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+    network = Network.objects.filter(species__ncbi_taxonomy_id=species)
+    num_conds_total = Condition.objects.filter(network__in=network).count()
+    conds_batch = Condition.objects.filter(network__in=network)[display_start:display_end]
+    conds = [[c.cond_id, c.cond_name, c.corems.count(), c.gene_set.count(), c.gre_set.count()]
+             for c in conds_batch]
+    #print conds
+    data = {
+        'sEcho': sEcho, 'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
+        'aaData': conds
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 def conditions(request, species=None):
     # Return info about conditions
     class ConditionInfo:
@@ -36,9 +60,7 @@ def conditions(request, species=None):
             species_obj = Species.objects.get(ncbi_taxonomy_id=species)
             self.species_name = species_obj.name
             self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
-            network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-            self.conds = [ConditionInfo(cond)
-                          for cond in Condition.objects.filter(network__in=network)[0:10]]
+
     if species:
         out = []
         out.append(SpeciesConditionInfo(species))

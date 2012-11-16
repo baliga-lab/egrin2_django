@@ -28,6 +28,9 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^conditions/(?P<species>[^/]*)/?$', 'conditions',name='conditions'),
     url(r'^conditions/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$', 'condition_detail',name='condition_detail'),
 
+    url(r'^conditions_json/$', 'conditions_json',name='conditions_json'),
+    url(r'^conditions_json/(?P<species>[^/]*)/?$', 'conditions_json', name='conditions_json'),
+
     url(r'^contact/$', 'contact',name='contact'),
 
     url(r'^corems/$', 'corems',name='corems'),

@@ -22,7 +22,13 @@
         {% for o in out %}	
         <script>
           $(document).ready(function() {  
-            $("#conds{{forloop.counter}}").dataTable();
+            $("#conds{{forloop.counter}}").dataTable({
+              "bFilter": false,
+              "bSort": false,
+              "bProcessing": true,
+              "bServerSide": true,
+              "sAjaxSource": "{% url 'conditions_json' %}{{o.ncbi_taxonomy_id}}"
+            });
           });
         </script>
         <blockquote><p>{{ o.species_name }} Condition Information</p></blockquote>
@@ -37,15 +43,6 @@
             </tr>
           </thead>
           <tbody>
-            {% for cond in o.conds %}
-            <tr class="{% cycle 'row-a' 'row-b' %}">
-              <td><a href="{% url 'conditions' %}{{ o.ncbi_taxonomy_id }}/{{ cond.cond_id }}">{{ cond.cond_id }}</a></td>
-              <td>{{ cond.cond_name }}</td>
-              <td>{{ cond.corem_count }}</td>
-              <td>{{ cond.gene_count }}</td>
-              <td>{{ cond.gre_count }}</td>
-            </tr>
-            {% endfor %}
           </tbody>
         </table>
         {% endfor %}

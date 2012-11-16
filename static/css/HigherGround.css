@@ -91,7 +91,7 @@ code {
   	overflow: auto;
   	font: 500 1em/1.5em 'Lucida Console', 'courier new', monospace ;
   	/* white-space: pre; */
-  	background: url(post.jpg);
+  	background: url('../post.jpg');
 	border: 1px solid #E0DBC9;
 }
 acronym {
@@ -101,7 +101,7 @@ acronym {
 blockquote {
 	margin: 10px;
  	padding: 0 0 0 25px;
-   background: url(post.jpg);
+   background: url('../post.jpg');
 	border: 1px solid #E0DBC9;
 	font: bold 1.3em/1.5em 'Trebuchet MS', Tahoma, Sans-serif;
 	color: #A89A6A;
@@ -117,7 +117,7 @@ th strong {
 	color: #fff;
 }
 th {
-	background: #93BC0C url(nav.jpg) repeat-x;
+	background: #93BC0C url('../nav.jpg') repeat-x;
 	height: 29px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -151,7 +151,7 @@ table .odd {
     background-color: #FFFFFF;
 }
 table .header {
-    background-image: url("/static/sort_bg.gif");
+    background-image: url("../sort_bg.gif");
     background-repeat: no-repeat;
     padding-left: 5px;
     padding-right:20px;
@@ -159,11 +159,11 @@ table .header {
     height: auto;
 }
 table .headerSortUp {
-    background-image: url("/static/sort_dsc.gif");
+    background-image: url("../sort_dsc.gif");
     background-repeat: no-repeat;
 }
 table .headerSortDown {
-    background-image: url("/static/sort_asc.gif");
+    background-image: url("../sort_asc.gif");
     background-repeat: no-repeat;
 }
 #tablepager, #pager-block {
@@ -190,26 +190,26 @@ table.tablesorter .odd {
     background-color: #FFFFFF;
 }
 table.tablesorter .header {
-    background-image: url("/static/sort_bg.png");
+    background-image: url("../sort_bg.png");
     background-repeat: no-repeat;
     padding-left: 25px;
     background-position: left center;
     height: auto;
 }
 table.tablesorter .headerSortUp {
-    background-image: url("/static/sort_asc.png");
+    background-image: url("../sort_asc.png");
     background-repeat: no-repeat;
 }
 table.tablesorter .headerSortDown {
-    background-image: url("/static/sort_dsc.png");
+    background-image: url("../sort_dsc.png");
     background-repeat: no-repeat;
 }
 
 /* form elements */
 form {
 	margin:0px; padding: 0 5px;
-	border: 1px solid #D5D5D5; 
-	background-color: #DFDFDF; 	
+	border: 1px solid #D5D5D5;
+	background-color: #DFDFDF;
 }
 label {
 	display:block;
@@ -231,13 +231,13 @@ textarea {
 	display:block;
 	color:#777;
 }
-input.button { 
-	font: bold 12px Arial, Sans-serif; 
+input.button {
+	font: bold 12px Arial, Sans-serif;
 	height: 24px;
 	margin: 0;
-	padding: 2px 3px; 
+	padding: 2px 3px;
 	color: #FFF;
-	background: #8EB50C url(nav.jpg) repeat-x 0 0;
+	background: #8EB50C url('../nav.jpg') repeat-x 0 0;
 	border: none;
 }
 /* search form */
@@ -257,20 +257,20 @@ form.pager fieldset{
 /* search form */
 .searchform {
 	background-color: transparent;
-	border: none;	
-	margin: 0 0 0 3px; padding: 5px 0 10px 0;	
-	width: 220px;	
+	border: none;
+	margin: 0 0 0 3px; padding: 5px 0 10px 0;
+	width: 220px;
 }
 .searchform p { margin: 0; padding: 0; }
-.searchform input.textbox { 
+.searchform input.textbox {
 	width: 130px;
-	color: #777; 
+	color: #777;
 	height: 18px;
-	padding: 2px;	
+	padding: 2px;
 	border: 1px solid #E5E5E5;
 	vertical-align: top;
 }
-.searchform input.button { 
+.searchform input.button {
 	width: 60px;
 	height: 24px;
 	padding: 2px 5px;
@@ -283,7 +283,7 @@ form.pager fieldset{
 #wrap {
 	position: relative;
 	width: 820px;
-	background: #CCC url(content.jpg) repeat-y center top;
+	background: #CCC url('../content.jpg') repeat-y center top;
 	margin: 0 auto;
 	text-align: left;
 }
@@ -291,7 +291,7 @@ form.pager fieldset{
    position: absolute;
 	width: 820px;
 	height: 19px;
-	background: #CCC url(top-bg.jpg) repeat-y center top;	
+	background: #CCC url('../top-bg.jpg') repeat-y center top;	
 	top: 0; left: 0;
 	z-index: 2;	
 }
@@ -311,7 +311,7 @@ form.pager fieldset{
 	width: 820px;
 	position: relative;
 	height: 100px;
-	background: #CCC url(header-bg.jpg) repeat-y center top;
+	background: #CCC url('../header-bg.jpg') repeat-y center top;
 	padding: 0;	
 	color: #FFF;	
 }
@@ -362,22 +362,22 @@ form.pager fieldset{
 	height: 200px;
 	width: 790px;
 	margin: 0 auto;
-	background: #FFF url(header-photo.jpg) no-repeat center center;
+	background: #FFF url('../header-photo.jpg') no-repeat center center;
 }
 
 /* Navigation */
 #nav {
-	clear: both;	
-	padding: 0;		
+	clear: both;
+	padding: 0;
 }
 #nav ul {
 	float: left;
 	list-style: none;
-	background: url(nav.jpg) repeat-x;	
-	width: 790px;		
+	background: url('../nav.jpg') repeat-x;
+	width: 790px;
 	text-transform: uppercase;
 	margin: 0 0 0 15px;
-	padding: 0;	
+	padding: 0;
 	display: inline;
 }
 #nav ul li {
@@ -396,15 +396,15 @@ form.pager fieldset{
 	color: #FFF;
 	font: bold 13px/2.8em "Century Gothic", "Trebuchet MS", Helvetica, Arial, Geneva, sans-serif;
 	text-transform: uppercase;
-	text-decoration: none;	
+	text-decoration: none;
 	letter-spacing: 1px;
 }
-#nav ul li a:hover, 
+#nav ul li a:hover,
 #nav ul li a:active {
-	background: url(nav-hover.jpg) repeat-x;	
+	background: url('../nav-hover.jpg') repeat-x;
 }
-#nav ul li#current a {	
-	background: url(nav-current.jpg) repeat-x;	
+#nav ul li#current a {
+	background: url('../nav-current.jpg') repeat-x;
 }
 
 /* Main Column */
@@ -416,51 +416,51 @@ form.pager fieldset{
 }
 #main h2 {
 	font: normal 1.9em 'Trebuchet MS', Tahoma, Sans-serif;
-	color: #85970C; 
+	color: #85970C;
 	text-transform: none;
-	padding: 10px 0 0px 10px; 			
+	padding: 10px 0 0px 10px;
 }
 #main h2 a {
 	color: #85970C;
-	text-decoration: none;	
+	text-decoration: none;
 }
 #main ul li {
-	list-style-image: url(bullet.gif);
+	list-style-image: url('../bullet.gif');
 }
 
-/* Sidebar */	
+/* Sidebar */
 #sidebar {
 	float: right;
 	width: 27.5%;
-	padding: 20px 10px 0 0; margin: 0;		
-}	
+	padding: 20px 10px 0 0; margin: 0;
+}
 #sidebar h3 {
-	padding: 5px 5px; 
+	padding: 5px 5px;
 	font: bold 1.4em 'Trebuchet MS', Tahoma, Sans-serif;
-	color: #8C9F0D; 		
+	color: #8C9F0D;
 }
 #sidebar ul.sidemenu {
 	text-align: left;
 	margin: 7px 4px 8px 0; padding: 0;
-	text-decoration: none;		
-	background: url(dots.jpg) repeat-x left top;
+	text-decoration: none;
+	background: url('../dots.jpg') repeat-x left top;
 }
 #sidebar ul.sidemenu li {
 	list-style: none;
-	background: url(dots.jpg) repeat-x left bottom;
+	background: url('../dots.jp'g) repeat-x left bottom;
 	padding: 5px 0 5px 5px;
-	margin: 0 2px;		
+	margin: 0 2px;
 	color: #8F8F8F;
 }
 * html body #sidebar ul.sidemenu li {
 	height: 1%;
 }
 #sidebar ul.sidemenu li a {
-	text-decoration: none;	
-	background-image: none;	
-	color: #666666;			
+	text-decoration: none;
+	background-image: none;
+	color: #666666;
 }
-#sidebar ul.sidemenu li a:hover {	
+#sidebar ul.sidemenu li a:hover {
 	color: #1773BC;	
 }
 #sidebar ul.sidemenu ul { margin: 0 0 0 5px; padding: 0; }
@@ -470,10 +470,10 @@ form.pager fieldset{
 #footer-wrap {
 	clear: both;
 	width: 820px;
-	font-size: 95%;	
+	font-size: 95%;
 	text-align: left;
 	padding: 15px 0;
-	background: url(footer-bottom.jpg) no-repeat center bottom;	
+	background: url('../footer-bottom.jpg') no-repeat center bottom;
 }
 #footer-wrap a {
 	text-decoration: none;
@@ -502,10 +502,10 @@ form.pager fieldset{
 	list-style: none;
 	margin: 10px 0 0 0;
 	padding: 0;
-	background: url(footer-dots.jpg) repeat-x left top;
+	background: url('../footer-dots.jpg') repeat-x left top;
 }
 #footer-columns li {
-	background: url(footer-dots.jpg) repeat-x left bottom;
+	background: url('../footer-dots.jpg') repeat-x left bottom;
 }
 #footer-columns li a {
 	display: block;
@@ -534,7 +534,7 @@ form.pager fieldset{
 
 /* postmeta */
 .post-footer {
-	background: url(post.jpg);
+	background: url('../post.jpg');
 	padding: 5px; margin: 5px 10px 10px 10px;
 	font-size: 95%;
 	color: #AEA471;
