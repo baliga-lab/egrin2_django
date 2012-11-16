@@ -232,9 +232,7 @@ def regulators(request,species=None):
             self.conds = list(set(Condition.objects.filter(gre__in=self.gres)))
     tfs = list(set([o.tf for o in greTF.objects.all()]))
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    out = []
-    for i in tfs:
-        out.append(regulators(species=species,tf=i))
+    out = [regulators(species, tf) for tf in tfs]
     return render_to_response('regulators.html', locals())
 
 def regulator_detail(request,species=None,regulator=None):
@@ -245,19 +243,21 @@ def regulator_detail(request,species=None,regulator=None):
             self.gre_id = gre.gre_id
             self.pssm = gre.pssm.matrix()
             self.score = greTF.objects.get(tf=tf,gre_id=gre).score
+
     CUTOFF = .75
     s = Species.objects.get(ncbi_taxonomy_id=species)
     tf = regulator
-    gres = list(set([o.gre_id for o in greTF.objects.filter(tf=tf,score__gte=CUTOFF)]))
-    corems = list(set(Corem.objects.filter(gre_ids__in=gres)))
-    corem_pval = GreCoremPval.objects.filter(corem__in=corems,gre_id__in=gres)
-    genes = list(set(Gene.objects.filter(gres__in=gres)))
-    gene_pval = GreGenePval.objects.filter(gene__in=corems,gre_id__in=gres)
-    conds = list(set(Condition.objects.filter(gres__in=gres)))
-    conds_pval = GreConditionPval.objects.filter(cond_id__in=conds,gre_id__in=gres)
-    greObjs = []
-    for i in gres:
-        greObjs.append(greObject(species=species,tf=tf,gre=i))
+    gre_ids = list(set([o.gre_id for o in greTF.objects.filter(tf=tf, score__gte=CUTOFF)]))
+    gres = Gre.objects.filter(id__in=gre_ids)
+
+    corems = list(set(Corem.objects.filter(gres__in=gres)))
+    corem_pval = GreCoremMembership.objects.filter(corem__in=corems, gre_id__in=gres)
+    genes = list(set(Gene.objects.filter(gre__in=gres)))
+    gene_pval = GreGeneMembership.objects.filter(gene__in=corems, gre_id__in=gres)
+    conds = list(set(Condition.objects.filter(gre__in=gres)))
+    conds_pval = GreConditionMembership.objects.filter(cond_id__in=conds, gre_id__in=gres)
+
+    greObjs = [greObject(species, tf, gre) for gre in gres]
     return render_to_response('regulator_detail.html', locals())
 
 def search(request):
