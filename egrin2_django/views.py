@@ -47,14 +47,6 @@ def conditions_json(request, species):
 
 def conditions(request, species=None):
     # Return info about conditions
-    class ConditionInfo:
-        def __init__(self, condition):
-            self.cond_id = condition.cond_id
-            self.cond_name = condition.cond_name
-            self.corem_count = condition.corems.count
-            self.gene_count = condition.gene_set.count
-            self.gre_count = condition.gre_set.count
-
     class SpeciesConditionInfo:
         def __init__(self,species):
             species_obj = Species.objects.get(ncbi_taxonomy_id=species)
@@ -62,13 +54,10 @@ def conditions(request, species=None):
             self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
 
     if species:
-        out = []
-        out.append(SpeciesConditionInfo(species))
+        out = [SpeciesConditionInfo(species)]
     else:
-        species = [i.ncbi_taxonomy_id for i in Species.objects.all()]
-        out = []
-        for i in species:
-            out.append(SpeciesConditionInfo(i))
+        species_ids = [s.ncbi_taxonomy_id for s in Species.objects.all()]
+        out = [SpeciesConditionInfo(species_id) for species_id in species_ids]
     return render_to_response('conditions.html', locals())
 
 def condition_detail(request, species=None, condition=None):
@@ -180,13 +169,10 @@ def genes(request, species=None):
             self.ncbi_taxonomy_id = species_obj.ncbi_taxonomy_id
 
     if species:
-        out = []
-        out.append(GeneInfo(species))
+        out = [GeneInfo(species)]
     else:
-        species = [i.ncbi_taxonomy_id for i in Species.objects.all()]
-        out = []
-        for i in species:
-            out.append(GeneInfo(i))
+        species_ids = [s.ncbi_taxonomy_id for s in Species.objects.all()]
+        out = [GeneInfo(species_id) for species_id in species_ids]
     return render_to_response('genes.html', locals())
 
 def gene_detail(request, species=None, gene=None):
@@ -218,25 +204,19 @@ def gene_detail(request, species=None, gene=None):
 def networks(request, species=None):
     # Return info about the network
     if species:
-        out = {}
-        s = Species.objects.get(ncbi_taxonomy_id=species)
-        n = Network.objects.get(species__name=s.name)
-        g = len(Gene.objects.filter(species__name=s.name))
-        cond = len(Condition.objects.filter(network__name=n.name))
-        corems = len(Corem.objects.filter(network__name=n.name))
-        gres = len(Gre.objects.filter(network__name=n.name))
-        out[s.short_name] = {"species":s,"network":n,"genes":g,"conditions":cond,"corems":corems,"gres":gres}
+        species_objs = [Species.objects.get(ncbi_taxonomy_id=species)]
     else:
-        species = Species.objects.all()
-        out = {}
-        for i in species:
-            s = i
-            n = Network.objects.get(species__name=s.name)
-            g = len(Gene.objects.filter(species__name=s.name))
-            cond = len(Condition.objects.filter(network__name=n.name))
-            corems = len(Corem.objects.filter(network__name=n.name))
-            gres = len(Gre.objects.filter(network__name=n.name))
-            out[s.short_name] = {"species":s,"network":n,"genes":g,"conditions":cond,"corems":corems,"gres":gres}
+        species_objs = Species.objects.all()
+        
+    out = {}
+    for s in species_objs:
+        n = Network.objects.get(species__name=s.name)
+        g = Gene.objects.filter(species__name=s.name).count()
+        cond = Condition.objects.filter(network__name=n.name).count()
+        corems = Corem.objects.filter(network__name=n.name).count()
+        gres = Gre.objects.filter(network__name=n.name).count()
+        out[s.short_name] = {"species":s,"network":n,"genes":g,
+                             "conditions":cond,"corems":corems,"gres":gres}
     return render_to_response('networks.html', locals())
 
 def regulators(request,species=None):
@@ -289,32 +269,25 @@ def sitemap(request):
 def species(request,species=None):
     # Return info about the organism
     if species:
-        out = {}
-        s = Species.objects.get(ncbi_taxonomy_id=species)
-        n = Network.objects.get(species__name=s.name)
-        g = len(Gene.objects.filter(species__name=s.name))
-        cond = len(Condition.objects.filter(network__name=n.name))
-        corems = len(Corem.objects.filter(network__name=n.name))
-        gres = len(Gre.objects.filter(network__name=n.name))
-        out[s.short_name] = {"species":s,"network":n,"genes":g,"conditions":cond,"corems":corems,"gres":gres}
+        species_objs = [Species.objects.get(ncbi_taxonomy_id=species)]
     else:
-        species = Species.objects.all()
-        out = {}
-        for i in species:
-            s = i
-            n = Network.objects.get(species__name=s.name)
-            g = len(Gene.objects.filter(species__name=s.name))
-            cond = len(Condition.objects.filter(network__name=n.name))
-            corems = len(Corem.objects.filter(network__name=n.name))
-            gres = len(Gre.objects.filter(network__name=n.name))
-            out[s.short_name] = {"species":s,"network":n,"genes":g,"conditions":cond,"corems":corems,"gres":gres}
+        species_objs = Species.objects.all()
+        
+    out = {}
+    for s in species_objs:
+        n = Network.objects.get(species__name=s.name)
+        g = Gene.objects.filter(species__name=s.name).count()
+        cond = Condition.objects.filter(network__name=n.name).count()
+        corems = Corem.objects.filter(network__name=n.name).count()
+        gres = Gre.objects.filter(network__name=n.name).count()
+        out[s.short_name] = {"species":s,"network":n,"genes":g,
+                             "conditions":cond,"corems":corems,"gres":gres}
     return render_to_response('species.html', locals())
 
 def gres(request):
     species = Species.objects.all()
     out = {}
-    for i in species:
-        s = i
+    for s in species:
         n = Network.objects.get(species__name=s.name)
         gres = Gre.objects.filter(network__name=n.name).count()
         out[s.short_name] = {"species":s,"network":n,"gres":gres}
@@ -384,15 +357,11 @@ def biclusters(request, species=None):
             self.bcs_count = Bicluster.objects.filter(network=network_obj).count
 
     if species:
-        networks = [i.version_id for i in Network.objects.filter(species__ncbi_taxonomy_id=species)]
-        out = []
-        for i in networks:
-            out.append(BCInfo(i))
+        networks = [i.version_id
+                    for i in Network.objects.filter(species__ncbi_taxonomy_id=species)]
     else:
-        networks = [i.version_id for i in Network.objects.all()]
-        out = []
-        for i in networks:
-            out.append(BCInfo(i))
+        networks = [n.version_id for n in Network.objects.all()]
+    out = [BCInfo(network) for network in networks]
     return render_to_response('biclusters.html', locals())
 
 @page_template("biclusters_page.html")

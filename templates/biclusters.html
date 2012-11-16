@@ -5,12 +5,12 @@
 <!-- navigation starts-->
 	<div  id="nav">
 		<ul>
-        <li><a href="{% url 'index' %}">Home</a></li>
-        <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
-        <li><a href="{% url 'search' %}">Search</a></li>
-        <li><a href="{% url 'downloads' %}">Downloads</a></li>
-        <li><a href="{% url 'contact' %}">Support</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>
+      <li><a href="{% url 'index' %}">Home</a></li>
+      <li id="current"><a href="{% url 'browse' %}">Browse</a></li>
+      <li><a href="{% url 'search' %}">Search</a></li>
+      <li><a href="{% url 'downloads' %}">Downloads</a></li>
+      <li><a href="{% url 'contact' %}">Support</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
 		</ul>
 	<!-- navigation ends-->
 	</div>	
@@ -20,36 +20,32 @@
 	<div id="content-wrap">
 		<div id="main">
         <script>
-                {% include 'sciparse.html' %}
-                $(document).ready(function() {
-                
-                $("#bcs")
-                .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[0,0]],headers: { 1: {sorter:"sci"} } })
-                .tablesorterPager({container: $("#pager_bcs"), positionFixed: false});
-                
-                });
+          $(document).ready(function() {          
+            $("#bcs").dataTable({
+             'bFilter': false,
+             'bSort': false
+            });          
+          });
         </script>
         <blockquote><p> Bicluster Information</p></blockquote>
         <table id="bcs" class="table">
-            <thead>
-                <tr>
-                    <th class="first">Organism</th>
-                    <th>Network</th>
-                    <th>Biclusters</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for o in out %}
-                    <tr class="{% cycle 'row-a' 'row-b' %}">
-                        <td class="first"><a href="{% url 'species' o.ncbi_taxonomy_id %}">{{ o.species_name }}</a></td>
-                        <td>{{ o.network_version }}</td>
-                        <td><a href="{% url 'biclusters_s' o.ncbi_taxonomy_id %}">{{ o.bcs_count }}</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+          <thead>
+            <tr>
+              <th class="first">Organism</th>
+              <th>Network</th>
+              <th>Biclusters</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in out %}
+            <tr class="{% cycle 'row-a' 'row-b' %}">
+              <td class="first"><a href="{% url 'species' o.ncbi_taxonomy_id %}">{{ o.species_name }}</a></td>
+              <td>{{ o.network_version }}</td>
+              <td><a href="{% url 'biclusters_s' o.ncbi_taxonomy_id %}">{{ o.bcs_count }}</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
-        <div id="pager_bcs">
-        {% include 'pager.html' %}
 		<!-- main ends -->
 		</div>
 {% endblock %}
