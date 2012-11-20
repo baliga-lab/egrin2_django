@@ -3,7 +3,10 @@ from endless_pagination.decorators import page_template
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.core.urlresolvers import reverse
 from models import *
+import collections
+import solr
 
 def index(request):
     species = Species.objects.count()
@@ -22,6 +25,10 @@ def about(request):
 def browse(request):
     return render_to_response('browse.html', locals())
 
+def condition_detail_link(species, cond_id, label):
+    return '<a href="%s">%s</a>' % (reverse('condition_detail',
+                                            args=[species, cond_id]), label)
+
 def conditions_json(request, species):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
@@ -35,7 +42,10 @@ def conditions_json(request, species):
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_conds_total = Condition.objects.filter(network__in=network).count()
     conds_batch = Condition.objects.filter(network__in=network)[display_start:display_end]
-    conds = [[c.cond_id, c.cond_name, c.corems.count(), c.gene_set.count(), c.gre_set.count()]
+    conds = [[condition_detail_link(species, c.cond_id, c.cond_id),
+              c.cond_name,
+              c.corems.count(),
+              c.gene_set.count(), c.gre_set.count()]
              for c in conds_batch]
     #print conds
     data = {
@@ -76,6 +86,10 @@ def condition_detail(request, species=None, condition=None):
 def contact(request):
     return render_to_response('contact.html', locals())
 
+def corem_detail_link(species, corem_id, label):
+    return '<a href="%s">%s</a>' % (reverse('corem_detail',
+                                            args=[species, corem_id]), label)
+
 def corems_json(request, species):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
@@ -85,7 +99,8 @@ def corems_json(request, species):
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_corems_total = Corem.objects.filter(network__in=network).count()
     corems_batch = Corem.objects.filter(network__in=network)[display_start:display_end]
-    corems = [[c.corem_id, c.genes.count(), c.conditions.count(), c.gres.count()]
+    corems = [[corem_detail_link(species, c.corem_id, c.corem_id),
+               c.genes.count(), c.conditions.count(), c.gres.count()]
               for c in corems_batch]
     data = {
         'sEcho': sEcho,
@@ -141,6 +156,9 @@ def downloads(request):
     s = Species.objects.all()
     return render_to_response('downloads.html', locals())
 
+def gene_detail_link(species, sys_name, label):
+    return '<a href="%s">%s</a>' % (reverse('gene_detail',
+                                            args=[species, sys_name]), label)
 def genes_json(request, species):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
@@ -148,7 +166,9 @@ def genes_json(request, species):
     display_end = display_start + display_length
     num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
     genes_batch = Gene.objects.filter(species__ncbi_taxonomy_id=species)[display_start:display_end]
-    genes = [[g.sys_name, g.name, g.accession, g.description, g.start, g.stop,
+    genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
+              g.name,
+              g.accession, g.description, g.start, g.stop,
               g.strand, g.chromosome.refseq] for g in genes_batch]
     data = {
         'sEcho': sEcho,
@@ -261,7 +281,22 @@ def regulator_detail(request,species=None,regulator=None):
     return render_to_response('regulator_detail.html', locals())
 
 def search(request):
-    return render_to_response('search.html', locals())
+    SolrGene = collections.namedtuple('SolrGene', ['sys_name', 'species', 'num_conditions'])
+    if 'search_query' in request.GET:
+        query = request.GET['search_query']
+        solr_docs = solr.search(query)
+        search_terms = query
+        docs = []
+        for doc in solr_docs:
+            if 'condition' in doc:
+                num_conditions = len(doc['condition'])
+            else:
+                num_conditions = 0
+            docs.append(SolrGene(doc['sys_name'], doc['short_name'],
+                                 num_conditions))
+        return render_to_response('search_results.html', locals())
+    else:
+        return render_to_response('search.html', locals())
 
 def sitemap(request):
     return render_to_response('sitemap.html', locals())
@@ -374,6 +409,9 @@ def biclusters_s(request, species=None):
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     return render_to_response('biclusters_s.html', locals())
 
+def bicluster_detail_link(species, bicluster_id, label):
+    return '<a href="%s">%s</a>' % (reverse('bicluster_detail',
+                                            args=[species, bicluster_id]), label)
 def biclusters_json(request, species=None):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
@@ -383,7 +421,8 @@ def biclusters_json(request, species=None):
     n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
     num_biclusters_total = Bicluster.objects.filter(network__in=n).count()
     bicluster_objs = Bicluster.objects.filter(network__in=n)[display_start:display_end]
-    biclusters = [[b.network.version_id, b.bc_id,
+    biclusters = [[b.network.version_id,
+                   bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.genes.count(), b.conditions.count(), b.cres.count(),
                    b.corems.count(), b.gres.count()]
                   for b in bicluster_objs]

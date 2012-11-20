@@ -76,8 +76,8 @@ class Condition(models.Model):
 class Expression(models.Model):
     gene = models.ForeignKey(Gene, verbose_name = "expressed gene")
     condition = models.ForeignKey(Condition, verbose_name = "expressed condition")
-    value = models.CharField(max_length=128)
-    
+    value = models.DecimalField(max_digits=12, decimal_places=8)  # models.CharField(max_length=128)
+
     class Meta:
         ordering = ['gene']
         
@@ -152,10 +152,10 @@ class Pssm(models.Model):
 class Row(models.Model):
     pssm = models.ForeignKey(Pssm, verbose_name = "pssm name")
     pos = models.IntegerField()
-    a = models.DecimalField(max_digits=6, decimal_places=5)
-    g = models.DecimalField(max_digits=6, decimal_places=5)
-    c = models.DecimalField(max_digits=6, decimal_places=5)
-    t = models.DecimalField(max_digits=6, decimal_places=5)
+    a = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
+    g = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
+    c = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
+    t = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
     
     class Meta:
         ordering = ['pos']
@@ -167,7 +167,7 @@ class Gre(models.Model):
     network = models.ForeignKey(Network)
     gre_id = models.CharField(max_length=255)
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
-    p_val = models.CharField(max_length=128)
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
 
     conditions = models.ManyToManyField(Condition, verbose_name = "Conditions members",
                                         through='GreConditionMembership')
@@ -185,7 +185,7 @@ class Cre(models.Model):
     cre_id = models.CharField(max_length=128)
     gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
-    eval = models.CharField(max_length=128)
+    e_val = models.DecimalField(max_digits=16, decimal_places=4)  # models.CharField(max_length=128)
     
     def return_eval(self):
         return float(self.eval)
@@ -196,8 +196,7 @@ class Cre(models.Model):
 class Bicluster(models.Model):
     network = models.ForeignKey(Network)
     bc_id = models.CharField(max_length=255)
-
-    residual = models.DecimalField(max_digits=8,decimal_places=5)
+    residual = models.DecimalField(max_digits=9, decimal_places=6)  # (max_digits=8,decimal_places=5)
     
     # Many-to-many relationships
     genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
@@ -248,7 +247,7 @@ class greTF(models.Model):
     network = models.ForeignKey(Network)
     tf = models.CharField(max_length=255)
     gre = models.ForeignKey(Gre, verbose_name = "GRE members")
-    score = models.CharField(max_length=255)
+    score = models.DecimalField(max_digits=18, decimal_places=16)  # models.CharField(max_length=255)
     
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
@@ -260,7 +259,7 @@ class greTF(models.Model):
 class GreGeneMembership(models.Model):
     gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     gene = models.ForeignKey(Gene, verbose_name = "gene parent")
-    p_val = models.CharField(max_length=128)
+    p_val = models.DecimalField(max_digits=15, decimal_places=13) # models.CharField(max_length=128)
     
     class Meta:
         ordering = ['gre']
@@ -274,7 +273,7 @@ class GreGeneMembership(models.Model):
 class GeneConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     gene = models.ForeignKey(Gene, verbose_name = "gene parent")
-    p_val = models.CharField(max_length=128)
+    p_val = models.DecimalField(max_digits=15, decimal_places=13) # models.CharField(max_length=128)
     
     class Meta:
         ordering = ['cond']
@@ -288,7 +287,7 @@ class GeneConditionMembership(models.Model):
 class CoremConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
-    p_val = models.CharField(max_length=128)
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
     
     class Meta:
         ordering = ['cond']
@@ -302,8 +301,8 @@ class CoremConditionMembership(models.Model):
 class GreConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     gre = models.ForeignKey('Gre', verbose_name = "gre parent")
-    p_val = models.CharField(max_length=128)
-    
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+
     class Meta:
         ordering = ['cond']
         
@@ -316,8 +315,8 @@ class GreConditionMembership(models.Model):
 class GreCoremMembership(models.Model):
     gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
-    p_val = models.CharField(max_length=128)
-    
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+
     class Meta:
         ordering = ['gre']
         

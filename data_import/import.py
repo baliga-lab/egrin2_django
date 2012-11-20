@@ -6,6 +6,7 @@ import rsat
 import re
 import os
 import traceback
+from decimal import Decimal
 
 # This prefix is used in the Postgres database, Django prepends that to the
 # model class name. If you named your application differently, this
@@ -32,6 +33,12 @@ RSAT_GENE_PATTERN = { 'eco': re.compile(r'^b[0-9]+'), 'hal': re.compile(r'^VNG[0
 
 PSSM_QUERY = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
 ROW_QUERY = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
+
+def to_decimal(strval):
+    if strval == None or strval == '' or strval == 'NA':
+        return Decimal('NaN')
+    else:
+        return Decimal(strval)
 
 def get_gene_map(conn, organism):
     cur = conn.cursor()
@@ -221,10 +228,11 @@ def add_gene_expressions(organism, conn, check_missing=False):
         for line in lines:
             count += 1
             if count % 100000 == 0:
-                print "%d percent done" % ((float(count)/tot)*100)
+                print "%d %% done" % ((float(count)/tot)*100)
             row = line.strip("\n").split("\t")
             cond_id = "%s_%s" % (organism, row[1])
-            cur.execute(query, [gene_map[row[0]], conditions_map[cond_id], row[2]])
+            cur.execute(query, [gene_map[row[0]], conditions_map[cond_id],
+                                to_decimal(row[2])])
 
         conn.commit()
         cur.close()
@@ -234,7 +242,7 @@ def add_gene_expressions(organism, conn, check_missing=False):
 ######################################################################
 
 def add_gre(organism, conn):
-    gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,p_val) values (%s,%s,%s,'')"
+    gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,p_val) values (%s,%s,%s,'NaN')"
     print "Importing GRE for ", organism
     with open(BASE_PATH[organism] + "gre.txt") as infile:
         cur = conn.cursor()
@@ -264,7 +272,7 @@ def add_gre(organism, conn):
 ######################################################################
 
 def add_cre(organism, conn):
-    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,eval) values (%s,%s,%s,%s,%s)"
+    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,e_val) values (%s,%s,%s,%s,%s)"
     print "Importing CRE for ", organism
     with open(BASE_PATH[organism] + "cre.txt") as infile:
         gre_map = get_gre_map(conn, organism)
@@ -280,12 +288,14 @@ def add_cre(organism, conn):
                 for pssm_row in pssm:
                     pssm_cols = pssm_row.split(",")
                     cur.execute(ROW_QUERY, [pssm_id, pssm_cols[0],
-                                            pssm_cols[1], pssm_cols[2], pssm_cols[3],
-                                            pssm_cols[4]])
+                                            to_decimal(pssm_cols[1]),
+                                            to_decimal(pssm_cols[2]),
+                                            to_decimal(pssm_cols[3]),
+                                            to_decimal(pssm_cols[4])])
                 cre_id = "%s_%s" % (organism, row[0])
                 gre_id = "%s_%s" % (organism, row[1])
                 cur.execute(cre_query, [NETWORK[organism], cre_id, gre_map[gre_id],
-                                        pssm_id, row[2]])
+                                        pssm_id, to_decimal(row[2])])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -330,7 +340,7 @@ def add_biclusters(organism, conn):
                 gre_ids = set([gre_map[gre_id]
                                for gre_id in ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL']])
                 # create bicluster record
-                cur.execute(bicluster_query, [NETWORK[organism], bc_id, float(row[1])])
+                cur.execute(bicluster_query, [NETWORK[organism], bc_id, to_decimal(row[1])])
                 bicluster_id = cur.fetchone()[0]
                 # establish membership associations
                 for gene_id in gene_ids:
@@ -399,7 +409,7 @@ def add_corems(organism, conn):
                         pval = pvals[index]
                     else:
                         pval = '0.0'
-                    cur.execute(corem_gre_query, [gre_ids[index], corem_id, pval])
+                    cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
 
             conn.commit()
         except:
@@ -465,14 +475,14 @@ def augment_conditions(organism, conn, check_biclusters=False,
                     for index in xrange(len(corem_ids)):
                         cur.execute(corem_condition_query, [corem_ids[index],
                                                             condition_id,
-                                                            pvals[index]])
+                                                            to_decimal(pvals[index])])
 
                 if connect_genes:
                     gene_ids = [gene_map[gene] for gene in row[5].split(',') if len(row[5]) > 0]
                     pvals = [pval for pval in row[6].split(',') if len(row[6]) > 0]
                     for index in xrange(len(gene_ids)):
                         cur.execute(gene_condition_query, [condition_id, gene_ids[index],
-                                                           pvals[index]])
+                                                           to_decimal(pvals[index])])
 
                 if connect_gres:
                     if len(row[7]) > 0:
@@ -484,7 +494,7 @@ def augment_conditions(organism, conn, check_biclusters=False,
                     pvals = [pval for pval in row[8].split(',') if len(row[8]) > 0]
                     for index in xrange(len(gre_ids)):
                         cur.execute(gre_condition_query, [condition_id, gre_ids[index],
-                                                          pvals[index]])
+                                                          to_decimal(pvals[index])])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -523,7 +533,7 @@ def augment_genes(organism, conn):
                                        for gre in row[1].split(',') if len(gre) > 0]]
                 pvals = [pval for pval in row[2].split(',') if len(pval) > 0]
                 for index in range(len(gre_ids)):
-                    cur.execute(gre_gene_query, [gre_ids[index], gene_id, pvals[index]])
+                    cur.execute(gre_gene_query, [gre_ids[index], gene_id, to_decimal(pvals[index])])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -553,7 +563,7 @@ def add_gre_regulator(organism, conn):
                 row = line.strip("\n").split("\t")
                 gre_id = gre_map['%s_%s' % (organism, row[0])]
                 regulators = [regulator for regulator in row[1].split(",") if len(regulator) > 0]
-                scores = [score for score in row[2].split(',') if len(score) > 0]
+                scores = [to_decimal(score) for score in row[2].split(',') if len(score) > 0]
                 for index in xrange(len(regulators)):
                     cur.execute(gre_tf_query, [NETWORK[organism], regulators[index],
                                                gre_id, scores[index]])
@@ -576,11 +586,11 @@ if __name__ == '__main__':
         #add_cre(organism, conn)
         #add_biclusters(organism, conn)
         #add_corems(organism, conn)
-        #augment_conditions(organism, conn, check_biclusters=False,
-        #                   connect_corems=False, connect_genes=False,
-        #                   connect_gres=True)
+        augment_conditions(organism, conn, check_biclusters=False,
+                           connect_corems=True, connect_genes=True,
+                           connect_gres=True)
         #augment_genes(organism, conn)
-        if organism == 'eco':
-            add_gre_regulator(organism, conn)
+        #if organism == 'eco':
+        #    add_gre_regulator(organism, conn)
 
     conn.close()

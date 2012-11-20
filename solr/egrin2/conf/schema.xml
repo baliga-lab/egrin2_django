@@ -103,6 +103,19 @@
    <field name="genre" type="text_general" indexed="true" stored="true"/>
    <field name="language" type="text_general" indexed="true" stored="true"/>
 
+   <!-- fields for network/gene searches -->
+   <field name="accession" type="string" indexed="true" stored="true"/>
+   <field name="gi" type="string" indexed="true" stored="true"/>
+   <field name="start" type="int" indexed="true" stored="true"/>
+   <field name="stop" type="int" indexed="true" stored="true"/>
+   <field name="strand" type="string" indexed="true" stored="true"/>
+   <field name="sys_name" type="string" indexed="true" stored="true"/>
+   <field name="short_name" type="string" indexed="true" stored="true"/>
+
+   <field name="network" type="text_general" indexed="true" stored="true" multiValued="true" />
+   <field name="species" type="text_general" indexed="true" stored="true" />
+   <field name="condition" type="text_general" indexed="true" stored="true" multiValued="true" />
+
    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
      Some fields are multiValued only because Tika currently may return
@@ -217,6 +230,7 @@
    <!-- Text fields from SolrCell to search by default in our catch-all field -->
    <copyField source="title" dest="text"/>
    <copyField source="description" dest="text"/>
+   <copyField source="sys_name" dest="text"/>
 
    <!-- Create a string version of author for faceting -->
    <!--

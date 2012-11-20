@@ -6,20 +6,21 @@
     <entity name="gene" query="select g.id, g.species_id, g.accession, g.gi, g.start, g.stop, g.strand, g.sys_name, g.name, g.description, g.chromosome_id from egrin2_django_gene g">
       <entity name="species" transformer="TemplateTransformer"
               query="select s.name, s.short_name from egrin2_django_species s where s.id = ${gene.species_id}">
+        <field column="species" template="${species.name} (${species.short_name})" />
       </entity>
       <entity name="network" transformer="TemplateTransformer"
               query="select n.name, n.version_id from egrin2_django_network n join egrin2_django_species s on n.species_id = s.id where s.id = ${gene.species_id}">
+        <field column="network" template="${network.name} (${network.version_id})" />
       </entity>
       <!--
-          At the moment, there is only authors as a multivalued
-          nested attribute
-      -->
-     <!--
       <entity name="biclusters" transformer="TemplateTransformer"
-              query="select a.last_name, a.first_name from stories_authors sa join authors a on sa.author_id = a.id where sa.story_id = ${story.id}">
-        <field column="author" template="${author.last_name}, ${author.first_name}" />
+              query="select bc.bc_id, bc.residual from egrin2_django_bicluster_genes bg join egrin2_django_bicluster bc on bg.bicluster_id = bc.id where bg.gene_id = ${gene.id}">
       </entity>
       -->
+      <entity name="condition" transformer="TemplateTransformer"
+              query="select distinct c.cond_name from egrin2_django_bicluster_conditions bicond join egrin2_django_condition c on bicond.condition_id = c.id join egrin2_django_bicluster bc on bc.id = bicond.bicluster_id join egrin2_django_bicluster_genes bigenes on bc.id = bigenes.bicluster_id join egrin2_django_gene g on bigenes.gene_id = g.id where g.id = ${gene.id}">
+        <field column="condition" template="${condition.cond_name}" />
+      </entity>
     </entity>
   </document>
 </dataConfig>

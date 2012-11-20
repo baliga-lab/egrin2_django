@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block title %}Search Results{% endblock %}
+{% block nav %}
+	<!-- navigation starts-->
+	<div  id="nav">
+		<ul>
+			<li><a href="{% url 'index' %}">Home</a></li>
+			<li><a href="{% url 'browse' %}">Browse</a></li>
+			<li id="current"><a href="{% url 'search' %}">Search</a></li>
+			<li><a href="{% url 'downloads' %}">Downloads</a></li>
+			<li><a href="{% url 'contact' %}">Support</a></li>
+			<li><a href="{% url 'about' %}">About</a></li>
+		</ul>
+	<!-- navigation ends-->
+	</div>
+{% endblock %}
+{% block content %}
+	<!-- content-wrap starts -->
+	<div id="content-wrap">
+		<div id="main">
+      <script>
+        $(document).ready(function() {          
+          $("#search_results").dataTable({
+          'bFilter': false,
+          'bSort': false
+          });          
+        });
+      </script>
+
+      <h1>Search Results</h1>
+      <div style="margin: 10px 0px 10px 0px"><span style="font-weight: bold">Search Terms:</span> <span>{{ search_terms }}<span></div>
+      <table id="search_results">
+        <thead>
+          <th>Organism</th>
+          <th>Gene</th>
+          <th># Conditions</th>
+        </thead>
+        <tbody>
+          {% for row in docs %}
+          <tr>
+            <td>{{ row.species }}</td>
+            <td>{{ row.sys_name }}</td>
+            <td>{{ row.num_conditions }}</td>
+          </tr>
+          {% endfor%}
+        </tbody>
+      </table>
+		<!-- main ends -->
+ </div>
+{% endblock %}
