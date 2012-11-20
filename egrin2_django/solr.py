@@ -13,9 +13,21 @@ def search(q):
     req = urllib2.Request(SOLR_URL)
     query_string = make_query_string(q)
     print "SEARCHING WITH QUERY: '%s'" % query_string
-    response = urllib2.urlopen(SOLR_URL, 'wt=json&rows=1000&q=' + query_string)
-    resp = simplejson.loads(response.read())['response']
+    print 'wt=json&rows=1000&facet=true&facet.field=network&q=' + query_string
+    response = urllib2.urlopen(SOLR_URL,
+                               'wt=json&facet=true&facet.field=network&q=' + query_string)
+    result = simplejson.loads(response.read())
+    resp   = result['response']
+    params = result['responseHeader']['params']
+
     start = resp['start']
     num_found = resp['numFound']
     docs = resp['docs']
-    return docs
+    facets = []
+    if params['facet'] == 'true':
+        facet_field = params['facet.field']
+        resp_facets = result['facet_counts']['facet_fields'][facet_field]
+        for i in range(0, len(resp_facets), 2):
+            facets.append((resp_facets[i], resp_facets[i + 1]))
+    return docs, facets
+           

@@ -30,6 +30,8 @@
 
       <h1>Search Results</h1>
       <div style="margin: 10px 0px 10px 0px"><span style="font-weight: bold">Search Terms:</span> <span>{{ search_terms }}<span></div>
+      <div style="margin: 10px 0px 10px 0px"><span style="font-weight: bold">Facets:</span>
+          {% for facet in facets %}<span>{{facet.0}}({{facet.1}}), </span>{% endfor %}</div>
       <table id="search_results">
         <thead>
           <th>Organism</th>

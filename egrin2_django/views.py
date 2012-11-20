@@ -284,7 +284,8 @@ def search(request):
     SolrGene = collections.namedtuple('SolrGene', ['sys_name', 'species', 'num_conditions'])
     if 'search_query' in request.GET:
         query = request.GET['search_query']
-        solr_docs = solr.search(query)
+        solr_docs, facets = solr.search(query)
+        print "FACETS: ", facets
         search_terms = query
         docs = []
         for doc in solr_docs:
