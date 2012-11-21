@@ -24,23 +24,23 @@
 <div id="content-wrap">
 	<div id="main">
     <script>
-      {% include 'sciparse.html' %}
       $(document).ready(function() {
-      $("#corems")
-      .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[2,0], [1,0]],headers: { 2: {sorter:"sci"} } })
-      .tablesorterPager({container: $("#pager_corems"), positionFixed: false});
-			
-      $("#genes")
-      .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[8,0],[7,0],[0,0]],headers: { 8: {sorter:"sci"} } })
-      .tablesorterPager({container: $("#pager_genes"), positionFixed: false});
-            
-			$("#conditions")
-      .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[3,0], [2,0]],headers: { 3: {sorter:"sci"} } })
-      .tablesorterPager({container: $("#pager_conditions"), positionFixed: false});
-			
-			$("#gres")
-      .tablesorter({widthFixed: false, widgets: ['zebra'],sortList: [[2,1], [0,0]],headers: { 2: {sorter:"sci"} } })
-      .tablesorterPager({container: $("#pager_gres"), positionFixed: false});
+        $("#gres").dataTable({
+          "bFilter": false,
+          "bSort": false,
+        });
+        $("#corems").dataTable({
+          "bFilter": false,
+          "bSort": false,
+        });
+        $("#genes").dataTable({
+          "bFilter": false,
+          "bSort": false,
+        });
+        $("#conditions").dataTable({
+          "bFilter": false,
+          "bSort": false,
+        });			            
       });
 		</script>
     <blockquote><p>Regulator {{ tf }}</p></blockquote>
@@ -67,93 +67,84 @@
           {% endfor %}
         </tbody>
       </table>
-      <!-- {% include 'motif_helper_cre.html' %} -->
-			<div id="pager_gres">
-			  {% include 'pager.html' %}
         
-        <!-- <p><span id="previewcanvas_{{ gre.gre_id }}"></p> -->
-        <blockquote><p>Corems</p></blockquote>
-			  <table id="corems" class="table">
-          <thead>
-            <tr>
-              <th class="first">Corem ID</th>
-              <th>GRE</th>
-              <th>pval</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in corem_pval %}
-            <tr class="{% cycle 'row-a' 'row-b' %}">
-              <td class="first"><a href="{% url 'corems' %}{{ s.ncbi_taxonomy_id }}/{{ c.corem.corem_id }}">{{ c.corem.corem_id }}</a></td>
-              <td>{{ c.gre_id.gre_id }}</td>
-              <td>{{ c.p_val }}</td>
-            </tr>
-					  {% endfor %}
-          </tbody>
-			  </table>
-        <div id="pager_corems">
-          {% include 'pager.html' %}
+      <!-- <p><span id="previewcanvas_{{ gre.gre_id }}"></p> -->
+      <blockquote><p>Corems</p></blockquote>
+			<table id="corems" class="table">
+        <thead>
+          <tr>
+            <th class="first">Corem ID</th>
+            <th>GRE</th>
+            <th>pval</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in corem_pval %}
+          <tr class="{% cycle 'row-a' 'row-b' %}">
+            <td class="first"><a href="{% url 'corems' %}{{ s.ncbi_taxonomy_id }}/{{ c.corem.corem_id }}">{{ c.corem.corem_id }}</a></td>
+            <td>{{ c.gre_id.gre_id }}</td>
+            <td>{{ c.p_val }}</td>
+          </tr>
+					{% endfor %}
+        </tbody>
+			</table>
             
-          <blockquote><p>Genes</p></blockquote>
-          <table id="genes" class="table">
-            <thead>
-				      <tr>
-                <th class="first">Gene name</th>
-					      <th>Common name</th>
-                <th>Description</th>
-                <th>Start</th>
-                <th>Stop</th>
-                <th>Strand</th>
-                <th>Chromosome</th>
-                <th>GRE</th>
-                <th>pval</th>
-				      </tr>
-            </thead>
-            <tbody>
-              {% for g in gene_pval %}
-              <tr class="{% cycle 'row-a' 'row-b' %}">
-                <td class="first"><a href="{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.gene.sys_name }}</a></td>
-                <td>{{ g.gene.name }}</td>
-                <td>{{ g.gene.desc }}</td>
-                <td>{{ g.gene.start }}</td>
-                <td>{{ g.gene.stop }}</td>
-                <td>{{ g.gene.strand }}</td>
-                <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.gene.chromosome.refseq }}">{{ g.gene.chromosome.refseq }}</a></td>
-                <td>{{ g.gre_id.gre_id }}</td>
-                <td>{{ g.p_val }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-            </table>
-          <div id="pager_genes">
-            {% include 'pager.html' %}
+      <blockquote><p>Genes</p></blockquote>
+      <table id="genes" class="table">
+        <thead>
+				  <tr>
+            <th class="first">Gene name</th>
+					  <th>Common name</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Strand</th>
+            <th>Chromosome</th>
+            <th>GRE</th>
+            <th>pval</th>
+				  </tr>
+        </thead>
+        <tbody>
+          {% for g in gene_pval %}
+          <tr class="{% cycle 'row-a' 'row-b' %}">
+            <td class="first"><a href="{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.gene.sys_name }}</a></td>
+            <td>{{ g.gene.name }}</td>
+            <td>{{ g.gene.desc }}</td>
+            <td>{{ g.gene.start }}</td>
+            <td>{{ g.gene.stop }}</td>
+            <td>{{ g.gene.strand }}</td>
+            <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.gene.chromosome.refseq }}">{{ g.gene.chromosome.refseq }}</a></td>
+            <td>{{ g.gre_id.gre_id }}</td>
+            <td>{{ g.p_val }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 			
-            <blockquote><p>Conditions</p></blockquote>
-			      <table id="conditions" class="table">
-				      <thead>
-					      <tr>
-						      <th class="first">Condition ID</th>
-						      <th>Condition Name</th>
-                  <th>GRE</th>
-						      <th>pval</th>
-					      </tr>
-				      </thead>
-				      <tbody>
-					      {% for o in conds_pval %}
-					      <tr class="{% cycle 'row-a' 'row-b' %}">
-							    <td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ o.cond_id.cond_id }}">{{ o.cond.cond_id }}</a></td>
-							    <td>{{ o.cond.cond_name }}</td>
-                  <td>{{ o.gre_id }}</td>
-							    <td>{{ o.p_val }}</td>
-						    </tr>
-					      {% endfor %}
-				      </tbody>
-            </table>
-			      <div id="pager_conditions">
-              {% include 'pager.html' %}
-		          <!-- main ends -->	
-            </div>
-            <script>
+      <blockquote><p>Conditions</p></blockquote>
+			<table id="conditions" class="table">
+				<thead>
+					<tr>
+						<th class="first">Condition ID</th>
+						<th>Condition Name</th>
+            <th>GRE</th>
+						<th>pval</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for o in conds_pval %}
+					<tr class="{% cycle 'row-a' 'row-b' %}">
+						<td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ o.cond_id.cond_id }}">{{ o.cond.cond_id }}</a></td>
+						<td>{{ o.cond.cond_name }}</td>
+            <td>{{ o.gre_id }}</td>
+						<td>{{ o.p_val }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+      </table>
+		  <!-- main ends -->	
+  </div>
+  <script>
 <!--
     var ids = [{{ gre.gre_id }}];
     var django_pssm = [{{ pssm }}];
@@ -177,6 +168,3 @@
 //-->
 </script>        
 {% endblock %}
-
-
-

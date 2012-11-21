@@ -357,7 +357,7 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
             self.species = Species.objects.get(ncbi_taxonomy_id=species)
             self.cre_id = cre.cre_id
             self.bcs = cre.cre_id.split("_")[0]+"_"+cre.cre_id.split("_")[1]
-            self.eval = cre.eval
+            self.e_val = cre.e_val
             #self.pssm = cre.pssm.matrix()
     # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
