@@ -24,7 +24,6 @@
       $(document).ready(function() {  
         $("#conds{{forloop.counter}}").dataTable({
           "bFilter": false,
-          "bSort": false,
           "bProcessing": true,
           "bServerSide": true,
           "sAjaxSource": "{% url 'conditions_json' %}{{o.ncbi_taxonomy_id}}"

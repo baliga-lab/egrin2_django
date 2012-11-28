@@ -24,7 +24,6 @@
         $(document).ready(function() {
           $("#corem{{forloop.counter}}").dataTable({
             'bFilter': false,
-            'bSort': false,
             "bProcessing": true,
             "bServerSide": true,
             "sAjaxSource": "{% url 'corems_json' %}{{o.ncbi_taxonomy_id}}"

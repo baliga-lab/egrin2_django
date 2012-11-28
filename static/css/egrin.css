@@ -1,0 +1,12 @@
+/* Custom CSS overrides of the EGRIN application */
+
+th.sorting {
+    background-color: #44bb88;
+}
+
+th.sorting_asc {
+    background-color: #00aa00;
+}
+th.sorting_desc {
+    background-color: #00aa00;
+}

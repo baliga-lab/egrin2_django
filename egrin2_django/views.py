@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from models import *
 import collections
 import solr
@@ -29,25 +30,43 @@ def condition_detail_link(species, cond_id, label):
     return '<a href="%s">%s</a>' % (reverse('condition_detail',
                                             args=[species, cond_id]), label)
 
+def get_sort_field(request, fields, default_field):
+    sort_field = default_field
+    sort_dir = "asc"
+    if "iSortCol_0" in request.GET:
+        sort_field = fields[int(request.GET['iSortCol_0'])]
+        
+    if "sSortDir_0" in request.GET:
+        sort_dir = request.GET['sSortDir_0']
+
+    if sort_dir == 'asc':
+        return sort_field
+    else:
+        return "-" + sort_field
+
 def conditions_json(request, species):
+    # TODO: note that we still need to figure out how to sort on a multi-valued
+    # many-to-many aggregate (count(genes), count(gres))
+    fields = ['cond_id', 'cond_name', 'corem_count']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
-    #sort_col = int(request.GET['iSortCol_0'])
-    #sort_dir = request.GET['sSortDir_0']
-    #print "sort col: ", sort_col, ' sort_dir: ', sort_dir
+    sort_field = get_sort_field(request, fields, fields[0])
 
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_conds_total = Condition.objects.filter(network__in=network).count()
-    conds_batch = Condition.objects.filter(network__in=network)[display_start:display_end]
+    conds_query = Condition.objects.filter(network__in=network).annotate(
+        corem_count=Count('corems'))
+    conds_query = conds_query.order_by(sort_field)
+
+    conds_batch = conds_query[display_start:display_end]
     conds = [[condition_detail_link(species, c.cond_id, c.cond_id),
               c.cond_name,
-              c.corems.count(),
+              c.corem_count,
               c.gene_set.count(), c.gre_set.count()]
              for c in conds_batch]
-    #print conds
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
@@ -91,16 +110,24 @@ def corem_detail_link(species, corem_id, label):
                                             args=[species, corem_id]), label)
 
 def corems_json(request, species):
+    fields = ['corem_id', 'gene_count', 'condition_count', 'gre_count']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_corems_total = Corem.objects.filter(network__in=network).count()
-    corems_batch = Corem.objects.filter(network__in=network)[display_start:display_end]
+    corems_query = Corem.objects.filter(network__in=network).annotate(
+        gene_count=Count('genes')).annotate(
+        condition_count=Count('conditions')).annotate(
+            gre_count=Count('gres'))
+    corems_query = corems_query.order_by(sort_field)
+    print corems_query.query
+    corems_batch = corems_query[display_start:display_end]
     corems = [[corem_detail_link(species, c.corem_id, c.corem_id),
-               c.genes.count(), c.conditions.count(), c.gres.count()]
+               c.gene_count, c.condition_count, c.gre_count]
               for c in corems_batch]
     data = {
         'sEcho': sEcho,
@@ -166,22 +193,12 @@ def genes_json(request, species):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
-    sort_field = "sys_name"
-    sort_dir = "asc"
-
-    if "iSortCol_0" in request.GET:
-        sort_field = fields[int(request.GET['iSortCol_0'])]
-        
-    if "sSortDir_0" in request.GET:
-        sort_dir = request.GET['sSortDir_0']
-
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
     num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
     genes_query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
-    if sort_dir == 'asc':
-        genes_query = genes_query.order_by(sort_field)
-    else:
-        genes_query = genes_query.order_by("-" + sort_field)
+    genes_query = genes_query.order_by(sort_field)
 
     genes_batch = genes_query[display_start:display_end]
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
