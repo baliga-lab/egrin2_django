@@ -171,40 +171,6 @@ table .headerSortDown {
 }
 /* end - table */
 
-/* Start Sort Table Styling */
-table.tablesorter {
-    width: 100%;
-    border: 1px solid #000;
-}
-table.tablesorter th {
-    text-align: left;
-    padding: 5px;
-}
-table.tablesorter td {
-    padding: 5px;
-}
-table.tablesorter .even {
-    background-color: #FFFFF2;
-}
-table.tablesorter .odd {
-    background-color: #FFFFFF;
-}
-table.tablesorter .header {
-    background-image: url("../sort_bg.png");
-    background-repeat: no-repeat;
-    padding-left: 25px;
-    background-position: left center;
-    height: auto;
-}
-table.tablesorter .headerSortUp {
-    background-image: url("../sort_asc.png");
-    background-repeat: no-repeat;
-}
-table.tablesorter .headerSortDown {
-    background-image: url("../sort_dsc.png");
-    background-repeat: no-repeat;
-}
-
 /* form elements */
 form {
 	margin:0px; padding: 0 5px;

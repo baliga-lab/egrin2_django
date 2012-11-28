@@ -160,12 +160,30 @@ def gene_detail_link(species, sys_name, label):
     return '<a href="%s">%s</a>' % (reverse('gene_detail',
                                             args=[species, sys_name]), label)
 def genes_json(request, species):
+    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
+              'strand', 'chromosome']
+
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
+    sort_field = "sys_name"
+    sort_dir = "asc"
+
+    if "iSortCol_0" in request.GET:
+        sort_field = fields[int(request.GET['iSortCol_0'])]
+        
+    if "sSortDir_0" in request.GET:
+        sort_dir = request.GET['sSortDir_0']
+
     display_end = display_start + display_length
     num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
-    genes_batch = Gene.objects.filter(species__ncbi_taxonomy_id=species)[display_start:display_end]
+    genes_query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
+    if sort_dir == 'asc':
+        genes_query = genes_query.order_by(sort_field)
+    else:
+        genes_query = genes_query.order_by("-" + sort_field)
+
+    genes_batch = genes_query[display_start:display_end]
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               g.accession, g.description, g.start, g.stop,
