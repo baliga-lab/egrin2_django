@@ -10,6 +10,7 @@ from django.db.models import Count
 from models import *
 import collections
 import solr
+from egrin2_django.settings import TABLE_PREFIX
 
 def index(request):
     species = Species.objects.count()
@@ -115,7 +116,6 @@ def corem_detail_link(species, corem_id, label):
                                             args=[species, corem_id]), label)
 
 def corems_json(request, species):
-    table_prefix = 'egrin2_django_'
     query = """select q1.corem_id, corem_name, num_genes, num_conditions, num_gres
 from (select c.id as corem_id, c.network_id, c.corem_id as corem_name,
 count(cg.gene_id) as num_genes
@@ -126,7 +126,7 @@ from %scoremconditionmembership ccm group by ccm.corem_id) as q2
 on q1.corem_id = q2.corem_id left outer join
 (select gcm.corem_id, count(gcm.gre_id) as num_gres
 from %sgrecoremmembership gcm group by gcm.corem_id) as q3
-on q1.corem_id = q3.corem_id""" % (table_prefix, table_prefix, table_prefix, table_prefix)
+on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX)
 
     fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres']
     sEcho = request.GET['sEcho']

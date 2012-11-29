@@ -372,6 +372,8 @@ def get_bicluster_ids(conn, biclusters):
     return ids
 
 def add_corems(organism, conn):
+    # different prefixing scheme for corems, we need to adjust this for more organisms
+    prefix = { 'eco': 'ec', 'hal': 'hc' }
     corem_query = "insert into " + APP_PREFIX + "corem (network_id,corem_id) values (%s,%s) returning id"
     corem_gene_query = "insert into " + APP_PREFIX + "corem_genes (corem_id,gene_id) values (%s,%s)"
     bicl_corem_query = "insert into " + APP_PREFIX + "bicluster_corems (bicluster_id,corem_id) values (%s,%s)"
@@ -388,7 +390,8 @@ def add_corems(organism, conn):
         try:
             for line in infile.readlines():
                 row = line.strip("\n").split("\t")
-                corem_id_str = '%s_%s' % (organism, row[0])
+                # note that the naming scheme for corems is different
+                corem_id_str = '%s%s' % (prefix[organism], row[0])
                 cur.execute(corem_query, [NETWORK[organism], corem_id_str])
                 corem_id = cur.fetchone()[0]
                 gene_ids = set([gene_map[sys_name] for sys_name in row[1].split(",")])
@@ -578,19 +581,19 @@ if __name__ == '__main__':
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
     for organism in ['eco', 'hal']:
         print "organism: ", organism
-        #add_microbes_online_genes(organism, conn)
-        #add_rsat_genes(organism, conn)
-        #add_conditions(organism, conn)
-        #add_gene_expressions(organism, conn, check_missing=True)
-        #add_gre(organism, conn)
-        #add_cre(organism, conn)
-        #add_biclusters(organism, conn)
-        #add_corems(organism, conn)
+        add_microbes_online_genes(organism, conn)
+        add_rsat_genes(organism, conn)
+        add_conditions(organism, conn)
+        add_gene_expressions(organism, conn, check_missing=True)
+        add_gre(organism, conn)
+        add_cre(organism, conn)
+        add_biclusters(organism, conn)
+        add_corems(organism, conn)
         augment_conditions(organism, conn, check_biclusters=False,
                            connect_corems=True, connect_genes=True,
                            connect_gres=True)
-        #augment_genes(organism, conn)
-        #if organism == 'eco':
-        #    add_gre_regulator(organism, conn)
+        augment_genes(organism, conn)
+        if organism == 'eco':
+            add_gre_regulator(organism, conn)
 
     conn.close()
