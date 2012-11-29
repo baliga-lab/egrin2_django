@@ -4,6 +4,8 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
+
+from django.db import connection, transaction
 from django.db.models import Count
 from models import *
 import collections
@@ -30,7 +32,7 @@ def condition_detail_link(species, cond_id, label):
     return '<a href="%s">%s</a>' % (reverse('condition_detail',
                                             args=[species, cond_id]), label)
 
-def get_sort_field(request, fields, default_field):
+def get_sort_field2(request, fields, default_field):
     sort_field = default_field
     sort_dir = "asc"
     if "iSortCol_0" in request.GET:
@@ -38,7 +40,10 @@ def get_sort_field(request, fields, default_field):
         
     if "sSortDir_0" in request.GET:
         sort_dir = request.GET['sSortDir_0']
+    return sort_field, sort_dir
 
+def get_sort_field(request, fields, default_field):
+    sort_field, sort_dir = get_sort_field2(request, fields, default_field)
     if sort_dir == 'asc':
         return sort_field
     else:
@@ -110,25 +115,39 @@ def corem_detail_link(species, corem_id, label):
                                             args=[species, corem_id]), label)
 
 def corems_json(request, species):
-    fields = ['corem_id', 'gene_count', 'condition_count', 'gre_count']
+    table_prefix = 'egrin2_django_'
+    query = """select q1.corem_id, corem_name, num_genes, num_conditions, num_gres
+from (select c.id as corem_id, c.network_id, c.corem_id as corem_name,
+count(cg.gene_id) as num_genes
+from %scorem c left outer join %scorem_genes cg
+on c.id = cg.corem_id group by c.id) as q1 left outer join
+(select ccm.corem_id, count(ccm.cond_id) as num_conditions
+from %scoremconditionmembership ccm group by ccm.corem_id) as q2
+on q1.corem_id = q2.corem_id left outer join
+(select gcm.corem_id, count(gcm.gre_id) as num_gres
+from %sgrecoremmembership gcm group by gcm.corem_id) as q3
+on q1.corem_id = q3.corem_id""" % (table_prefix, table_prefix, table_prefix, table_prefix)
+
+    fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
+    sort_field, sort_dir = get_sort_field2(request, fields, fields[0])
 
-    network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-    num_corems_total = Corem.objects.filter(network__in=network).count()
-    corems_query = Corem.objects.filter(network__in=network).annotate(
-        gene_count=Count('genes')).annotate(
-        condition_count=Count('conditions')).annotate(
-            gre_count=Count('gres'))
-    corems_query = corems_query.order_by(sort_field)
-    print corems_query.query
-    corems_batch = corems_query[display_start:display_end]
-    corems = [[corem_detail_link(species, c.corem_id, c.corem_id),
-               c.gene_count, c.condition_count, c.gre_count]
-              for c in corems_batch]
+    networks = Network.objects.filter(species__ncbi_taxonomy_id=species)
+    num_corems_total = Corem.objects.filter(network__in=networks).count()
+    network_ids = [str(network.id) for network in networks]
+
+    query += " where network_id in (%s)" % (",".join(network_ids))
+    query += (" order by %s %s" % (sort_field, sort_dir))
+    query += (" limit %d offset %d" % (display_length, display_start))
+
+    cursor = connection.cursor()
+    cursor.execute(query)
+    corems = [[corem_detail_link(species, row[1], row[1]),
+               row[2], row[3], row[4]] for row in cursor.fetchall()]
+
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_corems_total, 'iTotalDisplayRecords': num_corems_total,
@@ -199,7 +218,6 @@ def genes_json(request, species):
     num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
     genes_query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
     genes_query = genes_query.order_by(sort_field)
-
     genes_batch = genes_query[display_start:display_end]
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
