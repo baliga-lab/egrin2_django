@@ -34,6 +34,9 @@ RSAT_GENE_PATTERN = { 'eco': re.compile(r'^b[0-9]+'), 'hal': re.compile(r'^VNG[0
 PSSM_QUERY = "insert into " + APP_PREFIX + "pssm (parent_id) values (%s) returning id"
 ROW_QUERY = "insert into " + APP_PREFIX + "row (pssm_id,pos,a,c,g,t) values (%s,%s,%s,%s,%s,%s)"
 
+# different prefixing scheme for corems, we need to adjust this for more organisms
+COREM_PREFIX = { 'eco': 'ec', 'hal': 'hc' }
+
 def to_decimal(strval):
     if strval == None or strval == '' or strval == 'NA':
         return Decimal('NaN')
@@ -372,8 +375,6 @@ def get_bicluster_ids(conn, biclusters):
     return ids
 
 def add_corems(organism, conn):
-    # different prefixing scheme for corems, we need to adjust this for more organisms
-    prefix = { 'eco': 'ec', 'hal': 'hc' }
     corem_query = "insert into " + APP_PREFIX + "corem (network_id,corem_id) values (%s,%s) returning id"
     corem_gene_query = "insert into " + APP_PREFIX + "corem_genes (corem_id,gene_id) values (%s,%s)"
     bicl_corem_query = "insert into " + APP_PREFIX + "bicluster_corems (bicluster_id,corem_id) values (%s,%s)"
@@ -391,7 +392,7 @@ def add_corems(organism, conn):
             for line in infile.readlines():
                 row = line.strip("\n").split("\t")
                 # note that the naming scheme for corems is different
-                corem_id_str = '%s%s' % (prefix[organism], row[0])
+                corem_id_str = '%s%s' % (COREM_PREFIX[organism], row[0])
                 cur.execute(corem_query, [NETWORK[organism], corem_id_str])
                 corem_id = cur.fetchone()[0]
                 gene_ids = set([gene_map[sys_name] for sys_name in row[1].split(",")])
@@ -471,7 +472,7 @@ def augment_conditions(organism, conn, check_biclusters=False,
                             print "missing condition-bicluster relation, condition: %d and bicluster: %d" % (condition_id, bicluster_id)
 
                 if connect_corems:
-                    corems = ['%s_%s' % (organism, corem) for corem in row[3].split(',')
+                    corems = ['%s%s' % (COREM_PREFIX[organism], corem) for corem in row[3].split(',')
                               if len(row[3]) > 0]
                     pvals = [pval for pval in row[4].split(',') if len(row[4]) > 0]
                     corem_ids = [corem_map[corem] for corem in corems]
