@@ -27,6 +27,15 @@ def about(request):
     return render_to_response('about.html', locals())
 
 def browse(request):
+    species = Species.objects.count()
+    networks = Network.objects.count()
+    corems = Corem.objects.count()
+    genes = Gene.objects.count()
+    conditions = Condition.objects.count()
+    gres = Gre.objects.count()
+    biclusters = Bicluster.objects.count()
+    tfs = len(list(set([o.tf for o in greTF.objects.all()])))
+    return render_to_response('index.html', locals())
     return render_to_response('browse.html', locals())
 
 def condition_detail_link(species, cond_id, label):
