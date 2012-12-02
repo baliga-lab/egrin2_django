@@ -334,7 +334,7 @@ def regulator_detail(request,species=None,regulator=None):
     return render_to_response('regulator_detail.html', locals())
 
 def search(request):
-    SolrGene = collections.namedtuple('SolrGene', ['sys_name', 'species', 'num_conditions'])
+    SolrGene = collections.namedtuple('SolrGene', ['species', 'species_taxid', 'sys_name', 'name', 'description', 'num_conditions', 'num_corems', 'num_gres'])
     if 'search_query' in request.GET:
         query = request.GET['search_query']
         solr_docs, facets = solr.search(query)
@@ -342,12 +342,14 @@ def search(request):
         search_terms = query
         docs = []
         for doc in solr_docs:
-            if 'condition' in doc:
-                num_conditions = len(doc['condition'])
-            else:
-                num_conditions = 0
-            docs.append(SolrGene(doc['sys_name'], doc['short_name'],
-                                 num_conditions))
+            docs.append(SolrGene(doc['species'],
+                                 doc['ncbi_taxonomy_id'],
+                                 doc['sys_name'],
+                                 doc['name'],
+                                 doc['description'],
+                                 doc['num_conds'],
+                                 doc['num_corems'],
+                                 doc['num_gres']))
         return render_to_response('search_results.html', locals())
     else:
         return render_to_response('search.html', locals())

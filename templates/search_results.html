@@ -36,14 +36,22 @@
         <thead>
           <th>Organism</th>
           <th>Gene</th>
+          <th>Gene Name</th>
+          <th>Description</th>
           <th># Conditions</th>
+          <th># Corems</th>
+          <th># GREs</th>
         </thead>
         <tbody>
           {% for row in docs %}
           <tr>
             <td>{{ row.species }}</td>
-            <td>{{ row.sys_name }}</td>
+            <td><a href="{% url 'genes' %}{{ row.species_taxid }}/{{ row.sys_name }}">{{ row.sys_name }}</a></td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.description }}</td>
             <td>{{ row.num_conditions }}</td>
+            <td>{{ row.num_corems }}</td>
+            <td>{{ row.num_gres }}</td>
           </tr>
           {% endfor%}
         </tbody>

@@ -111,10 +111,14 @@
    <field name="strand" type="string" indexed="true" stored="true"/>
    <field name="sys_name" type="string" indexed="true" stored="true"/>
    <field name="short_name" type="string" indexed="true" stored="true"/>
+   <field name="num_conds" type="int" indexed="true" stored="true"/>
+   <field name="num_corems" type="int" indexed="true" stored="true"/>
+   <field name="num_gres" type="int" indexed="true" stored="true"/>
+   <field name="ncbi_taxonomy_id" type="int" indexed="true" stored="true"/>
 
    <field name="network" type="text_general" indexed="true" stored="true" multiValued="true" />
    <field name="species" type="text_general" indexed="true" stored="true" />
-   <field name="condition" type="text_general" indexed="true" stored="true" multiValued="true" />
+   <!-- <field name="condition" type="text_general" indexed="true" stored="true" multiValued="true" /> -->
 
    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
