@@ -350,14 +350,25 @@ def search(request):
         search_terms = query
         docs = []
         for doc in solr_docs:
+            num_corems = 0
+            num_conds = 0
+            num_gres = 0
+
+            if 'num_conds' in doc:
+                num_conds = doc['num_conds']
+            if 'num_corems' in doc:
+                num_corems = doc['num_corems']
+            if 'num_gres' in doc:
+                num_gres = doc['num_gres']
+
             docs.append(SolrGene(doc['species'],
                                  doc['ncbi_taxonomy_id'],
                                  doc['sys_name'],
                                  doc['name'],
                                  doc['description'],
-                                 doc['num_conds'],
-                                 doc['num_corems'],
-                                 doc['num_gres']))
+                                 num_conds,
+                                 num_corems,
+                                 num_gres))
         return render_to_response('search_results.html', locals())
     else:
         return render_to_response('search.html', locals())
