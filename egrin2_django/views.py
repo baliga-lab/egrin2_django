@@ -35,7 +35,6 @@ def browse(request):
     gres = Gre.objects.count()
     biclusters = Bicluster.objects.count()
     tfs = len(list(set([o.tf for o in greTF.objects.all()])))
-    return render_to_response('index.html', locals())
     return render_to_response('browse.html', locals())
 
 def condition_detail_link(species, cond_id, label):
