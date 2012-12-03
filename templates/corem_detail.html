@@ -39,6 +39,9 @@
           $("#conditions").dataTable({
             "bFilter": false,
             "bSort": false,
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "{% url 'corem_conditions_json' %}{{species}}/{{corem}}"
           });
           $("#biclusters").dataTable({
             "bFilter": false,
@@ -101,15 +104,7 @@
             <th>pval</th>
           </tr>
         </thead>
-        <tbody>
-          {% for c in conds_pval_dict.values %}
-          <tr class="{% cycle 'row-a' 'row-b' %}">
-            <td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ c.cond_id }}">{{ c.cond_id }}</a></td>
-            <td>{{ c.cond_name }}</td>
-            <td>{{ c.p_val }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
+        <tbody></tbody>
       </table>
       <blockquote><p>Biclusters</p></blockquote>
       <table id="biclusters" class="table">

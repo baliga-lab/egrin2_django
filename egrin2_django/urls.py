@@ -20,6 +20,9 @@ urlpatterns = patterns('egrin2_django.views',
 
     url(r'^browse/$', 'browse',name='browse'),
 
+    ##############################################################################
+    # CONDITIONS
+    ##############################################################################
     url(r'^conditions/$', 'conditions',name='conditions'),
     url(r'^conditions/(?P<species>[^/]*)/?$', 'conditions',name='conditions'),
     url(r'^conditions/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$', 'condition_detail',name='condition_detail'),
@@ -28,7 +31,9 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^conditions_json/$', 'conditions_json',name='conditions_json'),
     url(r'^conditions_json/(?P<species>[^/]*)/?$', 'conditions_json', name='conditions_json'),
 
-    url(r'^contact/$', 'contact',name='contact'),
+    url(r'^corem_conditions_json/$', 'corem_conditions_json',name='corem_conditions_json'),
+    url(r'^corem_conditions_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
+        'corem_conditions_json', name='corem_conditions_json'),
 
     ##############################################################################
     # BICLUSTERS
@@ -87,6 +92,7 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^regulators/(?P<species>[^/]*)/?$', 'regulators',name='regulators'),
     url(r'^regulators/(?P<species>[^/]*)/(?P<regulator>[^/]*)/?$', 'regulator_detail',name='regulator_detail'),
 
+    url(r'^contact/$', 'contact',name='contact'),
     url(r'^downloads/$', 'downloads', name='downloads'),
     url(r'^search/$', 'search', name='search'),
 

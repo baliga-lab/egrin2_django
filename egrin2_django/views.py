@@ -97,6 +97,30 @@ def conditions_json(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+def corem_conditions_json(request, species, corem):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+
+    corem_conds_query = CoremConditionMembership.objects.filter(corem=corem)
+    num_conds_total = corem_conds_query.count()
+    conds_batch = corem_conds_query[display_start:display_end]
+    conds = [[condition_detail_link(species, corem_cond.cond.cond_id, corem_cond.cond.cond_id),
+              corem_cond.cond.cond_name,
+              corem_cond.p_val]
+             for corem_cond in conds_batch]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
+        'aaData': conds
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
 def conditions(request, species=None):
     # Return info about conditions
     class SpeciesConditionInfo:
@@ -198,17 +222,9 @@ def corem_detail(request, species=None, corem=None):
             self.gre_id = gre.gre_id
             self.corem_pval = GreCoremMembership.objects.get(corem=corem,gre_id=gre).p_val
             #self.pssm = gre.pssm.matrix()
-    # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    network = Network.objects.filter(species=s)
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    conds = Condition.objects.filter(corems=corem)
-    conds_pval = CoremConditionMembership.objects.filter(corem=corem, 
-                                                         cond_id__in=conds)
-    conds_pval_dict = {}
-    for i in conds_pval:
-        d = {"cond_id":i.cond.cond_id,"cond_name":Condition.objects.get(cond_id = i.cond.cond_id).cond_name,"p_val":i.p_val}
-        conds_pval_dict[i] = d
+
     gres = Gre.objects.filter(corem=corem)
     gre_obj = [greObject(species, gre) for gre in gres]
     return render_to_response('corem_detail.html', locals())
