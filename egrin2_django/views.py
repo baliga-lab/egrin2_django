@@ -211,7 +211,6 @@ def corem_detail(request, species=None, corem=None):
         conds_pval_dict[i] = d
     gres = Gre.objects.filter(corem=corem)
     gre_obj = [greObject(species, gre) for gre in gres]
-    biclusters = Bicluster.objects.filter(corems=corem,network__in=network)
     return render_to_response('corem_detail.html', locals())
 
 def downloads(request):
@@ -536,6 +535,29 @@ def biclusters_json(request, species=None):
                    bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.genes.count(), b.conditions.count(), b.cres.count(),
                    b.corems.count(), b.gres.count()]
+                  for b in bicluster_objs]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'aaData': biclusters
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+def corem_biclusters_json(request, species=None, corem=None):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    biclusters_query = Bicluster.objects.filter(corems=corem,network__in=networks)
+    num_biclusters_total = biclusters_query.count()
+    bicluster_objs = biclusters_query[display_start:display_end]
+
+    biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
+                   b.residual, b.genes.count(), b.conditions.count()]
                   for b in bicluster_objs]
 
     data = {

@@ -18,13 +18,6 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^index/$', 'index', name='index'),
     url(r'^about/$', 'about',name='about'),
 
-    url(r'^biclusters_json/$', 'biclusters_json',name='biclusters_json'),
-    url(r'^biclusters_json/(?P<species>[^/]*)/?$', 'biclusters_json',name='biclusters_json'),
-
-    url(r'^biclusters/$', 'biclusters',name='biclusters'),
-    url(r'^biclusters/(?P<species>[^/]*)/?$', 'biclusters_s',name='biclusters_s'),
-    url(r'^biclusters/(?P<species>[^/]*)/(?P<bicluster>[^/]*)/?$', 'bicluster_detail',name='bicluster_detail'),
-
     url(r'^browse/$', 'browse',name='browse'),
 
     url(r'^conditions/$', 'conditions',name='conditions'),
@@ -36,6 +29,20 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^conditions_json/(?P<species>[^/]*)/?$', 'conditions_json', name='conditions_json'),
 
     url(r'^contact/$', 'contact',name='contact'),
+
+    ##############################################################################
+    # BICLUSTERS
+    ##############################################################################
+    url(r'^biclusters_json/$', 'biclusters_json', name='biclusters_json'),
+    url(r'^biclusters_json/(?P<species>[^/]*)/?$', 'biclusters_json', name='biclusters_json'),
+
+    url(r'^corem_biclusters_json/$', 'corem_biclusters_json', name='corem_biclusters_json'),
+    url(r'^corem_biclusters_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
+        'corem_biclusters_json', name='corem_biclusters_json'),
+
+    url(r'^biclusters/$', 'biclusters',name='biclusters'),
+    url(r'^biclusters/(?P<species>[^/]*)/?$', 'biclusters_s',name='biclusters_s'),
+    url(r'^biclusters/(?P<species>[^/]*)/(?P<bicluster>[^/]*)/?$', 'bicluster_detail',name='bicluster_detail'),
 
     ##############################################################################
     # COREMS
