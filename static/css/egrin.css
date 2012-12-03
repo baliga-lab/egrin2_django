@@ -12,7 +12,7 @@ th.sorting {
 }
 
 th.sorting_asc {
-    background: #93BC0C url('../nav.jpg') repeat-x;
+    background: #93BC0C url('../nav-current.jpg') repeat-x;
     height: 29px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -22,7 +22,7 @@ th.sorting_asc {
 	border-bottom: solid 2px #FFF;
 }
 th.sorting_desc {
-    background: #93BC0C url('../nav.jpg') repeat-x;
+    background: #93BC0C url('../nav-current.jpg') repeat-x;
     height: 29px;
 	padding-left: 8px;
 	padding-right: 8px;
