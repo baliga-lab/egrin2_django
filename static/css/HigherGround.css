@@ -110,7 +110,7 @@ blockquote {
 /* start - table */
 table {
 	border-collapse: collapse;
-	margin: 200px;
+	margin: 20px;
     table-layout:auto;
 }
 th strong {
@@ -272,6 +272,7 @@ form.pager fieldset{
 	border-bottom: 2px solid #D0D0D0;
 	margin-left: 15px;	
 	display: inline;
+	margin: 100 px;
 }
 #header {
 	width: 820px;
