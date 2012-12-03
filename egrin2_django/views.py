@@ -317,16 +317,12 @@ def gene_detail(request, species=None, gene=None):
     g = Gene.objects.get(sys_name=gene)
     s = Species.objects.get(ncbi_taxonomy_id=species)
     corems = Corem.objects.filter(genes__sys_name=g.sys_name)
-    conds = Condition.objects.filter(gene__sys_name = g.sys_name)
-    conds_pval = GeneConditionMembership.objects.filter(gene__sys_name=g.sys_name, 
-                                                        cond_id__in = conds)
-    # add cond name to conds_pval
-    conds_pval_dict = {}
-    for i in conds_pval:
-        d = {"cond_id":i.cond.cond_id,
-             "cond_name":Condition.objects.get(cond_id = i.cond.cond_id).cond_name,
-             "p_val":i.p_val}
-        conds_pval_dict[i] = d
+
+    gene_conds_query = GeneConditionMembership.objects.filter(gene__sys_name=g.sys_name)
+    conds = [[gene_cond.cond.cond_id,
+              gene_cond.cond.cond_name,
+              gene_cond.p_val]
+             for gene_cond in gene_conds_query] 
     gres = Gre.objects.filter(genes=g)
     gre_obj = [greObject(species, gre) for gre in gres]
     biclusters = Bicluster.objects.filter(genes__sys_name=g.sys_name)

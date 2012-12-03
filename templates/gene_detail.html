@@ -107,11 +107,11 @@
         </tr>
       </thead>
       <tbody>
-        {% for c in conds_pval_dict.values %}
+        {% for c in conds %}
         <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ c.cond_id }}">{{ c.cond_id }}</a></td>
-          <td>{{ c.cond_name }}</td>
-          <td>{{ c.p_val }}</td>
+          <td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ c.0 }}">{{ c.0 }}</a></td>
+          <td>{{ c.1 }}</td>
+          <td>{{ c.2 }}</td>
         </tr>
         {% endfor %}
       </tbody>
