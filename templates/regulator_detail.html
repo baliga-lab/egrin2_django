@@ -109,7 +109,7 @@
           <tr class="{% cycle 'row-a' 'row-b' %}">
             <td class="first"><a href="{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.gene.sys_name }}</a></td>
             <td>{{ g.gene.name }}</td>
-            <td>{{ g.gene.desc }}</td>
+            <td>{{ g.gene.description }}</td>
             <td>{{ g.gene.start }}</td>
             <td>{{ g.gene.stop }}</td>
             <td>{{ g.gene.strand }}</td>
