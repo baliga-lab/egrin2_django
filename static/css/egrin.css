@@ -12,8 +12,22 @@ th.sorting {
 }
 
 th.sorting_asc {
-    background-color: #00aa00;
+    background: #93BC0C url('../nav.jpg') repeat-x;
+    height: 29px;
+	padding-left: 8px;
+	padding-right: 8px;
+	color: #FFF;
+	text-align: left;
+	border-left: 1px solid #B6D59A;
+	border-bottom: solid 2px #FFF;
 }
 th.sorting_desc {
-    background-color: #00aa00;
+    background: #93BC0C url('../nav.jpg') repeat-x;
+    height: 29px;
+	padding-left: 8px;
+	padding-right: 8px;
+	color: #FFF;
+	text-align: left;
+	border-left: 1px solid #B6D59A;
+	border-bottom: solid 2px #FFF;
 }
