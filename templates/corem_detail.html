@@ -28,6 +28,9 @@
           $("#genes").dataTable({
             "bFilter": false,
             "bSort": false,
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "{% url 'corem_genes_json' %}{{species}}/{{corem}}"
           });                
           $("#gres").dataTable({
             "bFilter": false,
@@ -64,19 +67,6 @@
           </tr>
         </thead>
         <tbody>
-          {% for g in genes %}
-          <tr class="{% cycle 'row-a' 'row-b' %}">
-            <td class="first"><a href="{% url 'species' %}{{ s.ncbi_taxonomy_id }}">{{ s.name }}</a></td>
-            <td><a href="{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}">{{ g.sys_name }}</a></td>
-            <td>{{ g.name }}</td>
-            <td><a href="http://www.ncbi.nlm.nih.gov/protein/{{ g.accession }}">{{ g.accession }}</a></td>
-            <td>{{ g.description }}</td>
-            <td>{{ g.start }}</td>
-            <td>{{ g.stop }}</td>
-            <td>{{ g.strand }}</td>
-            <td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ g.chromosome.refseq }}">{{ g.chromosome.refseq }}</a></td>
-          </tr>
-          {% endfor %}
         </tbody>
       </table>
       <blockquote><p>GREs</p></blockquote>

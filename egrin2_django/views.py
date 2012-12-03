@@ -41,6 +41,15 @@ def condition_detail_link(species, cond_id, label):
     return '<a href="%s">%s</a>' % (reverse('condition_detail',
                                             args=[species, cond_id]), label)
 
+def species_detail_link(species, label):
+    return '<a href="%s">%s</a>' % (reverse('species', args=[species]), label)
+
+def ncbi_accession_link(accession):
+    return '<a href="http://www.ncbi.nlm.nih.gov/protein/%s">%s</a>' % (accession, accession)
+
+def ncbi_chromosome_link(chromosome):
+    return '<a href="http://www.ncbi.nlm.nih.gov/nuccore/%s">%s</a>' % (chromosome, chromosome)
+
 def get_sort_field2(request, fields, default_field):
     sort_field = default_field
     sort_dir = "asc"
@@ -193,7 +202,6 @@ def corem_detail(request, species=None, corem=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     network = Network.objects.filter(species=s)
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    genes = Gene.objects.filter(corem=corem,species=s)
     conds = Condition.objects.filter(corems=corem)
     conds_pval = CoremConditionMembership.objects.filter(corem=corem, 
                                                          cond_id__in=conds)
@@ -229,8 +237,10 @@ def genes_json(request, species):
     genes_batch = genes_query[display_start:display_end]
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
-              g.accession, g.description, g.start, g.stop,
-              g.strand, g.chromosome.refseq] for g in genes_batch]
+              ncbi_accession_link(g.accession),
+              g.description, g.start, g.stop,
+              g.strand,
+              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
@@ -238,6 +248,32 @@ def genes_json(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+def corem_genes_json(request, species=None, corem=None):
+    """corem-specific gene list"""
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
+    s = Species.objects.get(ncbi_taxonomy_id=species)
+    genes_query = Gene.objects.filter(corem=corem, species=s)
+    num_genes_total = genes_query.count()
+    genes_batch = genes_query[display_start:display_end]
+    
+    genes = [[species_detail_link(species, s.name),
+              gene_detail_link(species, g.sys_name, g.sys_name),
+              g.name,
+              ncbi_accession_link(g.accession),
+              g.description, g.start, g.stop,
+              g.strand,
+              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
+        'aaData': genes
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def genes(request, species=None):
     # Return info about the genes

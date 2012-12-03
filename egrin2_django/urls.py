@@ -37,23 +37,38 @@ urlpatterns = patterns('egrin2_django.views',
 
     url(r'^contact/$', 'contact',name='contact'),
 
+    ##############################################################################
+    # COREMS
+    ##############################################################################
+
     url(r'^corems/$', 'corems',name='corems'),
     url(r'^corems/(?P<species>[^/]*)/?$', 'corems',name='corems'),
     url(r'^corems/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$', 'corem_detail',name='corem_detail'),
 
-    # filling genes tables with JSON data
+    # filling corem tables with JSON data
     url(r'^corems_json/$', 'corems_json',name='corems_json'),
     url(r'^corems_json/(?P<species>[^/]*)/?$', 'corems_json', name='corems_json'),
 
-    url(r'^downloads/$', 'downloads',name='downloads'),
+    ##############################################################################
+    # GENES
+    ##############################################################################
 
     url(r'^genes/$', 'genes',name='genes'),
     url(r'^genes/(?P<species>[^/]*)/?$', 'genes',name='genes'),
     url(r'^genes/(?P<species>[^/]*)/(?P<gene>[^/]*)/?$', 'gene_detail',name='gene_detail'),
-
+    
     # filling genes tables with JSON data
     url(r'^genes_json/$', 'genes_json',name='genes_json'),
     url(r'^genes_json/(?P<species>[^/]*)/?$', 'genes_json', name='genes_json'),
+
+    # list of corem-specific genes
+    url(r'^corem_genes_json/$', 'corem_genes_json',name='corem_genes_json'),
+    url(r'^corem_genes_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
+        'corem_genes_json', name='corem_genes_json'),
+
+    ##############################################################################
+    # OTHER
+    ##############################################################################
 
     url(r'^gres/$', 'gres',name='gres'),
     url(r'^gres/(?P<species>[^/]*)/?$', 'gres_s',name='gres_s'),
@@ -65,10 +80,11 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^regulators/(?P<species>[^/]*)/?$', 'regulators',name='regulators'),
     url(r'^regulators/(?P<species>[^/]*)/(?P<regulator>[^/]*)/?$', 'regulator_detail',name='regulator_detail'),
 
-    url(r'^search/$', 'search',name='search'),
+    url(r'^downloads/$', 'downloads', name='downloads'),
+    url(r'^search/$', 'search', name='search'),
 
-    url(r'^sitemap/$', 'sitemap',name='sitemap'),
+    url(r'^sitemap/$', 'sitemap', name='sitemap'),
 
-    url(r'^species/$', 'species',name='species'),
-    url(r'^species/(?P<species>[^/]*)/?$', 'species',name='species'),
+    url(r'^species/$', 'species', name='species'),
+    url(r'^species/(?P<species>[^/]*)/?$', 'species', name='species'),
 )
