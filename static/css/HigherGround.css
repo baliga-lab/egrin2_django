@@ -110,7 +110,7 @@ blockquote {
 /* start - table */
 table {
 	border-collapse: collapse;
-	margin: 10px;
+	margin: 20px;
     table-layout:auto;
 }
 th strong {

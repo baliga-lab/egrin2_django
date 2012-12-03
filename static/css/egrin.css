@@ -1,7 +1,14 @@
 /* Custom CSS overrides of the EGRIN application */
 
 th.sorting {
-    background-color: #44bb88;
+    background: #93BC0C url('../nav.jpg') repeat-x;
+    height: 29px;
+	padding-left: 8px;
+	padding-right: 8px;
+	color: #FFF;
+	text-align: left;
+	border-left: 1px solid #B6D59A;
+	border-bottom: solid 2px #FFF;
 }
 
 th.sorting_asc {
