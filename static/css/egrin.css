@@ -3,31 +3,23 @@
 th.sorting {
     background: #93BC0C url('../nav.jpg') repeat-x;
     height: 29px;
-	padding-left: 8px;
-	padding-right: 8px;
-	color: #FFF;
-	text-align: left;
-	border-left: 1px solid #B6D59A;
-	border-bottom: solid 2px #FFF;
+	  padding-left: 8px;
+	  padding-right: 8px;
+	  color: #FFF;
+	  text-align: left;
+	  border-left: 1px solid #B6D59A;
+	  border-bottom: solid 2px #FFF;
 }
 
 th.sorting_asc {
-    background: #93BC0C url('../nav-current.jpg') repeat-x;
-    height: 29px;
-	padding-left: 8px;
-	padding-right: 8px;
-	color: #FFF;
-	text-align: left;
-	border-left: 1px solid #B6D59A;
-	border-bottom: solid 2px #FFF;
+    background-color: #93bc0c;
+    background-image: url("../sort_dsc.gif"), url('../nav-current.jpg');
+    background-repeat: no-repeat, repeat-x;
+    background-position: center right;
 }
 th.sorting_desc {
-    background: #93BC0C url('../nav-current.jpg') repeat-x;
-    height: 29px;
-	padding-left: 8px;
-	padding-right: 8px;
-	color: #FFF;
-	text-align: left;
-	border-left: 1px solid #B6D59A;
-	border-bottom: solid 2px #FFF;
+    background-color: #93bc0c;
+    background-image: url("../sort_asc.gif"), url('../nav-current.jpg');
+    background-repeat: no-repeat, repeat-x;
+    background-position: center right;
 }
