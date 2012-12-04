@@ -82,7 +82,7 @@
           {% for c in corem_pval %}
           <tr class="{% cycle 'row-a' 'row-b' %}">
             <td class="first"><a href="{% url 'corems' %}{{ s.ncbi_taxonomy_id }}/{{ c.corem.corem_id }}">{{ c.corem.corem_id }}</a></td>
-            <td>{{ c.gre_id.gre_id }}</td>
+            <td>{{ c.gre.gre_id }}</td>
             <td>{{ c.p_val }}</td>
           </tr>
 					{% endfor %}
@@ -144,27 +144,4 @@
       </table>
 		  <!-- main ends -->	
   </div>
-  <script>
-<!--
-    var ids = [{{ gre.gre_id }}];
-    var django_pssm = [{{ pssm }}];
-    initCanvas2 = function (pssmMap, prefix, motifIds) {
-        var i;
-        for (i = 0; i < motifIds.length; i += 1) {
-            var motifId = motifIds[i];
-            var pssm = { alphabet: ['A', 'C', 'G', 'T'],
-                        values: pssmMap[i]
-                        };
-            var canvas_id = prefix + motifId;
-            var canvasOptions = {
-                width: 400, //400,
-                height: 300, //300,
-                glyphStyle: '20pt Helvetica'
-            };
-            isblogo.makeLogo(canvas_id, pssm, canvasOptions);
-            }
-        };
-    initCanvas2(django_pssm, 'previewcanvas_', ids);
-//-->
-</script>        
 {% endblock %}
