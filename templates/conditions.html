@@ -26,7 +26,8 @@
           "bFilter": false,
           "bProcessing": true,
           "bServerSide": true,
-          "sAjaxSource": "{% url 'conditions_json' %}{{o.ncbi_taxonomy_id}}"
+          "sAjaxSource": "{% url 'conditions_json' %}{{o.ncbi_taxonomy_id}}",
+          "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
         });
       });
     </script>

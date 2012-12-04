@@ -83,8 +83,11 @@ def conditions_json(request, species):
     conds_query = Condition.objects.filter(network__in=network).annotate(
         corem_count=Count('corems'))
     conds_query = conds_query.order_by(sort_field)
+    if display_length == -1:
+        conds_batch = conds_query
+    else:
+        conds_batch = conds_query[display_start:display_end]
 
-    conds_batch = conds_query[display_start:display_end]
     conds = [[condition_detail_link(species, c.cond_id, c.cond_id),
               c.cond_name,
               c.corem_count,
@@ -104,10 +107,13 @@ def corem_conditions_json(request, species, corem):
     display_end = display_start + display_length
 
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-
     corem_conds_query = CoremConditionMembership.objects.filter(corem=corem)
     num_conds_total = corem_conds_query.count()
-    conds_batch = corem_conds_query[display_start:display_end]
+    if display_length == -1:
+        conds_batch = corem_conds_query
+    else:
+        conds_batch = corem_conds_query[display_start:display_end]
+        
     conds = [[condition_detail_link(species, corem_cond.cond.cond_id, corem_cond.cond.cond_id),
               corem_cond.cond.cond_name,
               corem_cond.p_val]
@@ -177,7 +183,8 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
 
     query += " where network_id in (%s)" % (",".join(network_ids))
     query += (" order by %s %s" % (sort_field, sort_dir))
-    query += (" limit %d offset %d" % (display_length, display_start))
+    if display_length > 0:
+        query += (" limit %d offset %d" % (display_length, display_start))
 
     cursor = connection.cursor()
     cursor.execute(query)
@@ -220,7 +227,7 @@ def corem_detail(request, species=None, corem=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
 
-    gres = Gre.objects.filter(corem=corem)
+    gres = Gre.objects.filter(corem=corem).order_by('p_val', 'gre_id')
     gre_obj = [greObject(species, gre) for gre in gres]
     return render_to_response('corem_detail.html', locals())
 
@@ -269,7 +276,10 @@ def corem_genes_json(request, species=None, corem=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     genes_query = Gene.objects.filter(corem=corem, species=s)
     num_genes_total = genes_query.count()
-    genes_batch = genes_query[display_start:display_end]
+    if display_length == -1:
+        genes_batch = genes_query
+    else:
+        genes_batch = genes_query[display_start:display_end]
     
     genes = [[species_detail_link(species, s.name),
               gene_detail_link(species, g.sys_name, g.sys_name),
@@ -561,11 +571,14 @@ def corem_biclusters_json(request, species=None, corem=None):
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
     biclusters_query = Bicluster.objects.filter(corems=corem,network__in=networks)
     num_biclusters_total = biclusters_query.count()
-    bicluster_objs = biclusters_query[display_start:display_end]
+    if display_length == -1:
+        bicluster_batch = biclusters_query
+    else:
+        bicluster_batch = biclusters_query[display_start:display_end]
 
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.residual, b.genes.count(), b.conditions.count()]
-                  for b in bicluster_objs]
+                  for b in bicluster_batch]
 
     data = {
         'sEcho': sEcho,
