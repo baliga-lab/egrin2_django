@@ -27,19 +27,23 @@
       $(document).ready(function() {
         $("#gres").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[2, 'desc']]
         });
         $("#corems").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[2, 'desc']]
         });
         $("#genes").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[8, 'desc']]
         });
         $("#conditions").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[3, 'desc']]
         });			            
       });
 		</script>
