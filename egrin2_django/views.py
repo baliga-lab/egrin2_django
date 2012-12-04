@@ -101,13 +101,15 @@ def conditions_json(request, species):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def corem_conditions_json(request, species, corem):
+    fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    corem_conds_query = CoremConditionMembership.objects.filter(corem=corem)
+    corem_conds_query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
     num_conds_total = corem_conds_query.count()
     if display_length == -1:
         conds_batch = corem_conds_query
@@ -158,7 +160,9 @@ def corem_detail_link(species, corem_id, label):
                                             args=[species, corem_id]), label)
 
 def corems_json(request, species):
-    query = """select q1.corem_id, corem_name, num_genes, num_conditions, num_gres
+    # note how we use the coalesce() function to generate 0
+    # for NULL values from the outer join to GREs
+    query = """select q1.corem_id, corem_name, num_genes, num_conditions, coalesce(num_gres, 0) as num_gres2
 from (select c.id as corem_id, c.network_id, c.corem_id as corem_name,
 count(cg.gene_id) as num_genes
 from %scorem c left outer join %scorem_genes cg
@@ -170,7 +174,7 @@ on q1.corem_id = q2.corem_id left outer join
 from %sgrecoremmembership gcm group by gcm.corem_id) as q3
 on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX)
 
-    fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres']
+    fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres2']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
@@ -267,22 +271,26 @@ def genes_json(request, species):
 
 def corem_genes_json(request, species=None, corem=None):
     """corem-specific gene list"""
+    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
+              'strand', 'chromosome__refseq']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
     s = Species.objects.get(ncbi_taxonomy_id=species)
     genes_query = Gene.objects.filter(corem=corem, species=s)
+    genes_query = genes_query.order_by(sort_field)
+
     num_genes_total = genes_query.count()
     if display_length == -1:
         genes_batch = genes_query
     else:
         genes_batch = genes_query[display_start:display_end]
     
-    genes = [[species_detail_link(species, s.name),
-              gene_detail_link(species, g.sys_name, g.sys_name),
+    genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               ncbi_accession_link(g.accession),
               g.description, g.start, g.stop,
@@ -562,14 +570,16 @@ def biclusters_json(request, species=None):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def corem_biclusters_json(request, species=None, corem=None):
+    fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
     networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    biclusters_query = Bicluster.objects.filter(corems=corem,network__in=networks)
+    biclusters_query = Bicluster.objects.filter(corems=corem).order_by(sort_field)
     num_biclusters_total = biclusters_query.count()
     if display_length == -1:
         bicluster_batch = biclusters_query
