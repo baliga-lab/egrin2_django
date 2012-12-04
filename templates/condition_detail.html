@@ -36,6 +36,9 @@
         $("#bcs").dataTable({
           "bFilter": false,
           "bSort": false,
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'condition_biclusters_json' %}{{species}}/{{condition}}"
         });            
       });
     </script>
@@ -119,16 +122,7 @@
           <th>Conditions</th>
         </tr>
       </thead>
-      <tbody>
-        {% for o in biclusters %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'biclusters' %}{{ s.ncbi_taxonomy_id }}/{{ o.bc_id }}">{{ o.bc_id }}</a></td>
-          <td>{{ o.residual }}</td>
-          <td>{{ o.genes.count }}</td>
-          <td>{{ o.conditions.count }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
+      <tbody></tbody>
     </table>
 		<!-- main ends -->
 		</div>

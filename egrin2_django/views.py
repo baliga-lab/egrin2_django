@@ -137,16 +137,11 @@ def conditions(request, species=None):
     return render_to_response('conditions.html', locals())
 
 def condition_detail(request, species=None, condition=None):
-    # Return info about conditions
-    # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
     genes = Gene.objects.filter(conditions=condition)
-    corems = Corem.objects.filter(conditions=condition)
-    corem_pval = CoremConditionMembership.objects.filter(cond_id=condition, 
-                                                         corem__in=corems)
+    corem_pval = CoremConditionMembership.objects.filter(cond_id=condition)
     gres_pval = GreConditionMembership.objects.filter(cond_id=condition)
-    biclusters = Bicluster.objects.filter(conditions=condition)
     return render_to_response('condition_detail.html', locals())
 
 def contact(request):
@@ -579,6 +574,28 @@ def corem_biclusters_json(request, species=None, corem=None):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+def condition_biclusters_json(request, species=None, condition=None):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+
+    s = Species.objects.get(ncbi_taxonomy_id=species)
+    condition = Condition.objects.get(cond_id = condition,network__species=s)
+    biclusters_query = Bicluster.objects.filter(conditions=condition)
+    num_biclusters_total = biclusters_query.count()
+    bicluster_objs = biclusters_query[display_start:display_end]
+
+    biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
+                   b.residual, b.genes.count(), b.conditions.count()]
+                  for b in bicluster_objs]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'aaData': biclusters
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def bicluster_detail(request, species=None, bicluster=None):
     # Return info about bicluster
