@@ -255,7 +255,11 @@ def genes_json(request, species):
     num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
     genes_query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
     genes_query = genes_query.order_by(sort_field)
-    genes_batch = genes_query[display_start:display_end]
+    if display_length == -1:
+        genes_batch = genes_query
+    else:
+        genes_batch = genes_query[display_start:display_end]
+
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               ncbi_accession_link(g.accession),
@@ -598,20 +602,26 @@ def corem_biclusters_json(request, species=None, corem=None):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def condition_biclusters_json(request, species=None, condition=None):
+    fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
     display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
-    biclusters_query = Bicluster.objects.filter(conditions=condition)
+    biclusters_query = Bicluster.objects.filter(conditions=condition).order_by(sort_field)
     num_biclusters_total = biclusters_query.count()
-    bicluster_objs = biclusters_query[display_start:display_end]
+
+    if display_length == -1:
+        bicluster_batch = biclusters_query
+    else:
+        bicluster_batch = biclusters_query[display_start:display_end]
 
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.residual, b.genes.count(), b.conditions.count()]
-                  for b in bicluster_objs]
+                  for b in bicluster_batch]
 
     data = {
         'sEcho': sEcho,

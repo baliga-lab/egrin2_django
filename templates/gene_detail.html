@@ -26,15 +26,18 @@
       $(document).ready(function() {
         $("#gres").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'desc']]
         });
         $("#conditions").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[2, 'desc']]
         });
         $("#biclusters").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'desc']]
         });                
       });
     </script>
@@ -140,34 +143,6 @@
     </table>
 		  <!-- main ends -->
 		</div>
-<script>
-<!--
-    var ids = []
-    var django_pssm = []
-    {% for o in gre_obj %}
-        ids.push({{ o.gre_id }})
-        django_pssm.push({{ o.pssm }})
-    {% endfor %}
-    
-    initCanvas2 = function (pssmMap, prefix, motifIds) {
-        var i;
-        for (i = 0; i < motifIds.length; i += 1) {
-            var motifId = motifIds[i];
-            var pssm = { alphabet: ['A', 'C', 'G', 'T'],
-                        values: pssmMap[i]
-                        };
-            var canvas_id = prefix + motifId;
-            var canvasOptions = {
-                width: 220, //400,
-                height: 120, //300,
-                glyphStyle: '20pt Helvetica'
-            };
-            isblogo.makeLogo(canvas_id, pssm, canvasOptions);
-            }
-        };
-    initCanvas2(django_pssm, 'previewcanvas_', ids);
-//-->
-</script>  
 <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
 <script type='text/javascript'>
 
