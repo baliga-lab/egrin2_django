@@ -108,25 +108,28 @@ def insert_gene(cur, species, accession, gi, start, stop, strand, sys_name, name
 def add_microbes_online_genes(organism, conn):
     print "Importing Microbes Online Genes..."
     with open(BASE_PATH[organism] + "genes.txt") as infile:
-        cur = conn.cursor()
-        infile.readline()  # skip header
-        for line in infile.readlines():
-            row = line.strip("\n").split("\t")
-            if len(row[7]) > 0:
-                species = int(SPECIES[organism])
-                accession = row[1]
-                gi = row[2]
-                chromosome_id = CHR_MO[int(row[3])]
-                start = int(row[4])
-                stop = int(row[5])
-                strand = row[6]
-                sys_name = row[7]
-                name = row[8]
-                desc = make_gene_description(row[9])
-                insert_gene(cur, species, accession, gi, start, stop,
-                            strand, sys_name, name, desc, chromosome_id)
-        conn.commit()
-        cur.close()
+        with open(BASE_PATH[organism] + "genes_in_model.txt") as refile:
+            ref = refile.readline().strip("\n").split(",")
+            cur = conn.cursor()
+            infile.readline()  # skip header
+            for line in infile.readlines():
+                row = line.strip("\n").split("\t")
+                if len(row[7]) > 0:
+                    if row[7] in ref:
+                        species = int(SPECIES[organism])
+                        accession = row[1]
+                        gi = row[2]
+                        chromosome_id = CHR_MO[int(row[3])]
+                        start = int(row[4])
+                        stop = int(row[5])
+                        strand = row[6]
+                        sys_name = row[7]
+                        name = row[8]
+                        desc = make_gene_description(row[9])
+                        insert_gene(cur, species, accession, gi, start, stop,
+                                    strand, sys_name, name, desc, chromosome_id)
+            conn.commit()
+            cur.close()
     print "done"
 
 ######################################################################
