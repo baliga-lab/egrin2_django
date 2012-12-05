@@ -176,6 +176,20 @@ class Gre(models.Model):
     
     def __unicode__(self):
         return '%s' % self.gre_id
+    
+class GO(models.Model):
+    go_id = models.CharField(max_length=255)
+    ontology = models.CharField(max_length=255)
+    term = models.TextField()
+    definition = models.TextField()
+    synonym = models.TextField()
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+    
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s' % self.gre_id
 
 class Cre(models.Model):
     network = models.ForeignKey(Network)
@@ -285,6 +299,20 @@ class CoremConditionMembership(models.Model):
         
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
+    
+class CoremGOMembership(models.Model):
+    go = models.ForeignKey(GO, verbose_name = "GO parent")
+    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+
+    class Meta:
+        ordering = ['go']
+        
+    def return_pval(self):
+        return float(self.p_val)
+    
+    def __unicode__(self):
+        return '%s : %s : %s' % (self.go,self.corem,self.p_val)
 
 class GreConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
