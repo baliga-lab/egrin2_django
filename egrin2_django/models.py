@@ -167,7 +167,8 @@ class Gre(models.Model):
     network = models.ForeignKey(Network)
     gre_id = models.CharField(max_length=255)
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
-    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+    is_pal = models.BooleanField()
+    pal_pval = models.DecimalField(max_digits=15, decimal_places=13)
 
     conditions = models.ManyToManyField(Condition, verbose_name = "Conditions members",
                                         through='GreConditionMembership')
@@ -183,7 +184,6 @@ class GO(models.Model):
     term = models.TextField()
     definition = models.TextField()
     synonym = models.TextField()
-    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
     
     def return_pval(self):
         return float(self.p_val)
@@ -301,7 +301,9 @@ class CoremConditionMembership(models.Model):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
     
 class CoremGOMembership(models.Model):
-    go = models.ForeignKey(GO, verbose_name = "GO parent")
+    go_id = models.ForeignKey(GO, verbose_name = "GO parent")
+    tot_annotated = models.IntegerField()
+    genes_annotated = models.IntegerField()
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
 
