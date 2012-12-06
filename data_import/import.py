@@ -13,9 +13,10 @@ from decimal import Decimal
 # is the place to change
 APP_PREFIX = 'egrin2_django_'
 
+PARENT_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/"
 ECO_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/511145/ecoli_"
 HAL_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/64091/hal_"
-BASE_PATH = { 'eco': ECO_PATH, 'hal': HAL_PATH }
+BASE_PATH = { 'eco': ECO_PATH, 'hal': HAL_PATH, 'parent': PARENT_PATH }
 
 # these maps reflect the ids established in the base fixtures
 SPECIES = { 'eco': 1, 'hal': 2 }
@@ -91,6 +92,30 @@ def get_corem_map(conn, organism):
     cur.close()
     return result
 
+######################################################################
+### Import Gene Ontology Table
+######################################################################
+
+def insert_go(cur, go_id, ontology, term, definition, synonym):
+    query = "insert into " + APP_PREFIX + "go (go_id, ontology, term, definition, synonym) values (%s,%s,%s,%s,%s)"
+    cur.execute(query, [go_id, ontology, term, definition, synonym])
+    
+def add_go(conn):
+    print "Importing Gene Ontology Reference Table..."
+    with open(BASE_PATH['parent'] + "geneontology.txt") as infile:
+        cur = conn.cursor()
+        infile.readline()  # skip header
+        for line in infile.readlines():
+            row = line.strip("\n").split("\t")
+            go_id = row[0]
+            ontology = row[3]
+            term = row[2]
+            definition = row[4]
+            synonym = row[5]
+            insert_go(cur, go_id, ontology, term, definition, synonym)
+        conn.commit()
+        cur.close()
+    print "done"    
 
 ######################################################################
 ### Import Microbes Online genome data
@@ -583,6 +608,7 @@ def add_gre_regulator(organism, conn):
 if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
+    add_go(conn)
     for organism in ['eco', 'hal']:
         print "organism: ", organism
         add_microbes_online_genes(organism, conn)
