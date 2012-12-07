@@ -23,19 +23,23 @@
       $(document).ready(function() {
         $("#genes").dataTable({
           "bFilter": false,
-          "bSort": false,
-        });                                
+          "bSort": true,
+          "aaSorting": [[1, 'asc']]
+        });
         $("#conditions").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[0, 'asc']]
         });
         $("#cres").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'asc']]
         });
         $("#gres").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[0, 'asc']]
         });
         $("#corems").dataTable({
           "bFilter": false,
@@ -110,7 +114,7 @@
         {% for o in cres %}
         <tr class="{% cycle 'row-a' 'row-b' %}">
           <td class="first">{{ o.cre_id }}</td>
-          <td>{{ o.eval }}</td>
+          <td>{{ o.e_val }}</td>
           <td><img src="/static/images/cres/{{ s.ncbi_taxonomy_id }}/{{ o.cre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
         </tr>
         {% endfor %}

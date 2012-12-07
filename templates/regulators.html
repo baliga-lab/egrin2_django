@@ -22,7 +22,9 @@
         <script>
             $(document).ready(function() {            
               $("#regulators").dataTable({
-                'bFilter': false
+                'bFilter': false,
+                "bSort": true,
+                "aaSorting": [[1, 'asc']]
               });
             });
         </script>

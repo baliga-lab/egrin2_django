@@ -26,23 +26,28 @@
       $(document).ready(function() {            
         $("#corems").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'asc']]
         });
         $("#genes").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'asc']]
         });
         $("#conditions").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[2, 'asc']]
         });
         $("#biclusters").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[1, 'asc']]
         });
         $("#cres").dataTable({
           "bFilter": false,
-          "bSort": false,
+          "bSort": true,
+          "aaSorting": [[3, 'asc']]
         });            			
       });
 		</script>

@@ -24,7 +24,7 @@
         $("#corems").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[1, 'desc']],
+          "aaSorting": [[1, 'asc']],
           "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
         });
         $("#genes").dataTable({
@@ -36,7 +36,7 @@
         $("#gres").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[1, 'desc']],
+          "aaSorting": [[1, 'asc']],
           "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
         });
         $("#bcs").dataTable({
@@ -44,7 +44,7 @@
           "bSort": true,
           "bProcessing": true,
           "bServerSide": true,
-          "aaSorting": [[1, 'desc']],
+          "aaSorting": [[1, 'asc']],
           "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']],
           "aoColumnDefs": [ { 'bSortable': false, 'aTargets': [2, 3]}],
           "sAjaxSource": "{% url 'condition_biclusters_json' %}{{species}}/{{condition}}"
