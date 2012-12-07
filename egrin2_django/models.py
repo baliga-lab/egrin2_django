@@ -174,9 +174,6 @@ class Gre(models.Model):
     genes = models.ManyToManyField(Gene, verbose_name = "Genes members",
                                    through='GreGeneMembership')
     
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s' % self.gre_id
 
@@ -264,9 +261,6 @@ class GreGeneMembership(models.Model):
     class Meta:
         ordering = ['gre']
         
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s : %s : %s' % (self.gre_id,self.gene,self.p_val)
     
@@ -278,9 +272,6 @@ class GeneConditionMembership(models.Model):
     class Meta:
         ordering = ['cond']
         
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.gene,self.p_val)
 
@@ -292,9 +283,6 @@ class CoremConditionMembership(models.Model):
     class Meta:
         ordering = ['cond']
         
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
 
@@ -306,23 +294,17 @@ class GreConditionMembership(models.Model):
     class Meta:
         ordering = ['cond']
         
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.gre,self.p_val)
 
 class GreCoremMembership(models.Model):
     gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
-    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)
 
     class Meta:
         ordering = ['gre']
         
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
         return '%s : %s : %s' % (self.gre_id,self.corem,self.p_val)
 

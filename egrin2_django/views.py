@@ -497,23 +497,12 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
             self.bcs = cre.cre_id.split("_")[0]+"_"+cre.cre_id.split("_")[1]
             self.e_val = cre.e_val
             #self.pssm = cre.pssm.matrix()
-    # just to be sure
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
     pssm = gre.pssm.matrix()
     genes = Gene.objects.filter(gre=gre)
-    corems = Corem.objects.filter(gres=gre)
-    corem_pval = GreCoremMembership.objects.filter(gre=gre, 
-                                                  corem__in = corems)
-    conds = Condition.objects.filter(gre=gre)
-    conds_pval = GreConditionMembership.objects.filter(gre=gre, 
-                                                       cond_id__in = conds)
-    conds_pval_dict = {}
-    for i in conds_pval:
-        d = {"cond_id":i.cond.cond_id,
-             "cond_name":Condition.objects.get(cond_id=i.cond.cond_id).cond_name,
-             "p_val":i.return_pval()}
-        conds_pval_dict[i] = d
+    corem_pval = GreCoremMembership.objects.filter(gre=gre)
+    conds_pval = GreConditionMembership.objects.filter(gre=gre)
     biclusters = Bicluster.objects.filter(gres=gre)
     cres = Cre.objects.filter(gre_id=gre)
     cre_dict = [creObject(species, cre) for cre in cres]
