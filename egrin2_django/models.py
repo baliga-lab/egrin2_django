@@ -304,8 +304,9 @@ class CoremGOMembership(models.Model):
     go_id = models.ForeignKey(GO, verbose_name = "GO parent")
     tot_annotated = models.IntegerField()
     genes_annotated = models.IntegerField()
-    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
+    
+    corem = models.ForeignKey('Corem', verbose_name = "corem parent")
 
     class Meta:
         ordering = ['go']

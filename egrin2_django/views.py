@@ -228,11 +228,15 @@ def corem_detail(request, species=None, corem=None):
             self.gre_id = gre.gre_id
             self.corem_pval = GreCoremMembership.objects.get(corem=corem,gre_id=gre).p_val
             #self.pssm = gre.pssm.matrix()
+    class goObject:
+        def __init__(self,species,go_id):
+            self.species = Species.objects.get(ncbi_taxonomy_id=species)
     s = Species.objects.get(ncbi_taxonomy_id=species)
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-
+    # i don't understand where corems are coming from
     gres = Gre.objects.filter(corem=corem).order_by('p_val', 'gre_id')
     gre_obj = [greObject(species, gre) for gre in gres]
+    go_ids = GO.objects.filter(corem=corem).order_by('p_val','go_id')
     return render_to_response('corem_detail.html', locals())
 
 def downloads(request):

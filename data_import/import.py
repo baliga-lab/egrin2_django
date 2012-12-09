@@ -92,6 +92,14 @@ def get_corem_map(conn, organism):
     cur.close()
     return result
 
+def get_go_map(conn, organism):
+    cur = conn.cursor()
+    query = "select id, go_id from " + APP_PREFIX + "go where network_id = %s"
+    cur.execute(query, [NETWORK[organism]])
+    result = { row[1]: row[0] for row in cur.fetchall() }
+    cur.close()
+    return result
+
 ######################################################################
 ### Import Gene Ontology Table
 ######################################################################
@@ -175,6 +183,9 @@ def add_rsat_genes(organism, conn):
         os.mkdir('cache')
     rsatdb = rsat.RSATDatabase(RSAT_BASE_URL, 'cache')
     rsat_name = RSAT_NAME[organism]
+    
+    with open(BASE_PATH[organism] + "genes_in_model.txt") as refile:
+        ref = refile.readline().strip("\n").split(",")
 
     features = [line.split('\t')
                 for line in rsatdb.get_features(rsat_name).split("\n")
@@ -187,8 +198,9 @@ def add_rsat_genes(organism, conn):
                     if RSAT_GENE_PATTERN[organism].match(row[1]) }
 
     genes = all_gene_names(conn, organism)
+
     missing = [feature for feature in features
-               if feature[0] in feature_map.keys() and feature_map[feature[0]] not in genes]
+               if feature[0] in feature_map.keys() and feature_map[feature[0]] not in genes and feature_map[feature[0]] in ref]
 
     cur = conn.cursor()
     print "added %d missing features from RSAT." % len(missing)
@@ -273,7 +285,7 @@ def add_gene_expressions(organism, conn, check_missing=False):
 ######################################################################
 
 def add_gre(organism, conn):
-    gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,p_val) values (%s,%s,%s,'NaN')"
+    gre_query = "insert into " + APP_PREFIX + "gre (network_id,gre_id,pssm_id,is_pal,pal_pval,p_val) values (%s,%s,%s,%s,%f,'NaN')"
     print "Importing GRE for ", organism
     with open(BASE_PATH[organism] + "gre.txt") as infile:
         cur = conn.cursor()
@@ -284,14 +296,14 @@ def add_gre(organism, conn):
                 parent_id = "%s_%s" % (organism, row[0])
                 cur.execute(PSSM_QUERY, [parent_id])
                 pssm_id = cur.fetchone()[0]
-                pssm = row[1].split(":")
+                pssm = row[3].split(":")
                 for pssm_row in pssm:
                     pssm_cols = pssm_row.split(",")
                     cur.execute(ROW_QUERY, [pssm_id, pssm_cols[0],
                                             pssm_cols[1], pssm_cols[2], pssm_cols[3],
                                             pssm_cols[4]])
                 gre_id = "%s_%s" % (organism, row[0])
-                cur.execute(gre_query, [NETWORK[organism], gre_id, pssm_id])
+                cur.execute(gre_query, [NETWORK[organism], gre_id, pssm_id,row[1],row[2]])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -407,12 +419,14 @@ def add_corems(organism, conn):
     corem_gene_query = "insert into " + APP_PREFIX + "corem_genes (corem_id,gene_id) values (%s,%s)"
     bicl_corem_query = "insert into " + APP_PREFIX + "bicluster_corems (bicluster_id,corem_id) values (%s,%s)"
     corem_gre_query = "insert into " + APP_PREFIX + "grecoremmembership (gre_id,corem_id,p_val) values (%s,%s,%s)"
+    corem_go_query = "insert into " + APP_PREFIX + "coremgomembership (go_id,tot_annotated,genes_annotated,p_val,corem_id) values (%s,%i,%i,%f,%s)"
 
     print "Importing corems for ", organism
     with open(BASE_PATH[organism] + "corems.txt") as infile:
         gene_map = get_gene_map(conn, organism)
         gre_map = get_gre_map(conn, organism)
         bicluster_map = get_bicluster_map(conn, organism)
+        go_map = get_go_map(conn, organism)
 
         cur = conn.cursor()
         infile.readline()  # skip header
@@ -442,6 +456,8 @@ def add_corems(organism, conn):
                     else:
                         pval = '0.0'
                     cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
+                    
+                gos = 
 
             conn.commit()
         except:
@@ -609,21 +625,21 @@ if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
     add_go(conn)
-    for organism in ['eco', 'hal']:
-        print "organism: ", organism
-        add_microbes_online_genes(organism, conn)
-        add_rsat_genes(organism, conn)
-        add_conditions(organism, conn)
-        add_gene_expressions(organism, conn, check_missing=True)
-        add_gre(organism, conn)
-        add_cre(organism, conn)
-        add_biclusters(organism, conn)
-        add_corems(organism, conn)
-        augment_conditions(organism, conn, check_biclusters=False,
-                           connect_corems=True, connect_genes=True,
-                           connect_gres=True)
-        augment_genes(organism, conn)
-        if organism == 'eco':
-            add_gre_regulator(organism, conn)
+#    for organism in ['eco', 'hal']:
+#        print "organism: ", organism
+#        add_microbes_online_genes(organism, conn)
+#        add_rsat_genes(organism, conn)
+#        add_conditions(organism, conn)
+#        add_gene_expressions(organism, conn, check_missing=True)
+#        add_gre(organism, conn)
+#        add_cre(organism, conn)
+#        add_biclusters(organism, conn)
+#        add_corems(organism, conn)
+#        augment_conditions(organism, conn, check_biclusters=False,
+#                           connect_corems=True, connect_genes=True,
+#                           connect_gres=True)
+#        augment_genes(organism, conn)
+#        if organism == 'eco':
+#            add_gre_regulator(organism, conn)
 
     conn.close()
