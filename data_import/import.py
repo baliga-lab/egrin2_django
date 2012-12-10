@@ -13,9 +13,9 @@ from decimal import Decimal
 # is the place to change
 APP_PREFIX = 'egrin2_django_'
 
-PARENT_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/"
-ECO_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/511145/ecoli_"
-HAL_PATH = "/home/weiju/Projects/ISB/egrin2_static_data/fixtures/64091/hal_"
+PARENT_PATH = "/isb-1/tmp/fixtures/"
+ECO_PATH = "/isb-1/tmp/fixtures/511145/ecoli_"
+HAL_PATH = "/isb-1/tmp/fixtures/64091/hal_"
 BASE_PATH = { 'eco': ECO_PATH, 'hal': HAL_PATH, 'parent': PARENT_PATH }
 
 # these maps reflect the ids established in the base fixtures
