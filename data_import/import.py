@@ -457,7 +457,7 @@ def add_corems(organism, conn):
                         pval = '0.0'
                     cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
                     
-                gos = 
+                gos = 1
 
             conn.commit()
         except:
