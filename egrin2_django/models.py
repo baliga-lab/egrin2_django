@@ -167,6 +167,7 @@ class Gre(models.Model):
     network = models.ForeignKey(Network)
     gre_id = models.CharField(max_length=255)
     pssm = models.ForeignKey(Pssm, verbose_name = "PSSM matrix")
+    p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
     is_pal = models.BooleanField()
     pal_pval = models.DecimalField(max_digits=15, decimal_places=13)
 
