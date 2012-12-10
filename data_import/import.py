@@ -43,6 +43,12 @@ def to_decimal(strval):
         return Decimal('NaN')
     else:
         return Decimal(strval)
+    
+def to_int(strval):
+    if strval == None or strval == '' or strval == 'NA':
+        return int("0")
+    else:
+        return int(strval)
 
 def get_gene_map(conn, organism):
     cur = conn.cursor()
@@ -92,10 +98,10 @@ def get_corem_map(conn, organism):
     cur.close()
     return result
 
-def get_go_map(conn, organism):
+def get_go_map(conn):
     cur = conn.cursor()
-    query = "select id, go_id from " + APP_PREFIX + "go where network_id = %s"
-    cur.execute(query, [NETWORK[organism]])
+    query = "select id, go_id from " + APP_PREFIX + "go"
+    cur.execute(query)
     result = { row[1]: row[0] for row in cur.fetchall() }
     cur.close()
     return result
@@ -419,7 +425,7 @@ def add_corems(organism, conn):
     corem_gene_query = "insert into " + APP_PREFIX + "corem_genes (corem_id,gene_id) values (%s,%s)"
     bicl_corem_query = "insert into " + APP_PREFIX + "bicluster_corems (bicluster_id,corem_id) values (%s,%s)"
     corem_gre_query = "insert into " + APP_PREFIX + "grecoremmembership (gre_id,corem_id,p_val) values (%s,%s,%s)"
-    corem_go_query = "insert into " + APP_PREFIX + "coremgomembership (go_id,tot_annotated,genes_annotated,p_val,corem_id) values (%s,%i,%i,%f,%s)"
+    corem_go_query = "insert into " + APP_PREFIX + "coremgomembership (go_id,tot_annotated,genes_annotated,p_val,corem_id) values (%s,%s,%s,%s,%s)"
 
     print "Importing corems for ", organism
     with open(BASE_PATH[organism] + "corems.txt") as infile:
@@ -457,8 +463,20 @@ def add_corems(organism, conn):
                         pval = '0.0'
                     cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
                     
-                gos = 1
-
+                go_ids = [go_map[go_id]
+                           for go_id in row[5].split(",") if len(row[5]) > 0]
+                tot_annot = [tot_ann for tot_ann in row[6].split(",") if len(row[6]) > 0]
+                genes_annot = [gene_ann for gene_ann in row[7].split(",") if len(row[7]) > 0]
+                pvals = [pval for pval in row[8].split(',') if len(row[8]) > 0]
+                for index in xrange(len(gre_ids)):
+                    if index < len(pvals):
+                        pval = pvals[index]
+                    else:
+                        tot_annot = '0'
+                        genes_annot = '0'
+                        pval = '0.0'
+                    cur.execute(corem_go_query, [go_ids[index], to_int(tot_annot[index]), to_int(genes_annot[index]),
+                                                 to_decimal(pval),corem_id])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -625,21 +643,21 @@ if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
     add_go(conn)
-#    for organism in ['eco', 'hal']:
-#        print "organism: ", organism
-#        add_microbes_online_genes(organism, conn)
-#        add_rsat_genes(organism, conn)
-#        add_conditions(organism, conn)
-#        add_gene_expressions(organism, conn, check_missing=True)
-#        add_gre(organism, conn)
-#        add_cre(organism, conn)
-#        add_biclusters(organism, conn)
-#        add_corems(organism, conn)
-#        augment_conditions(organism, conn, check_biclusters=False,
-#                           connect_corems=True, connect_genes=True,
-#                           connect_gres=True)
-#        augment_genes(organism, conn)
-#        if organism == 'eco':
-#            add_gre_regulator(organism, conn)
+    for organism in ['eco', 'hal']:
+        print "organism: ", organism
+        add_microbes_online_genes(organism, conn)
+        add_rsat_genes(organism, conn)
+        add_conditions(organism, conn)
+        add_gene_expressions(organism, conn, check_missing=True)
+        add_gre(organism, conn)
+        add_cre(organism, conn)
+        add_biclusters(organism, conn)
+        add_corems(organism, conn)
+        augment_conditions(organism, conn, check_biclusters=False,
+                           connect_corems=True, connect_genes=True,
+                           connect_gres=True)
+        augment_genes(organism, conn)
+        if organism == 'eco':
+            add_gre_regulator(organism, conn)
 
     conn.close()
