@@ -642,7 +642,7 @@ def add_gre_regulator(organism, conn):
 if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
-    add_go(conn)
+#    add_go(conn)
 #    for organism in ['eco', 'hal']:
 #        print "organism: ", organism
 #        add_microbes_online_genes(organism, conn)
