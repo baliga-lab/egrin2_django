@@ -167,7 +167,7 @@ def add_microbes_online_genes(organism, conn):
                         desc = make_gene_description(row[9])
                         insert_gene(cur, species, accession, gi, start, stop,
                                     strand, sys_name, name, desc, chromosome_id)
-            conn.commit()
+                        conn.commit()
             cur.close()
     print "done"
 
