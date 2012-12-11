@@ -228,16 +228,45 @@ def corem_detail(request, species=None, corem=None):
             self.gre_id = gre.gre_id
             self.corem_pval = GreCoremMembership.objects.get(corem=corem,gre_id=gre).p_val
             #self.pssm = gre.pssm.matrix()
-    #class goObject:
-    #    def __init__(self,species,go_id):
-    #        self.species = Species.objects.get(ncbi_taxonomy_id=species)
     s = Species.objects.get(ncbi_taxonomy_id=species)
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
     
     gres = Gre.objects.filter(corem=corem).order_by('p_val', 'gre_id')
     gre_obj = [greObject(species, gre) for gre in gres]
-    #go_ids = GO.objects.filter(corem=corem).order_by('p_val','go_id')
     return render_to_response('corem_detail.html', locals())
+
+def corem_go_json(request, species=None, corem=None):
+    """corem-specific go list"""
+    fields = ['go__go_id', 'go__term', 'go__ontology', 'genes_annotated', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
+    s = Species.objects.get(ncbi_taxonomy_id=species)
+    go_query = GO.objects.filter(corem=corem, species=s)
+    go_query = go_query.order_by(sort_field)
+
+    num_genes_total = genes_query.count()
+    if display_length == -1:
+        genes_batch = genes_query
+    else:
+        genes_batch = genes_query[display_start:display_end]
+    
+    genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
+              g.name,
+              ncbi_accession_link(g.accession),
+              g.description, g.start, g.stop,
+              g.strand,
+              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
+        'aaData': genes
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def downloads(request):
     s = Species.objects.all()
