@@ -51,7 +51,7 @@ def ncbi_chromosome_link(chromosome):
     return '<a href="http://www.ncbi.nlm.nih.gov/nuccore/%s">%s</a>' % (chromosome, chromosome)
 
 def amigo_link(go_id):
-    return '<a href="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=%s">%s</a>' % (go_id,go_id)
+    return '<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=%s">%s</a>' % (go_id,go_id)
 
 def get_sort_field2(request, fields, default_field):
     sort_field = default_field
