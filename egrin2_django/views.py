@@ -50,6 +50,9 @@ def ncbi_accession_link(accession):
 def ncbi_chromosome_link(chromosome):
     return '<a href="http://www.ncbi.nlm.nih.gov/nuccore/%s">%s</a>' % (chromosome, chromosome)
 
+def amigo_link(go_id):
+    return '<a href="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=%s">%s</a>' % (go_id,go_id)
+
 def get_sort_field2(request, fields, default_field):
     sort_field = default_field
     sort_dir = "asc"
@@ -254,7 +257,7 @@ def corem_go_json(request, species=None, corem=None):
     else:
         go_batch = go_query[display_start:display_end]
     
-    gos = [[g.go.go_id,g.go.term,g.go.ontology,g.genes_annotated,g.p_val] for g in go_batch]
+    gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,g.p_val] for g in go_batch]
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_gos_total, 'iTotalDisplayRecords': num_gos_total,
