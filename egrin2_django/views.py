@@ -486,7 +486,7 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     n = Network.objects.filter(species=species_obj)
 
-    gres = Gre.objects.filter(network__in=n).exclude(gre_id=s.short_name+"_0")
+    gres = Gre.objects.filter(network__in=n).exclude(gre_id=species_obj.short_name+"_0")
     objects = [greObject(species_obj, gre) for gre in gres]
     context = {'objects': objects}
     if extra_context is not None:
