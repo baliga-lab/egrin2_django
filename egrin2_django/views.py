@@ -480,6 +480,8 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
             self.gre_id = gre.gre_id
             self.cres = Cre.objects.filter(gre_id = gre).count()
             #self.pssm = gre.pssm.matrix()
+            self.is_pal = gre.is_pal
+            self.pal_pval = gre.pal_pval
 
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     n = Network.objects.filter(species=species_obj)

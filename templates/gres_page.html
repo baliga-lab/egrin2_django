@@ -6,7 +6,7 @@
       <th class="first">Organism</th>
       <th>GRE ID</th>
       <th>CRMs</th>
-      <th>Is palindromic?</th>
+      <th>Palindromic?</th>
       <th>Palindromic pval</th>
       <th>PSSM</th>
     </tr>
@@ -18,6 +18,8 @@
       <td class="first"><a href="{% url 'species' %}{{ object.species.ncbi_taxonomy_id }}">{{ object.species.name }}</a></td>
       <td><a href="{% url 'gres' %}{{ object.species.ncbi_taxonomy_id }}/{{ object.gre_id }}">{{ object.gre_id }}</td>
       <td>{{ object.cres }}</td>
+      <td>{{ object.is_pal }}</td>
+      <td>{{ object.pal_pval }}</td>
       <td><img src="/static/images/gres/{{ object.species.ncbi_taxonomy_id }}/{{ object.gre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
       <!-- <td><span id="previewcanvas_{{ object.gre_id }}"></span></td> -->
     </tr>
