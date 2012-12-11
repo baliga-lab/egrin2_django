@@ -432,7 +432,7 @@ def add_corems(organism, conn):
         gene_map = get_gene_map(conn, organism)
         gre_map = get_gre_map(conn, organism)
         bicluster_map = get_bicluster_map(conn, organism)
-        go_map = get_go_map(conn, organism)
+        go_map = get_go_map(conn)
 
         cur = conn.cursor()
         infile.readline()  # skip header
@@ -643,7 +643,7 @@ if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
     add_go(conn)
-    for organism in ['eco', 'hal']:
+    for organism in ['eco']: #, 'hal']:
         print "organism: ", organism
         add_microbes_online_genes(organism, conn)
         add_rsat_genes(organism, conn)
