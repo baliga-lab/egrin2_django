@@ -249,7 +249,7 @@ def corem_go_json(request, species=None, corem=None):
     go_query = go_query.order_by(sort_field)
 
     num_gos_total = go_query.count()
-    if display_length == -1:
+    if display_length == 1:
         go_batch = go_query
     else:
         go_batch = go_query[display_start:display_end]
