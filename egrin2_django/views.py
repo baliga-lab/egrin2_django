@@ -245,26 +245,20 @@ def corem_go_json(request, species=None, corem=None):
     sort_field = get_sort_field(request, fields, fields[0])
 
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
-    s = Species.objects.get(ncbi_taxonomy_id=species)
-    go_query = GO.objects.filter(corem=corem, species=s)
+    go_query = CoremGOMembership.objects.filter(corem=corem)
     go_query = go_query.order_by(sort_field)
 
-    num_genes_total = genes_query.count()
+    num_gos_total = go_query.count()
     if display_length == -1:
-        genes_batch = genes_query
+        go_batch = go_query
     else:
-        genes_batch = genes_query[display_start:display_end]
+        go_batch = go_query[display_start:display_end]
     
-    genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
-              g.name,
-              ncbi_accession_link(g.accession),
-              g.description, g.start, g.stop,
-              g.strand,
-              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
+    gos = [[g.go.go_id,g.go.term,g.go.ontology,g.genes_annotated,g.p_val] for g in go_batch]
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
-        'aaData': genes
+        'iTotalRecords': num_gos_total, 'iTotalDisplayRecords': num_gos_total,
+        'aaData': gos
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
