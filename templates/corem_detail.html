@@ -36,6 +36,7 @@
           $("#go").dataTable({
               "bFilter": false,
               "bSort": true,
+              "aaSorting": [[4, 'desc']],
               "bProcessing": true,
               "bServerSide": true,
               "sAjaxSource": "{% url 'corem_go_json' %}{{species}}/{{corem}}",
