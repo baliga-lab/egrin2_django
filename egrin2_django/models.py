@@ -322,7 +322,7 @@ class CoremGOMembership(models.Model):
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
 
     class Meta:
-        ordering = ['go_id']
+        ordering = ['go']
         
     def return_pval(self):
         return float(self.p_val)
