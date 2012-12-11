@@ -302,7 +302,7 @@ class CoremConditionMembership(models.Model):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
     
 class CoremGOMembership(models.Model):
-    go_id = models.ForeignKey(GO, verbose_name = "GO parent")
+    go = models.ForeignKey(GO, verbose_name = "GO parent")
     tot_annotated = models.IntegerField()
     genes_annotated = models.IntegerField()
     p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)

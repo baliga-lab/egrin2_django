@@ -378,7 +378,7 @@ def add_biclusters(organism, conn):
             count = 0
             for line in lines:
                 count += 1
-                print count
+                #print count
                 if count % 1000 == 0:
                     print "%d %% done" % ( (float(count) / tot) * 100.0)
                 row = line.strip('\n').split('\t')
