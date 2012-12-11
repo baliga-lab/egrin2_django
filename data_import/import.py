@@ -363,12 +363,13 @@ def add_biclusters(organism, conn):
     bicluster_gre_query = "insert into " + APP_PREFIX + "bicluster_gres (bicluster_id,gre_id) values (%s,%s)"
 
     print "Importing biclusters for ", organism
+
     with open(BASE_PATH[organism] + "biclusters.txt") as infile:
         gene_map = get_gene_map(conn, organism)
         cond_map = get_conditions_map(conn, organism)
         gre_map = get_gre_map(conn, organism)
         cre_map = get_cre_map(conn, organism)
-
+        
         cur = conn.cursor()
         try:
             infile.readline()  # skip header
@@ -377,17 +378,20 @@ def add_biclusters(organism, conn):
             count = 0
             for line in lines:
                 count += 1
+                print count
                 if count % 1000 == 0:
                     print "%d %% done" % ( (float(count) / tot) * 100.0)
                 row = line.strip('\n').split('\t')
                 bc_id = "%s_%s" % (organism, row[0])
-                gene_ids = set([gene_map[sys_name] for sys_name in row[2].split(",")])
+                gene_ids = set([gene_map[sys_name] for sys_name in row[2].split(",") if sys_name != ''])
                 condition_ids = set([cond_map[cond_id]
                                      for cond_id in ['%s_%s' % (organism, cond) for cond in  row[3].split(",")]])
                 cre_ids = set([cre_map[cre_id]
                                for cre_id in ['%s_%s' % (organism, cre) for cre in row[4].split(",")]])
                 gre_ids = set([gre_map[gre_id]
-                               for gre_id in ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL']])
+                               for gre_id in ['%s_%s' % (organism, gre) for gre in row[5].split(",") if gre != 'NULL'] 
+                               if gre_id != organism + '_' and gre_id !=''])
+
                 # create bicluster record
                 cur.execute(bicluster_query, [NETWORK[organism], bc_id, to_decimal(row[1])])
                 bicluster_id = cur.fetchone()[0]
