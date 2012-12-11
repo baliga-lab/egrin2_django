@@ -467,7 +467,7 @@ def gres(request):
     out = {}
     for s in species:
         n = Network.objects.get(species__name=s.name)
-        gres = Gre.objects.filter(network__name=n.name).count()
+        gres = Gre.objects.filter(network__name=n.name).exclude(gre_id=s.short_name+"_0").count()
         out[s.short_name] = {"species":s,"network":n,"gres":gres}
     return render_to_response('gres.html', locals())
 
@@ -486,8 +486,8 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     n = Network.objects.filter(species=species_obj)
 
-    gres = Gre.objects.filter(network__in=n)
-    objects = [greObject(species_obj, gre) for gre in gres if gre.gre_id.split("_") != "0"]
+    gres = Gre.objects.filter(network__in=n).exclude(gre_id=s.short_name+"_0")
+    objects = [greObject(species_obj, gre) for gre in gres]
     context = {'objects': objects}
     if extra_context is not None:
         context.update(extra_context)
