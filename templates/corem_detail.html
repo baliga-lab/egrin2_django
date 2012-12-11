@@ -51,7 +51,7 @@
           $("#conditions").dataTable({
             "bFilter": false,
             "bSort": true,
-            "aaSorting": [[2, 'asc']],
+            "aaSorting": [[2, 'desc']],
             "bProcessing": true,
             "bServerSide": true,
             "sAjaxSource": "{% url 'corem_conditions_json' %}{{species}}/{{corem}}",
@@ -60,7 +60,7 @@
           $("#biclusters").dataTable({
             "bFilter": false,
             "bSort": true,
-            "aaSorting": [[1, 'asc']],
+            "aaSorting": [[1, 'desc']],
             "bProcessing": true,
             "bServerSide": true,
             "sAjaxSource": "{% url 'corem_biclusters_json' %}{{species}}/{{corem}}",
