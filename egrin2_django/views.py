@@ -18,7 +18,7 @@ def index(request):
     corems = Corem.objects.count()
     genes = Gene.objects.count()
     conditions = Condition.objects.count()
-    gres = Gre.objects.count()
+    gres = Gre.objects.count()-2 # exclude eco_0 and hal_0, should to this more robust in future
     biclusters = Bicluster.objects.count()
     tfs = len(list(set([o.tf for o in greTF.objects.all()])))
     return render_to_response('index.html', locals())
