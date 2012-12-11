@@ -186,11 +186,8 @@ class GO(models.Model):
     definition = models.TextField()
     synonym = models.TextField()
     
-    def return_pval(self):
-        return float(self.p_val)
-    
     def __unicode__(self):
-        return '%s' % self.gre_id
+        return '%s' % self.go_id
 
 class Cre(models.Model):
     network = models.ForeignKey(Network)
