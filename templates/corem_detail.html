@@ -33,6 +33,14 @@
             "sAjaxSource": "{% url 'corem_genes_json' %}{{species}}/{{corem}}",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
           });
+          $("#go").dataTable({
+              "bFilter": false,
+              "bSort": true,
+              "bProcessing": true,
+              "bServerSide": true,
+              "sAjaxSource": "{% url 'corem_genes_json' %}{{species}}/{{corem}}",
+              "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
+            });
           $("#gres").dataTable({
             "bFilter": false,
             "bSort": true,
@@ -77,6 +85,20 @@
             <th>Stop</th>
             <th>Strand</th>
             <th>Chromosome</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <blockquote><p>GO Enrichment</p></blockquote>
+      <table id="go" class="table">
+        <thead>
+          <tr>
+            <th class="first">GO ID</th>
+            <th>Description</th>
+            <th>Ontology</th>
+            <th>Genes in Corem Annotated</th>
+            <th>pval</th>
           </tr>
         </thead>
         <tbody>

@@ -487,7 +487,7 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
     n = Network.objects.filter(species=species_obj)
 
     gres = Gre.objects.filter(network__in=n)
-    objects = [greObject(species_obj, gre) for gre in gres]
+    objects = [greObject(species_obj, gre) for gre in gres if gre.gre_id.split("_") != "0"]
     context = {'objects': objects}
     if extra_context is not None:
         context.update(extra_context)
