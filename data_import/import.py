@@ -658,8 +658,8 @@ if __name__ == '__main__':
         #add_biclusters(organism, conn)
         add_corems(organism, conn)
         #augment_conditions(organism, conn, check_biclusters=False,
-                           connect_corems=True, connect_genes=True,
-                           connect_gres=True)
+        #                   connect_corems=True, connect_genes=True,
+        #                   connect_gres=True)
         #augment_genes(organism, conn)
         if organism == 'eco':
             add_gre_regulator(organism, conn)
