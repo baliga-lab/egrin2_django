@@ -441,7 +441,10 @@ def add_corems(organism, conn):
         cur = conn.cursor()
         infile.readline()  # skip header
         try:
+            count = 1
             for line in infile.readlines():
+                print count
+                count = count + 1
                 row = line.strip("\n").split("\t")
                 # note that the naming scheme for corems is different
                 corem_id_str = '%s%s' % (COREM_PREFIX[organism], row[0])
