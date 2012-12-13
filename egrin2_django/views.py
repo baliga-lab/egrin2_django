@@ -398,7 +398,7 @@ def regulators(request,species=None):
     # get info about all regulators
     class regulators:
         def __init__(self,species,tf):
-            self.CUTOFF = .75
+            self.CUTOFF = 0
             self.s = Species.objects.get(ncbi_taxonomy_id=species)
             self.tf = tf
             self.gres = list(set([o.gre_id for o in greTF.objects.filter(tf=tf,score__gte=self.CUTOFF)]))
@@ -419,7 +419,7 @@ def regulator_detail(request,species=None,regulator=None):
             self.pssm = gre.pssm.matrix()
             self.score = greTF.objects.get(tf=tf,gre_id=gre).score
 
-    CUTOFF = .75
+    CUTOFF = 0
     s = Species.objects.get(ncbi_taxonomy_id=species)
     tf = regulator
     gre_ids = list(set([o.gre_id for o in greTF.objects.filter(tf=tf, score__gte=CUTOFF)]))
