@@ -389,7 +389,7 @@ def networks(request, species=None):
         g = Gene.objects.filter(species__name=s.name).count()
         cond = Condition.objects.filter(network__name=n.name).count()
         corems = Corem.objects.filter(network__name=n.name).count()
-        gres = Gre.objects.filter(network__name=n.name).count()
+        gres = Gre.objects.filter(network__name=n.name).count()-2 # exclude eco_0 and hal_0, should to this more robust in future
         out[s.short_name] = {"species":s,"network":n,"genes":g,
                              "conditions":cond,"corems":corems,"gres":gres}
     return render_to_response('networks.html', locals())
@@ -483,7 +483,7 @@ def species(request, species=None):
         g = Gene.objects.filter(species__name=s.name).count()
         cond = Condition.objects.filter(network__name=n.name).count()
         corems = Corem.objects.filter(network__name=n.name).count()
-        gres = Gre.objects.filter(network__name=n.name).count()
+        gres = Gre.objects.filter(network__name=n.name).count()-2 # exclude eco_0 and hal_0, should to this more robust in future
         out[s.short_name] = {"species":s,"network":n,"genes":g,
                              "conditions":cond,"corems":corems,"gres":gres}
     return render_to_response('species.html', locals())
