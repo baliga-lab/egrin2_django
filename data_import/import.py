@@ -461,7 +461,8 @@ def add_corems(organism, conn):
                     cur.execute(bicl_corem_query, [bicluster_id, corem_id])
 
                 gre_ids = [gre_map[gre_name]
-                           for gre_name in ['%s_%s' % (organism, gre) for gre in row[3].split(",") if len(row[3]) > 0 and gre != 'NA']]
+                           for gre_name in ['%s_%s' % (organism, gre) for gre in row[3].split(",") if len(row[3]) > 0 
+                                            and gre != 'NA' and gre != 'NULL']]
                 pvals = [pval for pval in row[4].split(',') if len(row[4]) > 0]
                 for index in xrange(len(gre_ids)):
                     if index < len(pvals):
@@ -650,7 +651,7 @@ if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
 #    add_go(conn)
-    for organism in ['eco']:#,'hal']:
+    for organism in ['hal']:#,'hal']:
         print "organism: ", organism
 #        add_microbes_online_genes(organism, conn)
 #        add_rsat_genes(organism, conn)
