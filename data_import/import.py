@@ -651,7 +651,7 @@ if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
     add_go(conn)
-    for organism in ['hal']:#,'hal']:
+    for organism in ['eco','hal']:
         print "organism: ", organism
         add_microbes_online_genes(organism, conn)
         add_rsat_genes(organism, conn)
