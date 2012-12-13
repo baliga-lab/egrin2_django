@@ -428,7 +428,7 @@ def regulator_detail(request,species=None,regulator=None):
     corems = list(set(Corem.objects.filter(gres__in=gres)))
     corem_pval = GreCoremMembership.objects.filter(corem__in=corems, gre_id__in=gres)
     genes = list(set(Gene.objects.filter(gre__in=gres)))
-    gene_pval = GreGeneMembership.objects.filter(gene__in=corems, gre_id__in=gres)
+    gene_pval = GreGeneMembership.objects.filter(gene__in=genes, gre_id__in=gres)
     conds = list(set(Condition.objects.filter(gre__in=gres)))
     conds_pval = GreConditionMembership.objects.filter(cond_id__in=conds, gre_id__in=gres)
 
