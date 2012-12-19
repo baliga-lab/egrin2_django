@@ -3,6 +3,28 @@
 {% block title %}Gene {{ g.sys_name }}{% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="/static/javascripts/isblogo_mod_ab.js"></script>
+    <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
+    
+    <script class="example" type="text/javascript">
+    // Create the tooltips only on document load
+	$(document).ready(function() 
+	{
+		MagnifImage.setup(  
+				"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
+				);
+	   // Match all link elements with href attributes within the content div
+	   $('#prom_arch').qtip(
+	   {
+	      content: {
+	    	  text: false
+	      },
+		  show: 'mouseover',
+	      hide: 'mouseout',
+	      style:'cream'
+	   });
+	});
+	</script>    
+    
 {% endblock %}
 {% block nav %}
 <!-- navigation starts-->
@@ -143,30 +165,6 @@
     </table>
 		  <!-- main ends -->
 		</div>
-
-<script class="example" type="text/javascript">
-// Create the tooltips only on document load
-$(document).ready(function() 
-{
-   // Match all link elements with href attributes within the content div
-   $('#prom_arch').qtip(
-   {
-      content: {
-    	  text: false
-      },
-	  show: 'mouseover',
-      hide: 'mouseout',
-      style:'cream'
-   });
-});
-</script>    
-	
-<script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
-<script type='text/javascript'>
-MagnifImage.setup(  
-"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
-);
-</script>  
 
 
 {% endblock %}
