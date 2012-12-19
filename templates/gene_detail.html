@@ -3,7 +3,7 @@
 {% block title %}Gene {{ g.sys_name }}{% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="/static/javascripts/isblogo_mod_ab.js"></script>
-    <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
+    <script type='text/javascript' src='/static/javascripts/jquery.colorbox-min.js'></script>
 {% endblock %}
 {% block nav %}
 <!-- navigation starts-->
@@ -86,8 +86,8 @@
       {% endfor %}
     </ul>
 
-    <blockquote><p>Promoter Architecture <a id="prom_arch" href="#">[hover for more info]</a></p></blockquote>
-    <img id = "promoterarch" src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
+    <blockquote><p>Promoter Architecture <a id="prom_arch" href="#"><img src="/static/help.png"></a><a> id="zoom_prom_arch",href="#"</a><img src="/static/zoom.gif"></p></blockquote>
+    <img src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
     <blockquote><p>GREs enriched in biclusters</p></blockquote>
 		<table id="gres" class="table">
       <thead>
@@ -159,8 +159,10 @@
     // Create the tooltips only on document load
 	$(document).ready(function() 
 	{
-		MagnifImage.setup(  
-				"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
+		$("zoom_prom_arch").colorbox({  
+				href:"/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png",
+				title:"{{ g.sys_name }} Promoter Architecture" 
+		}
 		);
 	});
 	</script>    
