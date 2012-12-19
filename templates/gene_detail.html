@@ -3,7 +3,7 @@
 {% block title %}Gene {{ g.sys_name }}{% endblock %}
 {% block javascript %}
     <script type="text/javascript" src="/static/javascripts/isblogo_mod_ab.js"></script>
-    <!-- <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>-->
+    <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
 {% endblock %}
 {% block nav %}
 <!-- navigation starts-->
@@ -39,7 +39,15 @@
           "bFilter": false,
           "bSort": true,
           "aaSorting": [[1, 'asc']]
-        });                
+        });
+        console.debug('installing qtip');
+		    $("#prom_arch").qtip({
+		      content: 'this is some random content',
+          position: { target: 'mouse' },
+          show: 'mouseover',
+          hide: 'mouseout',          
+		      style: 'dark' // Give it some style
+		   });
       });
     </script>
 		<table>
@@ -78,7 +86,7 @@
       {% endfor %}
     </ul>
 
-    <blockquote><p><a id = "prom_arch" title="this is a test">Promoter Architecture</a></p></blockquote>
+    <blockquote><p><a id="prom_arch" href="#">Promoter Architecture</a></p></blockquote>
     <img id = "promoterarch" src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
     <blockquote><p>GREs enriched in biclusters</p></blockquote>
 		<table id="gres" class="table">
@@ -151,16 +159,9 @@
     // Create the tooltips only on document load
 	$(document).ready(function() 
 	{
-		$("#prom_arch").qtip({
-		      content: {
-		         text: false // Use each elements title attribute
-		      },
-		      style: 'dark' // Give it some style
-		   });
-		///MagnifImage.setup(  
-		///		"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
-		///		);
+		MagnifImage.setup(  
+				"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
+		);
 	});
 	</script>    
-	
 {% endblock %}
