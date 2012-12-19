@@ -5,7 +5,7 @@
     <script type="text/javascript" src="/static/javascripts/isblogo_mod_ab.js"></script>
     <script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
     
-    <script class="example" type="text/javascript">
+    <script type="text/javascript">
     // Create the tooltips only on document load
 	$(document).ready(function() 
 	{
@@ -13,7 +13,7 @@
 				"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
 				);
 		// By suppling no content attribute, the library uses each elements title attribute by default
-		$('#prom_arch').qtip({
+		$('#content a[href][title]').qtip({
 		      content: {
 		         text: false // Use each elements title attribute
 		      },
@@ -162,6 +162,4 @@
     </table>
 		  <!-- main ends -->
 		</div>
-
-
 {% endblock %}
