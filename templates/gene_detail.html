@@ -12,6 +12,13 @@
 		MagnifImage.setup(  
 				"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
 				);
+		// By suppling no content attribute, the library uses each elements title attribute by default
+		$('#prom_arch').qtip({
+		      content: {
+		         text: false // Use each elements title attribute
+		      },
+		      style: 'cream' // Give it some style
+		   });
 	});
 	</script>    
     
@@ -89,7 +96,7 @@
       {% endfor %}
     </ul>
 
-    <blockquote><a id = "prom_arch" href="#" title="this is a test">Promoter Architecture</a></blockquote>
+    <blockquote><p><a id = "prom_arch" href="#" title="this is a test">Promoter Architecture</a></p></blockquote>
     <img id = "promoterarch" src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
     <blockquote><p>GREs enriched in biclusters</p></blockquote>
 		<table id="gres" class="table">
