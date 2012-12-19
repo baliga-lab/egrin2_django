@@ -143,13 +143,6 @@
     </table>
 		  <!-- main ends -->
 		</div>
-		
-<script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
-<script type='text/javascript'>
-MagnifImage.setup(  
-"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
-);
-</script>  
 
 <script class="example" type="text/javascript">
 // Create the tooltips only on document load
@@ -167,4 +160,13 @@ $(document).ready(function()
    });
 });
 </script>    
+	
+<script type='text/javascript' src='/static/javascripts/magnifimage.js'></script>
+<script type='text/javascript'>
+MagnifImage.setup(  
+"promoterarch", "/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png","{{ g.sys_name }} Promoter Architecture"
+);
+</script>  
+
+
 {% endblock %}
