@@ -46,6 +46,9 @@
             "bFilter": false,
             "bSort": true,
             "aaSorting": [[1, 'asc']],
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "{% url 'corem_gres_json' %}{{species}}/{{corem}}",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
           });
           $("#conditions").dataTable({
@@ -115,14 +118,6 @@
           </tr>
         </thead>
         <tbody>
-          {% for o in gre_obj %}
-          <tr class="{% cycle 'row-a' 'row-b' %}">
-            <td class="first"><a href="{% url 'gre_detail' s.ncbi_taxonomy_id o.gre_id %}">{{ o.gre_id }}</a></td>
-            <td>{{ o.corem_pval }}</td>
-            <td><img src="/static/images/gres/{{ s.ncbi_taxonomy_id }}/{{ o.gre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
-            <!-- <td><span id="previewcanvas_{{ o.gre_id }}"></span></td> -->
-          </tr>
-          {% endfor %}
         </tbody>
       </table>
       <blockquote><p>Conditional Activity</p></blockquote>

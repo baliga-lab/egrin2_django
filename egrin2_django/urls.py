@@ -91,6 +91,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^gres/$', 'gres',name='gres'),
     url(r'^gres/(?P<species>[^/]*)/?$', 'gres_s',name='gres_s'),
     url(r'^gres/(?P<species>[^/]*)/(?P<gre>[^/]*)/?$', 'gre_detail',name='gre_detail'),
+
+    url(r'^corem_gres_json/$', 'corem_gres_json',name='corem_gres_json'),
+    url(r'^corem_gres_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
+        'corem_gres_json', name='corem_gres_json'),
     
     # list of corem-specific go_ids
     url(r'^corem_go_json/$', 'corem_go_json',name='corem_go_json'),

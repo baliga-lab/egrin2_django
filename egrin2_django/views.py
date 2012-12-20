@@ -10,7 +10,7 @@ from django.db.models import Count
 from models import *
 import collections
 import solr
-from egrin2_django.settings import TABLE_PREFIX
+from egrin2_django.settings import TABLE_PREFIX, STATIC_URL
 
 def index(request):
     species = Species.objects.count()
@@ -40,6 +40,10 @@ def browse(request):
 def condition_detail_link(species, cond_id, label):
     return '<a href="%s">%s</a>' % (reverse('condition_detail',
                                             args=[species, cond_id]), label)
+
+def gre_detail_link(species, gre_id, label):
+    return '<a href="%s">%s</a>' % (reverse('gre_detail',
+                                            args=[species, gre_id]), label)
 
 def species_detail_link(species, label):
     return '<a href="%s">%s</a>' % (reverse('species', args=[species]), label)
@@ -224,18 +228,8 @@ def corems(request, species=None):
     return render_to_response('corems.html', locals())
 
 def corem_detail(request, species=None, corem=None):
-    # Return info about corem
-    class greObject:
-        def __init__(self,species,gre):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.gre_id = gre.gre_id
-            self.corem_pval = GreCoremMembership.objects.get(corem=corem,gre_id=gre).p_val
-            #self.pssm = gre.pssm.matrix()
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    
-    gres = Gre.objects.filter(corem=corem).order_by('p_val', 'gre_id')
-    gre_obj = [greObject(species, gre) for gre in gres]
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)    
     return render_to_response('corem_detail.html', locals())
 
 def corem_go_json(request, species=None, corem=None):
@@ -496,6 +490,36 @@ def gres(request):
         gres = Gre.objects.filter(network__name=n.name).exclude(gre_id=s.short_name+"_0").count()
         out[s.short_name] = {"species":s,"network":n,"gres":gres}
     return render_to_response('gres.html', locals())
+
+
+def corem_gres_json(request, species, corem):
+    fields = ['gre__gre_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    query = GreCoremMembership.objects.filter(corem=corem).order_by(sort_field)
+    num_total = query.count()
+    if display_length == -1:
+        gres_batch = query
+    else:
+        gres_batch = query[display_start:display_end]
+
+    gres = [[gre_detail_link(species, gre_corem.gre.gre_id, gre_corem.gre.gre_id),
+              gre_corem.p_val,
+             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, gre_corem.gre.gre_id))]
+             for gre_corem in gres_batch]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': gres
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 @page_template("gres_page.html")
 def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
