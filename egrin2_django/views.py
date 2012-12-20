@@ -619,8 +619,9 @@ def biclusters_json(request, species=None):
     display_end = display_start + display_length
 
     n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
-    num_total = Bicluster.objects.filter(network__in=n).count()
     bicluster_objs = Bicluster.objects.filter(network__in=n)[display_start:display_end]
+
+    num_total = Bicluster.objects.filter(network__in=n).count()
     biclusters = [[b.network.version_id,
                    bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.genes.count(), b.conditions.count(), b.cres.count(),
@@ -634,79 +635,61 @@ def biclusters_json(request, species=None):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def corem_biclusters_json(request, species=None, corem=None):
-    fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
 
-    networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
-    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    query = Bicluster.objects.filter(corems=corem).order_by(sort_field)
+def biclusters_json_generic(query, display_start, display_length, sEcho):
+    """all Bicluster JSON subqueries have the same generic structure"""
+    display_end = display_start + display_length
     num_total = query.count()
     bicluster_batch = query if display_length == -1 else query[display_start:display_end]
 
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.residual, b.genes.count(), b.conditions.count()]
                   for b in bicluster_batch]
-
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
+def corem_biclusters_json(request, species=None, corem=None):
+    fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    query = Bicluster.objects.filter(corems=corem).order_by(sort_field)
+    return biclusters_json_generic(query, display_start, display_length, sEcho)
+
 
 def condition_biclusters_json(request, species=None, condition=None):
     fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
     sort_field = get_sort_field(request, fields, fields[0])
 
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    condition = Condition.objects.get(cond_id = condition,network__species=s)
+    condition = Condition.objects.get(cond_id=condition,network__species=s)
     query = Bicluster.objects.filter(conditions=condition).order_by(sort_field)
-    num_total = query.count()
-    bicluster_batch = query if display_length == -1 else query[display_start:display_end]
+    return biclusters_json_generic(query, display_start, display_length, sEcho)
 
-    biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
-                   b.residual, b.genes.count(), b.conditions.count()]
-                  for b in bicluster_batch]
-
-    data = {
-        'sEcho': sEcho,
-        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
-        'aaData': biclusters
-        }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def gene_biclusters_json(request, species=None, gene=None):
     fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
     sort_field = get_sort_field(request, fields, fields[0])
 
     s = Species.objects.get(ncbi_taxonomy_id=species)
     query = Bicluster.objects.filter(genes__sys_name=gene).order_by(sort_field)
-    num_total = query.count()
-    bicluster_batch = query if display_length == -1 else query[display_start:display_end]
+    return biclusters_json_generic(query, display_start, display_length, sEcho)
 
-    biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
-                   b.residual, b.genes.count(), b.conditions.count()]
-                  for b in bicluster_batch]
-
-    data = {
-        'sEcho': sEcho,
-        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
-        'aaData': biclusters
-        }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def bicluster_detail(request, species=None, bicluster=None):
     # Return info about bicluster
