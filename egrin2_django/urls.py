@@ -54,6 +54,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^condition_biclusters_json/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$',
         'condition_biclusters_json', name='condition_biclusters_json'),
 
+    url(r'^gene_biclusters_json/$', 'gene_biclusters_json',
+        name='gene_biclusters_json'),
+    url(r'^gene_biclusters_json/(?P<species>[^/]*)/(?P<gene>[^/]*)/?$',
+        'gene_biclusters_json', name='gene_biclusters_json'),
 
     url(r'^biclusters/$', 'biclusters',name='biclusters'),
     url(r'^biclusters/(?P<species>[^/]*)/?$', 'biclusters_s',name='biclusters_s'),

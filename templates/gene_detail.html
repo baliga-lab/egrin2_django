@@ -45,7 +45,10 @@
         $("#biclusters").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[1, 'asc']]
+          "aaSorting": [[1, 'asc']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
         console.debug('installing qtip');
 		$("#prom_arch").qtip({
@@ -150,14 +153,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for o in biclusters %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'biclusters' %}{{ s.ncbi_taxonomy_id }}/{{ o.bc_id }}">{{ o.bc_id }}</a></td>
-          <td>{{ o.residual }}</td>
-          <td>{{ o.genes.count }}</td>
-          <td>{{ o.conditions.count }}</td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
 		  <!-- main ends -->
