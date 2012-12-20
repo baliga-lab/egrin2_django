@@ -32,12 +32,15 @@
           "aaSorting": [[1, 'asc']],
           "bProcessing": true,
           "bServerSide": true,
-          "sAjaxSource": "{% url 'gene_gres_json' %}{{species}}/{{gene}}",
+          "sAjaxSource": "{% url 'gene_gres_json' %}{{species}}/{{gene}}"
         });
         $("#conditions").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[2, 'asc']]
+          "aaSorting": [[2, 'asc']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'gene_conditions_json' %}{{species}}/{{gene}}"
         });
         $("#biclusters").dataTable({
           "bFilter": false,
@@ -133,13 +136,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for c in conds %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ c.0 }}">{{ c.0 }}</a></td>
-          <td>{{ c.1 }}</td>
-          <td>{{ c.2 }}</td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
             

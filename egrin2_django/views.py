@@ -86,14 +86,12 @@ def conditions_json(request, species):
 
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
-    num_conds_total = Condition.objects.filter(network__in=network).count()
-    conds_query = Condition.objects.filter(network__in=network).annotate(
-        corem_count=Count('corems'))
-    conds_query = conds_query.order_by(sort_field)
-    if display_length == -1:
-        conds_batch = conds_query
-    else:
-        conds_batch = conds_query[display_start:display_end]
+    num_total = Condition.objects.filter(network__in=network).count()
+
+    query = Condition.objects.filter(network__in=network).annotate(
+        corem_count=Count('corems')).order_by(sort_field)
+
+    conds_batch = query if display_length == -1 else query[display_start:display_end]
 
     conds = [[condition_detail_link(species, c.cond_id, c.cond_id),
               c.cond_name,
@@ -102,7 +100,7 @@ def conditions_json(request, species):
              for c in conds_batch]
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -116,21 +114,42 @@ def corem_conditions_json(request, species, corem):
     sort_field = get_sort_field(request, fields, fields[0])
 
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    corem_conds_query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
-    num_conds_total = corem_conds_query.count()
-    if display_length == -1:
-        conds_batch = corem_conds_query
-    else:
-        conds_batch = corem_conds_query[display_start:display_end]
+    query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
+    num_total = query.count()
+    conds_batch = query if display_length == -1 else query[display_start:display_end]
         
     conds = [[condition_detail_link(species, corem_cond.cond.cond_id, corem_cond.cond.cond_id),
               corem_cond.cond.cond_name,
               corem_cond.p_val]
              for corem_cond in conds_batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': conds
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
+def gene_conditions_json(request, species, gene):
+    fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = GeneConditionMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
+    num_total = query.count()
+    conds_batch = query if display_length == -1 else query[display_start:display_end]
+        
+    conds = [[condition_detail_link(species, gene_cond.cond.cond_id, gene_cond.cond.cond_id),
+              gene_cond.cond.cond_name,
+              gene_cond.p_val]
+             for gene_cond in conds_batch]
 
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_conds_total, 'iTotalDisplayRecords': num_conds_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -189,7 +208,7 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
     sort_field, sort_dir = get_sort_field2(request, fields, fields[0])
 
     networks = Network.objects.filter(species__ncbi_taxonomy_id=species)
-    num_corems_total = Corem.objects.filter(network__in=networks).count()
+    num_total = Corem.objects.filter(network__in=networks).count()
     network_ids = [str(network.id) for network in networks]
 
     query += " where network_id in (%s)" % (",".join(network_ids))
@@ -204,7 +223,7 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
 
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_corems_total, 'iTotalDisplayRecords': num_corems_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': corems
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -244,17 +263,15 @@ def corem_go_json(request, species=None, corem=None):
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
     go_query = CoremGOMembership.objects.filter(corem=corem)
     go_query = go_query.order_by(sort_field)
+    num_total = go_query.count()
 
-    num_gos_total = go_query.count()
-    if display_length == -1:
-        go_batch = go_query
-    else:
-        go_batch = go_query[display_start:display_end]
+    go_batch = go_query if display_length == -1 else go_query[display_start:display_end]
     
-    gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,g.p_val] for g in go_batch]
+    gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,g.p_val]
+           for g in go_batch]
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_gos_total, 'iTotalDisplayRecords': num_gos_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': gos
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -276,13 +293,9 @@ def genes_json(request, species):
     display_end = display_start + display_length
     sort_field = get_sort_field(request, fields, fields[0])
 
-    num_genes_total = Gene.objects.filter(species__ncbi_taxonomy_id=species).count()
-    genes_query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
-    genes_query = genes_query.order_by(sort_field)
-    if display_length == -1:
-        genes_batch = genes_query
-    else:
-        genes_batch = genes_query[display_start:display_end]
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species).order_by(sort_field)
+    num_total = query.count()
+    genes_batch = query if display_length == -1 else query[display_start:display_end]
 
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
@@ -292,7 +305,7 @@ def genes_json(request, species):
               ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -309,15 +322,9 @@ def corem_genes_json(request, species=None, corem=None):
 
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    genes_query = Gene.objects.filter(corem=corem, species=s)
-    genes_query = genes_query.order_by(sort_field)
-
-    num_genes_total = genes_query.count()
-    if display_length == -1:
-        genes_batch = genes_query
-    else:
-        genes_batch = genes_query[display_start:display_end]
-    
+    query = Gene.objects.filter(corem=corem, species=s).order_by(sort_field)
+    num_total = query.count()
+    genes_batch = query if display_length == -1 else query[display_start:display_end]    
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               ncbi_accession_link(g.accession),
@@ -326,7 +333,7 @@ def corem_genes_json(request, species=None, corem=None):
               ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_genes_total, 'iTotalDisplayRecords': num_genes_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -351,14 +358,7 @@ def gene_detail(request, species=None, gene=None):
     g = Gene.objects.get(sys_name=gene)
     s = Species.objects.get(ncbi_taxonomy_id=species)
     corems = Corem.objects.filter(genes__sys_name=gene)
-    gene_conds_query = GeneConditionMembership.objects.filter(gene__sys_name=gene)
-
-    conds = [[gene_cond.cond.cond_id,
-              gene_cond.cond.cond_name,
-              gene_cond.p_val]
-             for gene_cond in gene_conds_query] 
     biclusters = Bicluster.objects.filter(genes__sys_name=gene)
-
     return render_to_response('gene_detail.html', locals())
 
 def networks(request, species=None):
@@ -621,7 +621,7 @@ def biclusters_json(request, species=None):
     display_end = display_start + display_length
 
     n = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
-    num_biclusters_total = Bicluster.objects.filter(network__in=n).count()
+    num_total = Bicluster.objects.filter(network__in=n).count()
     bicluster_objs = Bicluster.objects.filter(network__in=n)[display_start:display_end]
     biclusters = [[b.network.version_id,
                    bicluster_detail_link(species, b.bc_id, b.bc_id),
@@ -631,7 +631,7 @@ def biclusters_json(request, species=None):
 
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -646,12 +646,9 @@ def corem_biclusters_json(request, species=None, corem=None):
 
     networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    biclusters_query = Bicluster.objects.filter(corems=corem).order_by(sort_field)
-    num_biclusters_total = biclusters_query.count()
-    if display_length == -1:
-        bicluster_batch = biclusters_query
-    else:
-        bicluster_batch = biclusters_query[display_start:display_end]
+    query = Bicluster.objects.filter(corems=corem).order_by(sort_field)
+    num_total = query.count()
+    bicluster_batch = query if display_length == -1 else query[display_start:display_end]
 
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.residual, b.genes.count(), b.conditions.count()]
@@ -659,7 +656,7 @@ def corem_biclusters_json(request, species=None, corem=None):
 
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
@@ -674,13 +671,9 @@ def condition_biclusters_json(request, species=None, condition=None):
 
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
-    biclusters_query = Bicluster.objects.filter(conditions=condition).order_by(sort_field)
-    num_biclusters_total = biclusters_query.count()
-
-    if display_length == -1:
-        bicluster_batch = biclusters_query
-    else:
-        bicluster_batch = biclusters_query[display_start:display_end]
+    query = Bicluster.objects.filter(conditions=condition).order_by(sort_field)
+    num_total = query.count()
+    bicluster_batch = query if display_length == -1 else query[display_start:display_end]
 
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.residual, b.genes.count(), b.conditions.count()]
@@ -688,7 +681,7 @@ def condition_biclusters_json(request, species=None, condition=None):
 
     data = {
         'sEcho': sEcho,
-        'iTotalRecords': num_biclusters_total, 'iTotalDisplayRecords': num_biclusters_total,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')

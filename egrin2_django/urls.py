@@ -35,6 +35,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^corem_conditions_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
         'corem_conditions_json', name='corem_conditions_json'),
 
+    url(r'^gene_conditions_json/$', 'gene_conditions_json',name='gene_conditions_json'),
+    url(r'^gene_conditions_json/(?P<species>[^/]*)/(?P<gene>[^/]*)/?$',
+        'gene_conditions_json', name='gene_conditions_json'),
+
     ##############################################################################
     # BICLUSTERS
     ##############################################################################
