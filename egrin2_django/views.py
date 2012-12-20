@@ -348,25 +348,16 @@ def genes(request, species=None):
 
 def gene_detail(request, species=None, gene=None):
     # Return info about gene
-    class greObject:
-        def __init__(self,species,gre):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.gre_id = gre.gre_id
-            self.gene_pval = GreGeneMembership.objects.get(gene=g,gre_id=gre).p_val
-            self.pssm = gre.pssm.matrix()
-
     g = Gene.objects.get(sys_name=gene)
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    corems = Corem.objects.filter(genes__sys_name=g.sys_name)
+    corems = Corem.objects.filter(genes__sys_name=gene)
+    gene_conds_query = GeneConditionMembership.objects.filter(gene__sys_name=gene)
 
-    gene_conds_query = GeneConditionMembership.objects.filter(gene__sys_name=g.sys_name)
     conds = [[gene_cond.cond.cond_id,
               gene_cond.cond.cond_name,
               gene_cond.p_val]
              for gene_cond in gene_conds_query] 
-    gres = Gre.objects.filter(genes=g)
-    gre_obj = [greObject(species, gre) for gre in gres]
-    biclusters = Bicluster.objects.filter(genes__sys_name=g.sys_name)
+    biclusters = Bicluster.objects.filter(genes__sys_name=gene)
 
     return render_to_response('gene_detail.html', locals())
 
@@ -512,6 +503,33 @@ def corem_gres_json(request, species, corem):
               gre_corem.p_val,
              ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, gre_corem.gre.gre_id))]
              for gre_corem in gres_batch]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': gres
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+def gene_gres_json(request, species, gene):
+    fields = ['gre__gre_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
+    num_total = query.count()
+    if display_length == -1:
+        gres_batch = query
+    else:
+        gres_batch = query[display_start:display_end]
+
+    gres = [[gre_detail_link(species, gre_gene.gre.gre_id, gre_gene.gre.gre_id),
+             gre_gene.p_val,
+             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, gre_gene.gre.gre_id))]
+             for gre_gene in gres_batch]
 
     data = {
         'sEcho': sEcho,
