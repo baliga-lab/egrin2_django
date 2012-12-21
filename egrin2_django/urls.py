@@ -79,6 +79,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^condition_corems_json/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$',
         'condition_corems_json', name='condition_corems_json'),
 
+    url(r'^gre_corems_json/$', 'gre_corems_json',name='gre_corems_json'),
+    url(r'^gre_corems_json/(?P<species>[^/]*)/(?P<gre>[^/]*)/?$',
+        'gre_corems_json', name='gre_corems_json'),
+
     ##############################################################################
     # GENES
     ##############################################################################

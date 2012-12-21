@@ -215,17 +215,11 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def condition_corems_json(request, species, condition):
-    fields = ['corem__corem_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
 
-    query = CoremConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
+def corems_json_generic(query, display_start, display_length, sEcho):
     num_total = query.count()
-    batch = query if display_length == -1 else query[display_start:display_end]        
+    display_end = display_start + display_length
+    batch = query if display_length == -1 else query[display_start:display_end]
     corems = [[corem_detail_link(species, item.corem.corem_id, item.corem.corem_id),
                item.p_val] for item in batch]
     data = {
@@ -234,7 +228,27 @@ def condition_corems_json(request, species, condition):
         'aaData': corems
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
     
+def condition_corems_json(request, species, condition):
+    fields = ['corem__corem_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = CoremConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
+    return corems_json_generic(query, display_start, display_length, sEcho)
+
+def gre_corems_json(request, species, gre):
+    fields = ['corem__corem_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = GreCoremMembership.objects.filter(gre__gre_id=gre).order_by(sort_field)
+    return corems_json_generic(query, display_start, display_length, sEcho)
 
 def corems(request, species=None):
     # Return info about corems            
@@ -571,12 +585,10 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
             self.cre_id = cre.cre_id
             self.bcs = cre.cre_id.split("_")[0]+"_"+cre.cre_id.split("_")[1]
             self.e_val = cre.e_val
-            #self.pssm = cre.pssm.matrix()
+
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
-    pssm = gre.pssm.matrix()
     genes = Gene.objects.filter(gre=gre)
-    corem_pval = GreCoremMembership.objects.filter(gre=gre)
     conds_pval = GreConditionMembership.objects.filter(gre=gre)
     biclusters = Bicluster.objects.filter(gres=gre)
     cres = Cre.objects.filter(gre_id=gre)
