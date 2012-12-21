@@ -12,6 +12,52 @@ import collections
 import solr
 from egrin2_django.settings import TABLE_PREFIX, STATIC_URL
 
+# data tables related helpers
+class DataTablesParam:
+    """convenience class for handling DataTables integration"""
+    def __init__(self, sEcho, display_start, display_length, sort_field, sort_dir):
+        self.sEcho = sEcho
+        self.display_start = display_start
+        self.display_length = display_length
+        self.display_end = display_start + display_length
+        self.sort_field = sort_field
+        self.sort_dir = sort_dir
+        self.sort_field2 = sort_field if sort_dir == 'asc' else '-' + sort_field
+
+    def batch(self, query):
+        """retrieves a batched query from the given Django query set"""
+        return query if self.display_length == -1 else query[self.display_start:self.display_end]
+
+    def ordered_batch(self, query):
+        """retrieves a batched query from the given Django query set which
+        is ordered by the sort field"""
+        return self.batch(query.order_by(self.sort_field2))
+
+
+def get_sort_field2(request, fields, default_field):
+    sort_field = default_field
+    sort_dir = "asc"
+    if "iSortCol_0" in request.GET:
+        sort_field = fields[int(request.GET['iSortCol_0'])]
+        
+    if "sSortDir_0" in request.GET:
+        sort_dir = request.GET['sSortDir_0']
+    return sort_field, sort_dir
+
+def get_sort_field(request, fields, default_field):
+    sort_field, sort_dir = get_sort_field2(request, fields, default_field)
+    return sort_field if sort_dir == 'asc' else '-' + sort_field
+
+def get_dtparams(request, fields, default_sort_field):
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field, sort_dir = get_sort_field2(request, fields, default_sort_field)
+
+    return DataTablesParam(sEcho, display_start, display_length,
+                           sort_field, sort_dir)
+
+
 def index(request):
     species = Species.objects.count()
     networks = Network.objects.count()
@@ -57,64 +103,39 @@ def ncbi_chromosome_link(chromosome):
 def amigo_link(go_id):
     return '<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=%s">%s</a>' % (go_id,go_id)
 
-def get_sort_field2(request, fields, default_field):
-    sort_field = default_field
-    sort_dir = "asc"
-    if "iSortCol_0" in request.GET:
-        sort_field = fields[int(request.GET['iSortCol_0'])]
-        
-    if "sSortDir_0" in request.GET:
-        sort_dir = request.GET['sSortDir_0']
-    return sort_field, sort_dir
-
-def get_sort_field(request, fields, default_field):
-    sort_field, sort_dir = get_sort_field2(request, fields, default_field)
-    if sort_dir == 'asc':
-        return sort_field
-    else:
-        return "-" + sort_field
-
 def conditions_json(request, species):
     # TODO: note that we still need to figure out how to sort on a multi-valued
     # many-to-many aggregate (count(genes), count(gres))
     fields = ['cond_id', 'cond_name', 'corem_count']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
+    dtparams = get_dtparams(request, fields, fields[0])
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     network = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_total = Condition.objects.filter(network__in=network).count()
-
     query = Condition.objects.filter(network__in=network).annotate(
-        corem_count=Count('corems')).order_by(sort_field)
+        corem_count=Count('corems'))
 
-    conds_batch = query if display_length == -1 else query[display_start:display_end]
+    batch = dtparams.ordered_batch(query)
 
     conds = [[condition_detail_link(species, c.cond_id, c.cond_id),
               c.cond_name,
               c.corem_count,
               c.gene_set.count(), c.gre_set.count()]
-             for c in conds_batch]
+             for c in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def conditions_json_generic(query, display_start, display_length, sEcho):
-    display_end = display_start + display_length
+def conditions_json_generic(query, dtparams):
     num_total = query.count()
-    conds_batch = query if display_length == -1 else query[display_start:display_end]        
+    batch = dtparams.ordered_batch(query)
     conds = [[condition_detail_link(species, item.cond.cond_id, item.cond.cond_id),
               item.cond.cond_name,
-              item.p_val]
-             for item in conds_batch]
+              item.p_val] for item in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
@@ -123,35 +144,23 @@ def conditions_json_generic(query, display_start, display_length, sEcho):
 
 def corem_conditions_json(request, species, corem):
     fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
+    dtparams = get_dtparams(request, fields, fields[0])
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
-    return conditions_json_generic(query, display_start, display_length, sEcho)
+    query = CoremConditionMembership.objects.filter(corem=corem)
+    return conditions_json_generic(query, dtparams)
 
 
 def gene_conditions_json(request, species, gene):
     fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GeneConditionMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
-    return conditions_json_generic(query, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = GeneConditionMembership.objects.filter(gene__sys_name=gene)
+    return conditions_json_generic(query, dtparams)
 
 def gre_conditions_json(request, species, gre):
     fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GreConditionMembership.objects.filter(gre__gre_id=gre).order_by(sort_field)
-    return conditions_json_generic(query, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = GreConditionMembership.objects.filter(gre__gre_id=gre)
+    return conditions_json_generic(query, dtparams)
 
 def conditions(request, species=None):
     # Return info about conditions
@@ -197,20 +206,16 @@ from %sgrecoremmembership gcm group by gcm.corem_id) as q3
 on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX)
 
     fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres2']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field, sort_dir = get_sort_field2(request, fields, fields[0])
+    dtparams = get_dtparams(request, fields, fields[0])
 
     networks = Network.objects.filter(species__ncbi_taxonomy_id=species)
     num_total = Corem.objects.filter(network__in=networks).count()
     network_ids = [str(network.id) for network in networks]
 
     query += " where network_id in (%s)" % (",".join(network_ids))
-    query += (" order by %s %s" % (sort_field, sort_dir))
-    if display_length > 0:
-        query += (" limit %d offset %d" % (display_length, display_start))
+    query += (" order by %s %s" % (dtparams.sort_field, dtparams.sort_dir))
+    if dtparams.display_length > 0:
+        query += (" limit %d offset %d" % (dtparams.display_length, dtparams.display_start))
 
     cursor = connection.cursor()
     cursor.execute(query)
@@ -218,21 +223,20 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
                row[2], row[3], row[4]] for row in cursor.fetchall()]
 
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': corems
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
-def corems_json_generic(query, display_start, display_length, sEcho):
+def corems_json_generic(query, dtparams):
     num_total = query.count()
-    display_end = display_start + display_length
-    batch = query if display_length == -1 else query[display_start:display_end]
+    batch = dtparams.ordered_batch(query)
     corems = [[corem_detail_link(species, item.corem.corem_id, item.corem.corem_id),
                item.p_val] for item in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': corems
         }
@@ -241,23 +245,15 @@ def corems_json_generic(query, display_start, display_length, sEcho):
     
 def condition_corems_json(request, species, condition):
     fields = ['corem__corem_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = CoremConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
-    return corems_json_generic(query, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = CoremConditionMembership.objects.filter(cond__cond_id=condition)
+    return corems_json_generic(query, dtparams)
 
 def gre_corems_json(request, species, gre):
     fields = ['corem__corem_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GreCoremMembership.objects.filter(gre__gre_id=gre).order_by(sort_field)
-    return corems_json_generic(query, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = GreCoremMembership.objects.filter(gre__gre_id=gre)
+    return corems_json_generic(query, dtparams)
 
 def corems(request, species=None):
     # Return info about corems            
