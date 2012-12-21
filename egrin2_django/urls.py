@@ -123,6 +123,11 @@ urlpatterns = patterns('egrin2_django.views',
     ##############################################################################
     # OTHER
     ##############################################################################
+
+    url(r'^gre_cres_json/$', 'gre_cres_json',name='gre_cres_json'),
+    url(r'^gre_cres_json/(?P<species>[^/]*)/(?P<gre>[^/]*)/?$',
+        'gre_cres_json', name='gre_cres_json'),
+
     # list of corem-specific go_ids
     url(r'^corem_go_json/$', 'corem_go_json',name='corem_go_json'),
     url(r'^corem_go_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',

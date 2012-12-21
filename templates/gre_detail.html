@@ -50,8 +50,11 @@
         $("#cres").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[3, 'asc']]
-        });   			
+          "aaSorting": [[3, 'asc']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'gre_cres_json' %}{{species}}/{{gre}}"
+        });
       });
 		</script>
     <blockquote><p>GRE {{ gre.gre_id }}</p></blockquote>
@@ -156,20 +159,8 @@
         </tr>
       </thead>
       <tbody>
-        {% for o in cre_dict %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first">{{ o.cre_id }}</td>
-          <td><a href="{% url 'biclusters' %}{{ s.ncbi_taxonomy_id }}/{{ o.bcs }}">{{ o.bcs }}</a></td>
-          <td><img src="/static/images/cres/{{ s.ncbi_taxonomy_id }}/{{ o.cre_id }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
-          <!-- <td><span id="previewcanvas_{{ o.cre_id }}"></span></td> -->
-          <td>{{ o.e_val }}</td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
 		<!-- main ends -->	
   </div>
 {% endblock %}
-
-
-

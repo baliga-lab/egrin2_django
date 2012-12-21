@@ -537,7 +537,6 @@ def gene_gres_json(request, species, gene):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
     sort_field = get_sort_field(request, fields, fields[0])
 
     query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
@@ -576,24 +575,58 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
         context.update(extra_context)
     return render_to_response(template, context,context_instance=RequestContext(request))
 
+def gene_gres_json(request, species, gene):
+    fields = ['gre__gre_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
+    return gres_json_generic(query, species, display_start, display_length, sEcho)
+
+
 @page_template("gres_detail_page.html")
 def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extra_context=None):
-    # Return info about gres
-    class creObject:
-        def __init__(self,species,cre):
-            self.species = Species.objects.get(ncbi_taxonomy_id=species)
-            self.cre_id = cre.cre_id
-            self.bcs = cre.cre_id.split("_")[0]+"_"+cre.cre_id.split("_")[1]
-            self.e_val = cre.e_val
-
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
     genes = Gene.objects.filter(gre=gre)
     conds_pval = GreConditionMembership.objects.filter(gre=gre)
     biclusters = Bicluster.objects.filter(gres=gre)
-    cres = Cre.objects.filter(gre_id=gre)
-    cre_dict = [creObject(species, cre) for cre in cres]
     return render_to_response(template, locals(),context_instance=RequestContext(request))
+
+
+def gre_cres_json(request, species, gre):
+    def bicluster_id(cre_id):
+        comps = cre_id.split("_")
+        return '%s_%s' % (comps[0], comps[1])
+
+    fields = ['cre_id', 'cre_id', 'cre_id', 'e_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = Cre.objects.filter(gre__gre_id=gre).order_by(sort_field)
+    display_end = display_start + display_length
+    num_total = query.count()
+    batch = query if display_length == -1 else query[display_start:display_end]
+
+    cres = [[item.cre_id,
+             bicluster_detail_link(species, bicluster_id(item.cre_id), bicluster_id(item.cre_id)),
+             ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, item.cre_id)),
+             item.e_val
+             ]
+             for item in batch]
+
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': cres
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def biclusters(request, species=None):
     # Return info about biclusters
