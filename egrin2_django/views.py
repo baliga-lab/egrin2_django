@@ -551,7 +551,6 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
     genes = Gene.objects.filter(gre=gre)
-    biclusters = Bicluster.objects.filter(gres=gre)
     return render_to_response(template, locals(),context_instance=RequestContext(request))
 
 
@@ -668,8 +667,15 @@ def condition_biclusters_json(request, species=None, condition=None):
 def gene_biclusters_json(request, species=None, gene=None):
     fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     dtparams = get_dtparams(request, fields, fields[0])
-    s = Species.objects.get(ncbi_taxonomy_id=species)
     query = Bicluster.objects.filter(genes__sys_name=gene)
+    return biclusters_json_generic(query, dtparams)
+
+
+def gre_biclusters_json(request, species=None, gre=None):
+    fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
+    dtparams = get_dtparams(request, fields, fields[0])
+    gre = Gre.objects.get(gre_id=gre, network__species__ncbi_taxonomy_id=species)
+    query = Bicluster.objects.filter(gres=gre)
     return biclusters_json_generic(query, dtparams)
 
 

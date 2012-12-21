@@ -48,7 +48,10 @@
         $("#biclusters").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[1, 'asc']]
+          "aaSorting": [[1, 'asc']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'gre_biclusters_json' %}{{species}}/{{gre}}"
         });
         $("#cres").dataTable({
           "bFilter": false,
