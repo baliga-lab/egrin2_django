@@ -39,6 +39,10 @@ urlpatterns = patterns('egrin2_django.views',
     url(r'^gene_conditions_json/(?P<species>[^/]*)/(?P<gene>[^/]*)/?$',
         'gene_conditions_json', name='gene_conditions_json'),
 
+    url(r'^gre_conditions_json/$', 'gre_conditions_json',name='gre_conditions_json'),
+    url(r'^gre_conditions_json/(?P<species>[^/]*)/(?P<gre>[^/]*)/?$',
+        'gre_conditions_json', name='gre_conditions_json'),
+
     ##############################################################################
     # BICLUSTERS
     ##############################################################################

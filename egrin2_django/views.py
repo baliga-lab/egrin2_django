@@ -138,10 +138,19 @@ def gene_conditions_json(request, species, gene):
     sEcho = request.GET['sEcho']
     display_start = int(request.GET['iDisplayStart'])
     display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
     sort_field = get_sort_field(request, fields, fields[0])
 
     query = GeneConditionMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
+    return conditions_json_generic(query, display_start, display_length, sEcho)
+
+def gre_conditions_json(request, species, gre):
+    fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = GreConditionMembership.objects.filter(gre__gre_id=gre).order_by(sort_field)
     return conditions_json_generic(query, display_start, display_length, sEcho)
 
 def conditions(request, species=None):
@@ -592,7 +601,6 @@ def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extr
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
     genes = Gene.objects.filter(gre=gre)
-    conds_pval = GreConditionMembership.objects.filter(gre=gre)
     biclusters = Bicluster.objects.filter(gres=gre)
     return render_to_response(template, locals(),context_instance=RequestContext(request))
 

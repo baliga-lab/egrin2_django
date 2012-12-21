@@ -40,7 +40,10 @@
         $("#conditions").dataTable({
           "bFilter": false,
           "bSort": true,
-          "aaSorting": [[2, 'asc']]
+          "aaSorting": [[2, 'asc']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'gre_conditions_json' %}{{species}}/{{gre}}"
         });
         $("#biclusters").dataTable({
           "bFilter": false,
@@ -116,13 +119,6 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for o in conds_pval %}
-				<tr class="{% cycle 'row-a' 'row-b' %}">
-					<td class="first"><a href="{% url 'conditions' %}{{ s.ncbi_taxonomy_id }}/{{ o.cond.cond_id }}">{{ o.cond.cond_id }}</a></td>
-					<td>{{ o.cond.cond_name }}</td>
-					<td>{{ o.p_val }}</td>
-				</tr>
-				{% endfor %}
 			</tbody>
     </table>
             
