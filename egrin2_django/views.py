@@ -281,23 +281,15 @@ def corem_detail(request, species=None, corem=None):
 def corem_go_json(request, species=None, corem=None):
     """corem-specific go list"""
     fields = ['go__go_id', 'go__term', 'go__ontology', 'genes_annotated', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
+    dtparams = get_dtparams(request, fields, fields[0])
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
-    go_query = CoremGOMembership.objects.filter(corem=corem)
-    go_query = go_query.order_by(sort_field)
-    num_total = go_query.count()
-
-    go_batch = go_query if display_length == -1 else go_query[display_start:display_end]
-    
+    query = CoremGOMembership.objects.filter(corem=corem)
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)    
     gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,g.p_val]
-           for g in go_batch]
+           for g in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': gos
         }
@@ -313,25 +305,19 @@ def gene_detail_link(species, sys_name, label):
 def genes_json(request, species):
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
               'strand', 'chromosome']
-
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = Gene.objects.filter(species__ncbi_taxonomy_id=species).order_by(sort_field)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
     num_total = query.count()
-    genes_batch = query if display_length == -1 else query[display_start:display_end]
+    batch = dtparams.ordered_batch(query)
 
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               ncbi_accession_link(g.accession),
               g.description, g.start, g.stop,
               g.strand,
-              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
+              ncbi_chromosome_link(g.chromosome.refseq)] for g in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
@@ -341,25 +327,20 @@ def corem_genes_json(request, species=None, corem=None):
     """corem-specific gene list"""
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
               'strand', 'chromosome__refseq']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
+    dtparams = get_dtparams(request, fields, fields[0])
     corem = Corem.objects.get(corem_id=corem, network__species__ncbi_taxonomy_id=species)
     s = Species.objects.get(ncbi_taxonomy_id=species)
-    query = Gene.objects.filter(corem=corem, species=s).order_by(sort_field)
+    query = Gene.objects.filter(corem=corem, species=s)
     num_total = query.count()
-    genes_batch = query if display_length == -1 else query[display_start:display_end]    
+    batch = dtparams.ordered_batch(query)
     genes = [[gene_detail_link(species, g.sys_name, g.sys_name),
               g.name,
               ncbi_accession_link(g.accession),
               g.description, g.start, g.stop,
               g.strand,
-              ncbi_chromosome_link(g.chromosome.refseq)] for g in genes_batch]
+              ncbi_chromosome_link(g.chromosome.refseq)] for g in batch]
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
@@ -508,10 +489,11 @@ def gres(request):
     return render_to_response('gres.html', locals())
 
 
-def gres_json_generic(query, species, display_start, display_length, sEcho):
-    display_end = display_start + display_length
+def gres_json_generic(query, species, dtparams):
+    #display_end = display_start + display_length
     num_total = query.count()
-    batch = query if display_length == -1 else query[display_start:display_end]
+    #batch = query if display_length == -1 else query[display_start:display_end]
+    batch = dtparams.ordered_batch(query)
 
     gres = [[gre_detail_link(species, item.gre.gre_id, item.gre.gre_id),
               item.p_val,
@@ -519,7 +501,7 @@ def gres_json_generic(query, species, display_start, display_length, sEcho):
              for item in batch]
 
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': gres
         }
@@ -528,35 +510,22 @@ def gres_json_generic(query, species, display_start, display_length, sEcho):
 
 def corem_gres_json(request, species, corem):
     fields = ['gre__gre_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
+    dtparams = get_dtparams(request, fields, fields[0])
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    query = GreCoremMembership.objects.filter(corem=corem).order_by(sort_field)
-    return gres_json_generic(query, species, display_start, display_length, sEcho)
+    query = GreCoremMembership.objects.filter(corem=corem)
+    return gres_json_generic(query, species, dtparams)
 
 def gene_gres_json(request, species, gene):
     fields = ['gre__gre_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
-    return gres_json_generic(query, species, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = GreGeneMembership.objects.filter(gene__sys_name=gene)
+    return gres_json_generic(query, species, dtparams)
 
 def condition_gres_json(request, species, condition):
     fields = ['gre__gre_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GreConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
-    return gres_json_generic(query, species, display_start, display_length, sEcho)
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = GreConditionMembership.objects.filter(cond__cond_id=condition)
+    return gres_json_generic(query, species, dtparams)
 
 @page_template("gres_page.html")
 def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
@@ -580,17 +549,6 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
         context.update(extra_context)
     return render_to_response(template, context,context_instance=RequestContext(request))
 
-def gene_gres_json(request, species, gene):
-    fields = ['gre__gre_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
-    return gres_json_generic(query, species, display_start, display_length, sEcho)
-
 
 @page_template("gres_detail_page.html")
 def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extra_context=None):
@@ -607,26 +565,19 @@ def gre_cres_json(request, species, gre):
         return '%s_%s' % (comps[0], comps[1])
 
     fields = ['cre_id', 'cre_id', 'cre_id', 'e_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
-    display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    query = Cre.objects.filter(gre__gre_id=gre).order_by(sort_field)
-    display_end = display_start + display_length
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = Cre.objects.filter(gre__gre_id=gre)
     num_total = query.count()
-    batch = query if display_length == -1 else query[display_start:display_end]
+    batch = dtparams.ordered_batch(query)
 
     cres = [[item.cre_id,
              bicluster_detail_link(species, bicluster_id(item.cre_id), bicluster_id(item.cre_id)),
              ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, item.cre_id)),
              item.e_val
-             ]
-             for item in batch]
+             ] for item in batch]
 
     data = {
-        'sEcho': sEcho,
+        'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': cres
         }
