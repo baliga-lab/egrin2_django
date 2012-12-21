@@ -163,7 +163,6 @@ def condition_detail(request, species=None, condition=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
     genes = Gene.objects.filter(conditions=condition)
-    gres_pval = GreConditionMembership.objects.filter(cond_id=condition)
     return render_to_response('condition_detail.html', locals())
 
 def contact(request):
@@ -490,26 +489,15 @@ def gres(request):
     return render_to_response('gres.html', locals())
 
 
-def corem_gres_json(request, species, corem):
-    fields = ['gre__gre_id', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
+def gres_json_generic(query, species, display_start, display_length, sEcho):
     display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    query = GreCoremMembership.objects.filter(corem=corem).order_by(sort_field)
     num_total = query.count()
-    if display_length == -1:
-        gres_batch = query
-    else:
-        gres_batch = query[display_start:display_end]
+    batch = query if display_length == -1 else query[display_start:display_end]
 
-    gres = [[gre_detail_link(species, gre_corem.gre.gre_id, gre_corem.gre.gre_id),
-              gre_corem.p_val,
-             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, gre_corem.gre.gre_id))]
-             for gre_corem in gres_batch]
+    gres = [[gre_detail_link(species, item.gre.gre_id, item.gre.gre_id),
+              item.p_val,
+             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, item.gre.gre_id))]
+             for item in batch]
 
     data = {
         'sEcho': sEcho,
@@ -517,6 +505,18 @@ def corem_gres_json(request, species, corem):
         'aaData': gres
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
+def corem_gres_json(request, species, corem):
+    fields = ['gre__gre_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    query = GreCoremMembership.objects.filter(corem=corem).order_by(sort_field)
+    return gres_json_generic(query, species, display_start, display_length, sEcho)
 
 def gene_gres_json(request, species, gene):
     fields = ['gre__gre_id', 'p_val']
@@ -527,24 +527,18 @@ def gene_gres_json(request, species, gene):
     sort_field = get_sort_field(request, fields, fields[0])
 
     query = GreGeneMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
-    num_total = query.count()
-    if display_length == -1:
-        gres_batch = query
-    else:
-        gres_batch = query[display_start:display_end]
+    return gres_json_generic(query, species, display_start, display_length, sEcho)
 
-    gres = [[gre_detail_link(species, gre_gene.gre.gre_id, gre_gene.gre.gre_id),
-             gre_gene.p_val,
-             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, gre_gene.gre.gre_id))]
-             for gre_gene in gres_batch]
+def condition_gres_json(request, species, condition):
+    fields = ['gre__gre_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
 
-    data = {
-        'sEcho': sEcho,
-        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
-        'aaData': gres
-        }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
-
+    query = GreConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
+    return gres_json_generic(query, species, display_start, display_length, sEcho)
 
 @page_template("gres_page.html")
 def gres_s(request, template = "gres_s.html", species=None, extra_context=None):

@@ -40,7 +40,10 @@
           "bFilter": false,
           "bSort": true,
           "aaSorting": [[1, 'asc']],
-          "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
+          "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'condition_gres_json' %}{{species}}/{{condition}}"
         });
         $("#bcs").dataTable({
           "bFilter": false,
@@ -108,13 +111,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for o in gres_pval %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'gre_detail' s.ncbi_taxonomy_id o.gre %}">{{ o.gre }}</a></td>
-          <td>{{ o.p_val }}</td>
-          <td><img src="/static/images/gres/{{ s.ncbi_taxonomy_id }}/{{ o.gre }}.png" background-color="black" width=220 height=120 class="float-center" /></td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
             
