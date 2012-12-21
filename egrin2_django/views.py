@@ -124,7 +124,7 @@ def conditions_json(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def conditions_json_generic(query, dtparams):
+def conditions_json_generic(query, species, dtparams):
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
     conds = [[condition_detail_link(species, item.cond.cond_id, item.cond.cond_id),
@@ -143,20 +143,20 @@ def corem_conditions_json(request, species, corem):
     dtparams = get_dtparams(request, fields, fields[0])
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
     query = CoremConditionMembership.objects.filter(corem=corem)
-    return conditions_json_generic(query, dtparams)
+    return conditions_json_generic(query, species, dtparams)
 
 
 def gene_conditions_json(request, species, gene):
     fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
     dtparams = get_dtparams(request, fields, fields[0])
     query = GeneConditionMembership.objects.filter(gene__sys_name=gene)
-    return conditions_json_generic(query, dtparams)
+    return conditions_json_generic(query, species, dtparams)
 
 def gre_conditions_json(request, species, gre):
     fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
     dtparams = get_dtparams(request, fields, fields[0])
     query = GreConditionMembership.objects.filter(gre__gre_id=gre)
-    return conditions_json_generic(query, dtparams)
+    return conditions_json_generic(query, species, dtparams)
 
 def conditions(request, species=None):
     # Return info about conditions
@@ -226,7 +226,7 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
-def corems_json_generic(query, dtparams):
+def corems_json_generic(query, species, dtparams):
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
     corems = [[corem_detail_link(species, item.corem.corem_id, item.corem.corem_id),
@@ -243,13 +243,13 @@ def condition_corems_json(request, species, condition):
     fields = ['corem__corem_id', 'p_val']
     dtparams = get_dtparams(request, fields, fields[0])
     query = CoremConditionMembership.objects.filter(cond__cond_id=condition)
-    return corems_json_generic(query, dtparams)
+    return corems_json_generic(query, species, dtparams)
 
 def gre_corems_json(request, species, gre):
     fields = ['corem__corem_id', 'p_val']
     dtparams = get_dtparams(request, fields, fields[0])
     query = GreCoremMembership.objects.filter(gre__gre_id=gre)
-    return corems_json_generic(query, dtparams)
+    return corems_json_generic(query, species, dtparams)
 
 def corems(request, species=None):
     # Return info about corems            
@@ -631,7 +631,7 @@ def biclusters_json(request, species=None):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
-def biclusters_json_generic(query, dtparams):
+def biclusters_json_generic(query, species, dtparams):
     """all Bicluster JSON subqueries have the same generic structure"""
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
@@ -652,7 +652,7 @@ def corem_biclusters_json(request, species=None, corem=None):
     networks = Network.objects.filter(species=Species.objects.get(ncbi_taxonomy_id=species))
     corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
     query = Bicluster.objects.filter(corems=corem)
-    return biclusters_json_generic(query, dtparams)
+    return biclusters_json_generic(query, species, dtparams)
 
 
 def condition_biclusters_json(request, species=None, condition=None):
@@ -661,14 +661,14 @@ def condition_biclusters_json(request, species=None, condition=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id=condition,network__species=s)
     query = Bicluster.objects.filter(conditions=condition)
-    return biclusters_json_generic(query, dtparams)
+    return biclusters_json_generic(query, species, dtparams)
 
 
 def gene_biclusters_json(request, species=None, gene=None):
     fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     dtparams = get_dtparams(request, fields, fields[0])
     query = Bicluster.objects.filter(genes__sys_name=gene)
-    return biclusters_json_generic(query, dtparams)
+    return biclusters_json_generic(query, species, dtparams)
 
 
 def gre_biclusters_json(request, species=None, gre=None):
@@ -676,7 +676,7 @@ def gre_biclusters_json(request, species=None, gre=None):
     dtparams = get_dtparams(request, fields, fields[0])
     gre = Gre.objects.get(gre_id=gre, network__species__ncbi_taxonomy_id=species)
     query = Bicluster.objects.filter(gres=gre)
-    return biclusters_json_generic(query, dtparams)
+    return biclusters_json_generic(query, species, dtparams)
 
 
 def bicluster_detail(request, species=None, bicluster=None):
