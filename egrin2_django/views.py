@@ -163,7 +163,6 @@ def condition_detail(request, species=None, condition=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
     genes = Gene.objects.filter(conditions=condition)
-    corem_pval = CoremConditionMembership.objects.filter(cond_id=condition)
     gres_pval = GreConditionMembership.objects.filter(cond_id=condition)
     return render_to_response('condition_detail.html', locals())
 
@@ -216,6 +215,27 @@ on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TAB
         'aaData': corems
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+def condition_corems_json(request, species, condition):
+    fields = ['corem__corem_id', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    display_end = display_start + display_length
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    query = CoremConditionMembership.objects.filter(cond__cond_id=condition).order_by(sort_field)
+    num_total = query.count()
+    batch = query if display_length == -1 else query[display_start:display_end]        
+    corems = [[corem_detail_link(species, item.corem.corem_id, item.corem.corem_id),
+               item.p_val] for item in batch]
+    data = {
+        'sEcho': sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': corems
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    
 
 def corems(request, species=None):
     # Return info about corems            

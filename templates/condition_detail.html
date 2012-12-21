@@ -25,7 +25,10 @@
           "bFilter": false,
           "bSort": true,
           "aaSorting": [[1, 'asc']],
-          "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']]
+          "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']],
+          "bProcessing": true,
+          "bServerSide": true,
+          "sAjaxSource": "{% url 'condition_corems_json' %}{{species}}/{{condition}}"
         });
         $("#genes").dataTable({
           "bFilter": false,
@@ -60,12 +63,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for c in corem_pval %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'corems' %}{{ s.ncbi_taxonomy_id }}/{{ c.corem }}">{{ c.corem }}</a></td>
-          <td>{{ c.p_val }}</td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
             
