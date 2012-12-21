@@ -105,29 +105,32 @@ def conditions_json(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def corem_conditions_json(request, species, corem):
-    fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
-    sEcho = request.GET['sEcho']
-    display_start = int(request.GET['iDisplayStart'])
-    display_length = int(request.GET['iDisplayLength'])
+def conditions_json_generic(query, display_start, display_length, sEcho):
     display_end = display_start + display_length
-    sort_field = get_sort_field(request, fields, fields[0])
-
-    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
-    query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
     num_total = query.count()
-    conds_batch = query if display_length == -1 else query[display_start:display_end]
-        
-    conds = [[condition_detail_link(species, corem_cond.cond.cond_id, corem_cond.cond.cond_id),
-              corem_cond.cond.cond_name,
-              corem_cond.p_val]
-             for corem_cond in conds_batch]
+    conds_batch = query if display_length == -1 else query[display_start:display_end]        
+    conds = [[condition_detail_link(species, item.cond.cond_id, item.cond.cond_id),
+              item.cond.cond_name,
+              item.p_val]
+             for item in conds_batch]
     data = {
         'sEcho': sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
+def corem_conditions_json(request, species, corem):
+    fields = ['cond__cond_id', 'cond__cond_name', 'p_val']
+    sEcho = request.GET['sEcho']
+    display_start = int(request.GET['iDisplayStart'])
+    display_length = int(request.GET['iDisplayLength'])
+    sort_field = get_sort_field(request, fields, fields[0])
+
+    corem = Corem.objects.get(corem_id=corem,network__species__ncbi_taxonomy_id=species)
+    query = CoremConditionMembership.objects.filter(corem=corem).order_by(sort_field)
+    return conditions_json_generic(query, display_start, display_length, sEcho)
 
 
 def gene_conditions_json(request, species, gene):
@@ -139,21 +142,7 @@ def gene_conditions_json(request, species, gene):
     sort_field = get_sort_field(request, fields, fields[0])
 
     query = GeneConditionMembership.objects.filter(gene__sys_name=gene).order_by(sort_field)
-    num_total = query.count()
-    conds_batch = query if display_length == -1 else query[display_start:display_end]
-        
-    conds = [[condition_detail_link(species, gene_cond.cond.cond_id, gene_cond.cond.cond_id),
-              gene_cond.cond.cond_name,
-              gene_cond.p_val]
-             for gene_cond in conds_batch]
-
-    data = {
-        'sEcho': sEcho,
-        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
-        'aaData': conds
-        }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
-
+    return conditions_json_generic(query, display_start, display_length, sEcho)
 
 def conditions(request, species=None):
     # Return info about conditions
