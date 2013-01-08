@@ -24,14 +24,14 @@
 		<script>
 			$(document).ready(function() {
 				$("#gre_tip").qtip({
-					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regualtory motifs (CRMs)',
+					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regulatory motifs (CRMs)',
 		          	position: { target: 'mouse' },
 		          	show: 'mouseover',
 		          	hide: 'mouseout',          
 				    style: 'dark' 
 				   	});
 				$("#corem_tip").qtip({
-					content: 'Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
+					content: 'Corem: Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
 		          	position: { target: 'mouse' },
 		          	show: 'mouseover',
 		          	hide: 'mouseout',          
@@ -40,6 +40,13 @@
 				$("#bicluster_tip").qtip({
 					content: 'Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression, over subsets of conditions (biclusters) (2) similar de novo detected sequence motifs in their promoters and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
 		          	position: { target: 'mouse' },
+		          	show: 'mouseover',
+		          	hide: 'mouseout',          
+				    style: 'dark' 
+				   	});
+				$("#network_tip").qtip({
+					content: 'A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of the data, (2) CRM clustering, (3) CRM scanning, and (4) corem detection.'
+					position: { target: 'mouse' },
 		          	show: 'mouseover',
 		          	hide: 'mouseout',          
 				    style: 'dark' 
@@ -72,7 +79,7 @@
 					<td>Networks inferred</td>
 				</tr>
                 <tr class="row-a">
-					<td class="first">Corems <a id="corem_tip" href="#"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></td>
+					<td class="first">Corems <a id="corem_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 					<td><a href="{% url 'corems' %}">{{ corems }}</a></td>
 					<td>Corems discovered</td>
 				</tr>
@@ -87,7 +94,7 @@
 					<td>Conditions in the models</td>
 				</tr>
 				<tr class="row-a">
-					<td class="first">Gene Regulatory Elements (GREs) <a id="gre_tip" href="#"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></td>
+					<td class="first">Gene Regulatory Elements (GREs) <a id="gre_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 					<td><a href="{% url 'gres' %}">{{ gres }}</a></td>
 					<td>GREs discovered</td>
 				</tr>
