@@ -45,7 +45,7 @@
 				    style: 'dark' 
 				   	});
 				$("#network_tip").qtip({
-					content: 'A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of the data, (2) CRM clustering, (3) CRM scanning, and (4) corem detection.'
+					content: 'A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of the data, (2) CRM clustering, (3) CRM scanning, and (4) corem detection.',
 					position: { target: 'mouse' },
 		          	show: 'mouseover',
 		          	hide: 'mouseout',          
@@ -74,7 +74,7 @@
 					<td>Species modeled</td>
 				</tr>
                 <tr class="row-b">
-					<td class="first">Networks</td>
+					<td class="first">Networks <a id="network_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 					<td><a href="{% url 'networks' %}">{{ networks }}</a></td>
 					<td>Networks inferred</td>
 				</tr>
