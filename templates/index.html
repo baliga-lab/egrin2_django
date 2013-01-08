@@ -20,12 +20,38 @@
 	<div id="content-wrap">
 	
 		<div id="main">
+		
+		<script>
+			$(document).ready(function() {
+				$("#gre_tip").qtip({
+					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regualtory motifs (CRMs)',
+		          	position: { target: 'mouse' },
+		          	show: 'mouseover',
+		          	hide: 'mouseout',          
+				    style: 'dark' 
+				   	});
+				$("#corem_tip").qtip({
+					content: 'Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
+		          	position: { target: 'mouse' },
+		          	show: 'mouseover',
+		          	hide: 'mouseout',          
+				    style: 'dark' 
+				   	});
+				$("#bicluster_tip").qtip({
+					content: 'Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression, over subsets of conditions (biclusters) (2) similar de novo detected sequence motifs in their promoters and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
+		          	position: { target: 'mouse' },
+		          	show: 'mouseover',
+		          	hide: 'mouseout',          
+				    style: 'dark' 
+				   	});
+		      });
+	    </script>
 				
 			<a name="What is EGRIN 2.0?"></a>
 			<h2><a href="index" title="">What is EGRIN 2.0?</a></h2>
 					
             <p>A foremost challenge in systems biology is to understand how, with just a few transcription factors (TFs), a simple prokaryote is able to tailor responses to complex and varying environmental challenges.  <strong>EGRIN2.0</strong> is a single nucleotide resolution model that describes how the genome-wide distribution of gene regulatory elements (GREs; i.e. binding sites for TFs) encodes sophisticated regulatory programs for environmental responses. Currently, we have comprehesive models for two prokaryotic organisms: a bacterium (<i>Escherichia coli K-12</i>) and an archaeon (<i>Halobacterium salinarum NRC-1</i>). The complex organization of GREs within intergenic and intragenic promoters encodes combinatorial influences of TFs to dynamically split regulons and even operons, regrouping genes into conditionally co-regulated modules or <strong>‘corems’</strong> that stitch together distinct processes into environment-specific responses.  Corems accurately predict similarities in fitness contributions of genes across diverse environments, while simultaneously revealing active regulatory mechanisms responsible for the operational state of a TRN in each environment. </p>
-            <p><code>This website's aim is to faciliate <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+            <p><code>This website's aim is to facilitate <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
 			
 			<blockquote><p>EGRIN2.0 statistics</p></blockquote>
 				
@@ -61,9 +87,9 @@
 					<td>Conditions in the models</td>
 				</tr>
 				<tr class="row-a">
-					<td class="first">GREs</td>
+					<td class="first">Gene Regulatory Elements (GREs)</td>
 					<td><a href="{% url 'gres' %}">{{ gres }}</a></td>
-					<td>GREs discovered</td>
+					<td>GREs discovered <a id="gre_tip" href="#"></a> </td>
 				</tr>
                 <tr class="row-b">
 					<td class="first">Biclusters</td>
@@ -71,9 +97,9 @@
 					<td>Biclusters in the models</td>
 				</tr>
                 <tr class="row-a">
-					<td class="first">Known Regulators</td>
+					<td class="first">Known regulators</td>
 					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
-					<td>Mapping to TFs (E. coli only)</td>
+					<td>RegulonDB annotated TFs mapped to GREs (E. coli only)</td>
 				</tr>
 			</table>
 								

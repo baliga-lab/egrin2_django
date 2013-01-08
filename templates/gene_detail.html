@@ -50,27 +50,26 @@
           "bServerSide": true,
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
-        console.debug('installing qtip');
 		$("#prom_arch").qtip({
-			content: 'Promoter architecture calculated by scanning all CRMs contained within GREs across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+			content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
           	position: { target: 'mouse' },
           	show: 'mouseover',
           	hide: 'mouseout',          
-		    style: 'dark' // Give it some style
+		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
 			content: 'Enriched GREs computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
           	position: { target: 'mouse' },
           	show: 'mouseover',
           	hide: 'mouseout',          
-		    style: 'dark' // Give it some style
+		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
 			content: 'Enriched conditions computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
           	position: { target: 'mouse' },
           	show: 'mouseover',
           	hide: 'mouseout',          
-		    style: 'dark' // Give it some style
+		    style: 'dark' 
 		   	});
 		$("#zoom_prom_arch").colorbox({  
 			title:"{{ g.sys_name }} Promoter Architecture",
