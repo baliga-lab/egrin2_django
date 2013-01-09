@@ -25,9 +25,9 @@
 			$(document).ready(function() {
 				$("#gre_tip").qtip({
 					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regulatory motifs (CRMs) discovered in individual biclusters',
-		          	position: { target: 'mouse' },
+		          	position: { target: false },
 		          	show: 'click',
-		          	hide: 'click',          
+		          	hide: { when:'click', delay: 5000 },          
 				    style: 'dark' 
 				   	});
 				$("#corem_tip").qtip({
