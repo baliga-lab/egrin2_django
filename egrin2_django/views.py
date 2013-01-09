@@ -620,8 +620,8 @@ def biclusters_json(request, species=None):
     biclusters = [[b.network.version_id,
                    bicluster_detail_link(species, b.bc_id, b.bc_id),
                    b.genes.count(), b.conditions.count(), b.cres.count(),
-                   b.corems.count(), b.gres.count()]
-                  for b in batch]
+                   b.corems.count(), b.gres.count()-1]
+                  for b in batch] # hardcoded removal of gre_0, need to make more robust
 
     data = {
         'sEcho': dtparams.sEcho,
@@ -688,5 +688,5 @@ def bicluster_detail(request, species=None, bicluster=None):
     conds = Condition.objects.filter(bicluster=bc)
     corems = Corem.objects.filter(bicluster=bc)
     cres = Cre.objects.filter(bicluster=bc)
-    gres = Gre.objects.filter(bicluster=bc)
+    gres = Gre.objects.filter(bicluster=bc).exclude(gre_id=s.short_name+"_0")
     return render_to_response('bicluster_detail.html', locals())
