@@ -71,7 +71,7 @@
             "aoColumnDefs": [ { 'bSortable': false, 'aTargets': [2, 3]}]
           });  
 		$("#expression_tip").qtip({
-			content: 'Standardized relative expression of all corem genes in conditions where the corem is actively co-regulated (see Conditions for details). Color blocks denote related experimental conditions (determined by array annotations). Key below.',
+			content: 'Standardized relative expression of all genes in corem in conditions where the corem is actively co-regulated (see Conditions for details). Color blocks denote related experimental conditions (determined by array annotations, key below).',
           	position: { target: 'mouse' },
           	show: 'mouseover',
           	hide: 'mouseout',          
@@ -99,7 +99,7 @@
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditional activity computed by minimal relative standard deviation given resampling. All conditions with pval<=0.05 are reported.',
+			content: 'Conditional activity computed by relative standard deviation given resampling. All conditions with pval<=0.05 are reported.',
 			position: { target: 'mouse' },
           	show: 'mouseover',
           	hide: 'mouseout',          
