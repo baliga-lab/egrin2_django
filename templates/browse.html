@@ -53,51 +53,42 @@
 		      });
 	    </script>
             
-        <blockquote><p>Browse EGRIN2.0</p></blockquote>
+        <blockquote><p>Browse EGRIN 2.0</p></blockquote>
 				
 			<table>
 				<tr>
-					<th class="first">attribute</th>
 					<th>value</th>
 					<th>description</th>
 				</tr>
                 <tr class="row-a">
-					<td class="first">Species</td>
 					<td><a href="{% url 'species' %}">{{ species }}</a></td>
 					<td>Species modeled</td>
 				</tr>
                 <tr class="row-b">
-					<td class="first">Networks</td>
 					<td><a href="{% url 'networks' %}">{{ networks }}</a></td>
 					<td>Networks inferred <a id="network_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 				</tr>
                 <tr class="row-a">
-					<td class="first">Corems</td>
 					<td><a href="{% url 'corems' %}">{{ corems }}</a></td>
 					<td>Corems discovered <a id="corem_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 				</tr>
 				<tr class="row-b">
-					<td class="first">Genes</td>
 					<td><a href="{% url 'genes' %}">{{ genes }}</a></td>
 					<td>Genes modeled</td>
 				</tr>
 				<tr class="row-b">
-					<td class="first">Conditions</td>
 					<td><a href="{% url 'conditions' %}">{{ conditions }}</a></td>
 					<td>Conditions in the models</td>
 				</tr>
 				<tr class="row-a">
-					<td class="first">Gene Regulatory Elements (GREs)</td>
 					<td><a href="{% url 'gres' %}">{{ gres }}</a></td>
-					<td>GREs discovered <a id="gre_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
+					<td>Gene Regulatory Elements (GREs) discovered <a id="gre_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 				</tr>
                 <tr class="row-b">
-					<td class="first">Biclusters</td>
 					<td><a href="{% url 'biclusters' %}">{{ biclusters }}</a></td>
 					<td>Biclusters in the models <a id="bicluster_tip" href="#"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
 				</tr>
                 <tr class="row-a">
-					<td class="first">Known regulators</td>
 					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
 					<td>RegulonDB annotated TFs mapped to GREs (E. coli only)</td>
 				</tr>
