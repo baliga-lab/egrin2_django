@@ -61,6 +61,41 @@
           "bServerSide": true,
           "sAjaxSource": "{% url 'gre_cres_json' %}{{species}}/{{gre}}"
         });
+		$("#gene_tip").qtip({
+			content: 'Genes determined by hypergeometric test through bicluster membership, reported if BH-corrected qvalue <= 0.05.',
+          	position: { target: 'mouse' },
+          	show: 'click',
+          	hide: { when: { event: 'click' } },          
+		    style: 'dark' 
+		   	});
+		$("#corem_tip").qtip({
+			content: 'Reported corems contain GRE in representative biclusters for that corem (i.e. biclusters containing largest fraction of genes in corem, top decile), suggesting that these GREs are responsible for regulating the corem. qval is BH-corrected pval from hypergeometric test.',
+          	position: { target: 'mouse' },
+          	show: 'click',
+          	hide: { when: { event: 'click' } },          
+		    style: 'dark' 
+		   	});
+		$("#bicluster_tip").qtip({
+			content: 'Biclusters containing a cis-regualtory motif (CRM) mapped to GRE.',
+          	position: { target: 'mouse' },
+          	show: 'click',
+          	hide: { when: { event: 'click' } },         
+		    style: 'dark' 
+		   	});
+		$("#condition_tip").qtip({
+			content: 'Conditions determined by hypergeometric test through bicluster membership, reported if BH-corrected qvalue <= 0.05.',
+			position: { target: 'mouse' },
+          	show: 'click',
+          	hide: { when: { event: 'click' } },          
+		    style: 'dark' 
+		   	});
+		$("#crm_tip").qtip({
+			content: 'CRM: cis-regulatory motif. Motifs discovered in individual biclusters clustered into GRE. May be depicted as reverse complement. Evalue computed by MEME.',
+			position: { target: 'mouse' },
+          	show: 'click',
+          	hide: { when: { event: 'click' } },          
+		    style: 'dark' 
+		   	});
       });
 		</script>
     <blockquote><p>GRE {{ gre.gre_id }}</p></blockquote>
@@ -68,19 +103,20 @@
       <img src="/static/images/gres/{{ s.ncbi_taxonomy_id }}/{{ gre.gre_id }}.png" background-color="black" width=440 height=240 class="float-center" />
     </div>
     <!-- <p><span id="previewcanvas_{{ gre.gre_id }}"></p> -->
-    <blockquote><p>Corems</p></blockquote>
+    
+    <blockquote><p>Corems <a id="corem_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="corems" class="table">
       <thead>
         <tr>
           <th class="first">Corem ID</th>
-          <th>pval</th>
+          <th>qval</th>
         </tr>
       </thead>
       <tbody>
       </tbody>
 		</table>
             
-    <blockquote><p>Genes</p></blockquote>
+    <blockquote><p>Genes <a id="gene_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
     <table id="genes" class="table">
       <thead>
 				<tr>
@@ -112,7 +148,7 @@
       </tbody>
     </table>
 			
-    <blockquote><p>Conditions</p></blockquote>
+    <blockquote><p>Conditions <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="conditions" class="table">
 			<thead>
 				<tr>
@@ -125,7 +161,7 @@
 			</tbody>
     </table>
             
-    <blockquote><p>Biclusters</p></blockquote>
+    <blockquote><p>Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="biclusters" class="table">
       <thead>
         <tr>
@@ -147,7 +183,7 @@
       </tbody>
     </table>
             
-    <blockquote><p>CRMs</p></blockquote>
+    <blockquote><p>CRMs <a id="crm_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="cres" class="table">
       <thead>
         <tr>
