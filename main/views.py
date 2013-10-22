@@ -193,7 +193,7 @@ def corems_json(request, species):
 from (select c.id as corem_id, c.network_id, c.corem_id as corem_name,
 count(cg.gene_id) as num_genes
 from %scorem c left outer join %scorem_genes cg
-on c.id = cg.corem_id group by c.id) as q1 left outer join
+on c.id = cg.corem_id group by c.id, c.network_id, c.corem_id) as q1 left outer join
 (select ccm.corem_id, count(ccm.cond_id) as num_conditions
 from %scoremconditionmembership ccm group by ccm.corem_id) as q2
 on q1.corem_id = q2.corem_id left outer join
