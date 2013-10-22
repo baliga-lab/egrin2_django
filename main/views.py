@@ -283,7 +283,7 @@ def corem_go_json(request, species=None, corem=None):
     query = CoremGOMembership.objects.filter(corem=corem)
     num_total = query.count()
     batch = dtparams.ordered_batch(query)    
-    gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,g.p_val]
+    gos = [[amigo_link(g.go.go_id),g.go.term,g.go.ontology,g.genes_annotated,float(g.p_val)]
            for g in batch]
     data = {
         'sEcho': dtparams.sEcho,
