@@ -493,7 +493,7 @@ def gres_json_generic(query, species, dtparams):
     batch = dtparams.ordered_batch(query)
 
     gres = [[gre_detail_link(species, item.gre.gre_id, item.gre.gre_id),
-              item.p_val,
+              float(item.p_val),
              ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (settings.STATIC_URL, species, item.gre.gre_id))]
              for item in batch]
 
