@@ -129,7 +129,7 @@ def conditions_json_generic(query, species, dtparams):
     batch = dtparams.ordered_batch(query)
     conds = [[condition_detail_link(species, item.cond.cond_id, item.cond.cond_id),
               item.cond.cond_name,
-              item.p_val] for item in batch]
+              float(item.p_val)] for item in batch]
     data = {
         'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
@@ -231,7 +231,7 @@ def corems_json_generic(query, species, dtparams):
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
     corems = [[corem_detail_link(species, item.corem.corem_id, item.corem.corem_id),
-               item.p_val] for item in batch]
+               float(item.p_val)] for item in batch]
     data = {
         'sEcho': dtparams.sEcho,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
@@ -637,7 +637,7 @@ def biclusters_json_generic(query, species, dtparams):
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
     biclusters = [[bicluster_detail_link(species, b.bc_id, b.bc_id),
-                   b.residual, b.genes.count(), b.conditions.count()]
+                   float(b.residual), b.genes.count(), b.conditions.count()]
                   for b in batch]
     data = {
         'sEcho': dtparams.sEcho,
