@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('egrin2_django.views',
+urlpatterns = patterns('main.views',
     # Examples:
     # url(r'^$', 'egrin2_django.views.home', name='home'),
     # url(r'^egrin2_django/', include('egrin2_django.foo.urls')),

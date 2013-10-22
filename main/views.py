@@ -7,10 +7,10 @@ from django.core.urlresolvers import reverse
 
 from django.db import connection, transaction
 from django.db.models import Count
-from models import *
+from .models import *
 import collections
 import solr
-from egrin2_django.settings import TABLE_PREFIX, STATIC_URL
+from django.conf import settings
 
 # data tables related helpers
 class DataTablesParam:
@@ -199,7 +199,8 @@ from %scoremconditionmembership ccm group by ccm.corem_id) as q2
 on q1.corem_id = q2.corem_id left outer join
 (select gcm.corem_id, count(gcm.gre_id) as num_gres
 from %sgrecoremmembership gcm group by gcm.corem_id) as q3
-on q1.corem_id = q3.corem_id""" % (TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX, TABLE_PREFIX)
+on q1.corem_id = q3.corem_id""" % (settings.TABLE_PREFIX, settings.TABLE_PREFIX,
+	settings.TABLE_PREFIX, settings.TABLE_PREFIX)
 
     fields = ['corem_name', 'num_genes', 'num_conditions', 'num_gres2']
     dtparams = get_dtparams(request, fields, fields[0])
@@ -493,7 +494,7 @@ def gres_json_generic(query, species, dtparams):
 
     gres = [[gre_detail_link(species, item.gre.gre_id, item.gre.gre_id),
               item.p_val,
-             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, item.gre.gre_id))]
+             ('<img src="%simages/gres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (settings.STATIC_URL, species, item.gre.gre_id))]
              for item in batch]
 
     data = {
@@ -567,7 +568,7 @@ def gre_cres_json(request, species, gre):
 
     cres = [[item.cre_id,
              bicluster_detail_link(species, bicluster_id(item.cre_id), bicluster_id(item.cre_id)),
-             ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (STATIC_URL, species, item.cre_id)),
+             ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (settings.STATIC_URL, species, item.cre_id)),
              item.e_val
              ] for item in batch]
 

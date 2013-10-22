@@ -13,6 +13,7 @@ class Species(models.Model):
         return self.name
     
     class Meta:
+        app_label = 'egrin2_django'
         ordering = ['name']
         verbose_name_plural = "Species"
 
@@ -27,6 +28,9 @@ class Chromosome(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        app_label = 'egrin2_django'
+
 class Network(models.Model):
     species = models.ForeignKey(Species)
     name = models.CharField(max_length=255)
@@ -37,6 +41,9 @@ class Network(models.Model):
     
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        app_label = 'egrin2_django'
 
 class Gene(models.Model):
     species = models.ForeignKey(Species)
@@ -54,11 +61,12 @@ class Gene(models.Model):
     conditions = models.ManyToManyField('Condition', verbose_name = "condition membership",
                                         through='GeneConditionMembership')
     
-    class Meta:
-        ordering = ['sys_name']
-    
     def __unicode__(self):
         return self.sys_name
+
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['sys_name']
     
 class Condition(models.Model):
     network = models.ForeignKey(Network)
@@ -67,23 +75,25 @@ class Condition(models.Model):
     corems = models.ManyToManyField('Corem', verbose_name="corem membership",
                                     through='CoremConditionMembership')
     
-    class Meta:
-        ordering = ['cond_id']
-    
     def __unicode__(self):
         return str(self.cond_id)
+    
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['cond_id']
     
 class Expression(models.Model):
     gene = models.ForeignKey(Gene, verbose_name = "expressed gene")
     condition = models.ForeignKey(Condition, verbose_name = "expressed condition")
     value = models.DecimalField(max_digits=12, decimal_places=8)  # models.CharField(max_length=128)
 
-    class Meta:
-        ordering = ['gene']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.gene,self.condition,self.value)
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['gene']
+        
 class Pssm(models.Model):
     parent_id = models.CharField(max_length=128)
     #genes = models.ManyToManyField(Gene, verbose_name = "gene membership")
@@ -149,6 +159,9 @@ class Pssm(models.Model):
     def __unicode__(self):
         return '%s' % self.parent_id
 
+    class Meta:
+        app_label = 'egrin2_django'
+
 class Row(models.Model):
     pssm = models.ForeignKey(Pssm, verbose_name = "pssm name")
     pos = models.IntegerField()
@@ -157,12 +170,13 @@ class Row(models.Model):
     c = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
     t = models.DecimalField(max_digits=8, decimal_places=6)  # (max_digits=6, decimal_places=5)
     
-    class Meta:
-        ordering = ['pos']
-    
     def __unicode__(self):
         return '%s' % self.pos
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['pos']
+    
 class Gre(models.Model):
     network = models.ForeignKey(Network)
     gre_id = models.CharField(max_length=255)
@@ -179,6 +193,9 @@ class Gre(models.Model):
     def __unicode__(self):
         return '%s' % self.gre_id
     
+    class Meta:
+        app_label = 'egrin2_django'
+
 class GO(models.Model):
     go_id = models.CharField(max_length=255)
     ontology = models.CharField(max_length=255)
@@ -188,6 +205,9 @@ class GO(models.Model):
     
     def __unicode__(self):
         return '%s' % self.go_id
+
+    class Meta:
+        app_label = 'egrin2_django'
 
 class Cre(models.Model):
     network = models.ForeignKey(Network)
@@ -202,6 +222,9 @@ class Cre(models.Model):
     def __unicode__(self):
         return '%s' % self.cre_id
         
+    class Meta:
+        app_label = 'egrin2_django'
+
 class Bicluster(models.Model):
     network = models.ForeignKey(Network)
     bc_id = models.CharField(max_length=255)
@@ -225,6 +248,9 @@ class Bicluster(models.Model):
     def __unicode__(self):
         return '%s' % self.bc_id
     
+    class Meta:
+        app_label = 'egrin2_django'
+
 class Corem(models.Model):
     network = models.ForeignKey(Network)
     corem_id = models.CharField(max_length=255)
@@ -252,6 +278,9 @@ class Corem(models.Model):
     def __unicode__(self):
         return '%s' % self.corem_id
 
+    class Meta:
+        app_label = 'egrin2_django'
+
 class greTF(models.Model):
     network = models.ForeignKey(Network)
     tf = models.CharField(max_length=255)
@@ -260,6 +289,9 @@ class greTF(models.Model):
     
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
+
+    class Meta:
+        app_label = 'egrin2_django'
 
 ######################################################################
 ####  Many-to-many relationships with attributes
@@ -270,34 +302,37 @@ class GreGeneMembership(models.Model):
     gene = models.ForeignKey(Gene, verbose_name = "gene parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13) # models.CharField(max_length=128)
     
-    class Meta:
-        ordering = ['gre']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.gre_id,self.gene,self.p_val)
     
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['gre']
+        
 class GeneConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     gene = models.ForeignKey(Gene, verbose_name = "gene parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13) # models.CharField(max_length=128)
     
-    class Meta:
-        ordering = ['cond']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.gene,self.p_val)
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['cond']
+        
 class CoremConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
     
-    class Meta:
-        ordering = ['cond']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
     
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['cond']
+        
 class CoremGOMembership(models.Model):
     go = models.ForeignKey(GO, verbose_name = "GO parent")
     tot_annotated = models.IntegerField()
@@ -306,37 +341,40 @@ class CoremGOMembership(models.Model):
     
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
 
-    class Meta:
-        ordering = ['go']
-        
     def return_pval(self):
         return float(self.p_val)
     
     def __unicode__(self):
         return '%s : %s : %s' % (self.go,self.corem,self.p_val)
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['go']
+        
 class GreConditionMembership(models.Model):
     cond = models.ForeignKey(Condition, verbose_name = "condition parent")
     gre = models.ForeignKey('Gre', verbose_name = "gre parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13)  # models.CharField(max_length=128)
 
-    class Meta:
-        ordering = ['cond']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.cond_id,self.gre,self.p_val)
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['cond']
+        
 class GreCoremMembership(models.Model):
     gre = models.ForeignKey(Gre, verbose_name = "GRE parent")
     corem = models.ForeignKey('Corem', verbose_name = "corem parent")
     p_val = models.DecimalField(max_digits=15, decimal_places=13)
 
-    class Meta:
-        ordering = ['gre']
-        
     def __unicode__(self):
         return '%s : %s : %s' % (self.gre_id,self.corem,self.p_val)
 
+    class Meta:
+        app_label = 'egrin2_django'
+        ordering = ['gre']
+        
 # These are not implemented at the moment. For future use
 #class Cog(models.Model):
 #    cog_id = models.CharField(max_length=128,required=False)
