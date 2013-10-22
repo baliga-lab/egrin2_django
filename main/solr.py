@@ -14,7 +14,7 @@ def search(q):
     query_string = make_query_string(q)
     print "SEARCHING WITH QUERY: '%s'" % query_string
     print 'wt=json&rows=1000&facet=true&facet.field=network&q=' + query_string
-    response = urllib2.urlopen(SOLR_URL,
+    response = urllib2.urlopen(settings.SOLR_URL,
                                'wt=json&facet=true&facet.field=network&q=' + query_string)
     result = simplejson.loads(response.read())
     resp   = result['response']
