@@ -11,13 +11,13 @@ PLOTS = F
 PVAL = .05
 
 if (ECO) {
-  source("/docs/git/Corems/main.R")
-  source("/docs/git/Corems/processEGRIN.R")
+	#source("/docs/git/Corems/main.R")
+	#source("/docs/git/Corems/processEGRIN.R")
   
-  cwd <- getwd()
-  setwd("/docs/EGRIN2/ecoli/ecoli_corems")
-  o <- loadEnv()
-  setwd(cwd)
+	#cwd <- getwd()
+	#setwd("/docs/EGRIN2/ecoli/ecoli_corems")
+	#o <- loadEnv()
+	#setwd(cwd)
   
   outRoot="/isb-1/R/egrin2/website/fixtures/511145/ecoli"
   # from Dave final list of motif.clusters
