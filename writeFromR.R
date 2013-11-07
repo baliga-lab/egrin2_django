@@ -45,7 +45,7 @@ if (HALO) {
 # Write gene ontology data for gene ontology table
 library("GO.db")
 go.table  <- toTable(GOTERM)
-write.table(go.table,sep="\t",col.names=T,row.names=F,quote=F,file="/isb-1/tmp/fixtures/geneontology")
+write.table(go.table,sep="\t",col.names=T,row.names=F,quote=F,file="/isb-1/R/egrin2/website/fixtures/geneontology")
 
 writeInitials <- function(outRoot) {
   require(multicore)
