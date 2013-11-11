@@ -127,7 +127,7 @@ writeInitials <- function(outRoot) {
 		}
 	}
 	if (is.null(go)) {
-		o <- paste(c("","","",""),sep="\t")
+		o <- paste(c("","","",""),collapse="\t")
 	} else {
 		o <- paste(paste(sapply(strsplit(go[,1],"~"),function(i)i[[1]]),collapse=","),paste(go[,2],collapse=","),paste(go[,3],collapse=","),paste(go[,4],collapse=","),sep="\t")			 
 	}
