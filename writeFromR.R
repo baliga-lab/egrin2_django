@@ -48,6 +48,9 @@ go.table  <- toTable(GOTERM)
 write.table(go.table,sep="\t",col.names=T,row.names=F,quote=F,file="/isb-1/R/egrin2/website/fixtures/geneontology")
 
 writeInitials <- function(outRoot) {
+  unload("filehash")
+  unload("filehashRO")
+  require(filehashRO)
   require(multicore)
   # write data to initialize django models
   # eg. conditions, biclusters, etc
@@ -97,25 +100,38 @@ writeInitials <- function(outRoot) {
   })
   names(corem_genes) <- o$corem_list$corems
   corem_go <- lapply(o$corem_list$corems,function(i){
+	#print(i)
     go = NULL
-    if (dim(as.matrix(o$corem_list$geneontology[[i]]$BP))[1]>0) {
-      go <- as.matrix(o$corem_list$geneontology[[i]]$BP)
-    }
-    if (dim(as.matrix(o$corem_list$geneontology[[i]]$MF))[1]>0) {
-      if (!is.null(go)) {
-        go <- rbind(go,as.matrix(o$corem_list$geneontology[[i]]$MF))
-      } else {
-        go <- as.matrix(o$corem_list$geneontology[[i]]$MF)
-      }
-    }
-    if (dim(as.matrix(o$corem_list$geneontology[[i]]$CC))[1]>0) {
-      if (!is.null(go)) {
-        go <- rbind(go,as.matrix(o$corem_list$geneontology[[i]]$CC))
-      } else {
-        go <- as.matrix(o$corem_list$geneontology[[i]]$CC)
-      }
-    }
-    o <- paste(paste(go[,1],collapse=","),paste(go[,3],collapse=","),paste(go[,4],collapse=","),paste(go[,6],collapse=","),sep="\t")
+	if (!is.null(o$corem_list$gene.ontology[[i]]$BP)) {
+		if (dim(as.matrix(o$corem_list$gene.ontology[[i]]$BP))[1]>0) {
+			go <- as.matrix(o$corem_list$gene.ontology[[i]]$BP)[,c("Term","Count","Pop Hits","FDR"),drop=F]
+			}
+					 
+	}
+	if (!is.null(o$corem_list$gene.ontology[[i]]$MF)) {
+		if (dim(as.matrix(o$corem_list$gene.ontology[[i]]$MF))[1]>0) {
+			if (!is.null(go)) {
+				go <- rbind(go,as.matrix(o$corem_list$gene.ontology[[i]]$MF)[,c("Term","Count","Pop Hits","FDR"),drop=F])
+			} else {
+				go <- as.matrix(o$corem_list$gene.ontology[[i]]$MF)[,c("Term","Count","Pop Hits","FDR"),drop=F]
+			}
+		}
+	}
+	if (!is.null(o$corem_list$gene.ontology[[i]]$CC)) {
+		if (dim(as.matrix(o$corem_list$gene.ontology[[i]]$CC))[1]>0) {
+			if (!is.null(go)) {
+				go <- rbind(go,as.matrix(o$corem_list$gene.ontology[[i]]$CC)[,c("Term","Count","Pop Hits","FDR"),drop=F])
+			} else {
+				go <- as.matrix(o$corem_list$gene.ontology[[i]]$CC)[,c("Term","Count","Pop Hits","FDR"),drop=F]
+			}
+		}
+	}
+	if (is.null(go)) {
+		o <- paste(c("","","",""),sep="\t")
+	} else {
+		o <- paste(paste(sapply(strsplit(go[,1],"~"),function(i)i[[1]]),collapse=","),paste(go[,2],collapse=","),paste(go[,3],collapse=","),paste(go[,4],collapse=","),sep="\t")			 
+	}
+	return(o)
   })
   # order corem, genes, bcs, gres, gre_pvals,go_ids,term_descriptions,genes_annotated,go_pval
   # write header
