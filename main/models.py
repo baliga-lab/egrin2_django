@@ -24,7 +24,7 @@ class Chromosome(models.Model):
     topology = models.CharField(max_length=64)
     refseq = models.CharField(max_length=64, blank=True, null=True)
     scaffoldId = models.IntegerField()
-    sequence = models.CharField(max_length=3000000000)
+    #sequence = models.CharField(max_length=3000000000)
     
     def __unicode__(self):
         return self.name
