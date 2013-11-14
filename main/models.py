@@ -24,6 +24,7 @@ class Chromosome(models.Model):
     topology = models.CharField(max_length=64)
     refseq = models.CharField(max_length=64, blank=True, null=True)
     scaffoldId = models.IntegerField()
+    sequence = models.CharField(max_length=3000000000)
     
     def __unicode__(self):
         return self.name
@@ -221,6 +222,19 @@ class Cre(models.Model):
     
     def __unicode__(self):
         return '%s' % self.cre_id
+        
+    class Meta:
+        app_label = 'egrin2_django'
+
+class Cre_pos(models.Model):
+    network = models.ForeignKey(Network)
+    cre_id = models.ForeignKey(Cre)
+    start = models.IntegerField()
+    stop = models.IntegerField()
+    pval = models.DecimalField(max_digits=16, decimal_places=4)
+
+    def __unicode__(self):
+        return '%s' % self.start
         
     class Meta:
         app_label = 'egrin2_django'
