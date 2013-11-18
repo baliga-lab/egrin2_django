@@ -11,11 +11,12 @@ from decimal import Decimal
 # This prefix is used in the Postgres database, Django prepends that to the
 # model class name. If you named your application differently, this
 # is the place to change
-APP_PREFIX = 'egrin2_django_'
+APP_PREFIX = 'main_'
 
-PARENT_PATH = "/isb-1/tmp/fixtures/"
-ECO_PATH = "/isb-1/tmp/fixtures/511145/ecoli_"
-HAL_PATH = "/isb-1/tmp/fixtures/64091/hal_"
+#PARENT_PATH = "/isb-1/tmp/fixtures/"
+PARENT_PATH = "/home/weiju/Projects/ISB/egrin2_django/tmp/website/fixtures/"
+ECO_PATH = PARENT_PATH + "511145/ecoli_"
+HAL_PATH = PARENT_PATH + "64091/hal_"
 BASE_PATH = { 'eco': ECO_PATH, 'hal': HAL_PATH, 'parent': PARENT_PATH }
 
 # these maps reflect the ids established in the base fixtures
@@ -116,7 +117,7 @@ def insert_go(cur, go_id, ontology, term, definition, synonym):
     
 def add_go(conn):
     print "Importing Gene Ontology Reference Table..."
-    with open(BASE_PATH['parent'] + "geneontology.txt") as infile:
+    with open(BASE_PATH['parent'] + "geneontology") as infile:
         cur = conn.cursor()
         infile.readline()  # skip header
         for line in infile.readlines():
@@ -649,7 +650,7 @@ def add_gre_regulator(organism, conn):
 
 if __name__ == '__main__':
     print "EGRIN2 data import"
-    conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
+    conn = psycopg2.connect("dbname=egrin2 user=dj_ango password=django")
     add_go(conn)
     for organism in ['eco','hal']:
         print "organism: ", organism
