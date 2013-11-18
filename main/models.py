@@ -212,12 +212,12 @@ class Cre(models.Model):
         return '%s' % self.cre_id
 
 
-class Cre_pos(models.Model):
+class CrePos(models.Model):
     network = models.ForeignKey(Network)
-    cre_id = models.ForeignKey(Cre)
+    cre = models.ForeignKey(Cre)
     start = models.IntegerField()
     stop = models.IntegerField()
-    pval = models.DecimalField(max_digits=16, decimal_places=4)
+    p_val = models.DecimalField(max_digits=16, decimal_places=4)
 
     def __unicode__(self):
         return '%s' % self.start

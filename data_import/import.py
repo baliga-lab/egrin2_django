@@ -322,7 +322,9 @@ def add_gre(organism, conn):
 ######################################################################
 
 def add_cre(organism, conn):
-    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,e_val) values (%s,%s,%s,%s,%s)"
+    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,e_val) values (%s,%s,%s,%s,%s) returning id"
+    cre_pos_query = "insert into " + APP_PREFIX + "crepos (network_id,cre_id,start,stop,p_val) values (%s,%s,%s,%s,%s) returning id"
+
     print "Importing CRE for ", organism
     with open(BASE_PATH[organism] + "cre.txt") as infile:
         gre_map = get_gre_map(conn, organism)
@@ -346,6 +348,16 @@ def add_cre(organism, conn):
                 gre_id = "%s_%s" % (organism, row[1])
                 cur.execute(cre_query, [NETWORK[organism], cre_id, gre_map[gre_id],
                                         pssm_id, to_decimal(row[2])])
+                cre_pk = cur.fetchone()[0]
+
+                # make Cre_pos objects we zip together a list of
+                # start, stop, pval tuples
+                cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','))
+                for start, stop, pval in cre_pos:
+                    if start != 'NA' and stop != 'NA':  # only insert valid positions
+                        cur.execute(cre_pos_query, [NETWORK[organism], cre_pk,
+                                                    int(start), int(stop),
+                                                    to_decimal(pval)])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
