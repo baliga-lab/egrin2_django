@@ -101,9 +101,13 @@ def get_corem_map(conn, organism):
 
 def get_go_map(conn):
     cur = conn.cursor()
-    query = "select id, go_id from " + APP_PREFIX + "go"
+    query = "select id, go_id, synonym from " + APP_PREFIX + "go"
     cur.execute(query)
-    result = { row[1]: row[0] for row in cur.fetchall() }
+    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+    result = {}
+    for pk, go_id, synonym in rows:
+        result[go_id] = pk
+        result[synonym] = pk
     cur.close()
     return result
 
@@ -331,7 +335,7 @@ def add_cre(organism, conn):
         cur = conn.cursor()
         infile.readline()
         try:
-            for line in infile.readlines():
+            for lineno, line in enumerate(infile.readlines()):
                 row = line.strip("\n").split("\t")
                 parent_id = "%s_%s" % (organism, row[0])
                 cur.execute(PSSM_QUERY, [parent_id])
@@ -355,9 +359,15 @@ def add_cre(organism, conn):
                 cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','))
                 for start, stop, pval in cre_pos:
                     if start != 'NA' and stop != 'NA':  # only insert valid positions
-                        cur.execute(cre_pos_query, [NETWORK[organism], cre_pk,
-                                                    int(start), int(stop),
-                                                    to_decimal(pval)])
+                        try:
+                            # The integer start/stop positions might be represented in
+                            # scientific format, so we do funny conversions here
+                            cur.execute(cre_pos_query, [NETWORK[organism], cre_pk,
+                                                        int(float(start)),
+                                                        int(float(stop)),
+                                                        to_decimal(pval)])
+                        except:
+                            print "ERROR in line %d, start = %s stop = %s pval = %s" % (lineno, start, stop, pval)
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -483,21 +493,32 @@ def add_corems(organism, conn):
                     else:
                         pval = '0.0'
                     cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
-                    
-                go_ids = [go_map[go_id]
-                           for go_id in row[5].split(",") if len(row[5]) > 0]
-                tot_annot = [tot_ann for tot_ann in row[6].split(",") if len(row[6]) > 0]
-                genes_annot = [gene_ann for gene_ann in row[7].split(",") if len(row[7]) > 0]
-                pvals = [pval for pval in row[8].split(',') if len(row[8]) > 0]
-                for index in xrange(len(go_ids)):
-                    if index < len(pvals):
-                        pval = pvals[index]
-                    else:
-                        tot_annot = '0'
-                        genes_annot = '0'
-                        pval = '0.0'
-                    cur.execute(corem_go_query, [go_ids[index], to_int(tot_annot[index]), to_int(genes_annot[index]),
-                                                 to_decimal(pval),corem_id])
+                
+                if (len(row[5]) > 0 and len(row[6]) > 0 and
+                    len(row[7]) > 0 and len(row[8]) > 0):
+                    # go_id, total_annot, genes_annot, pval
+                    go_ids = row[5].split(',')
+                    totals = row[6].split(',')
+                    genes = row[7].split(',')
+                    pvals = row[8].split(',')
+                    if len(go_ids) != len(pvals):
+                        print "# go_ids: %d, # pvals: %d" % (len(go_ids), len(pvals))
+                        raise Exception("|go_ids| != |pvals|")
+
+                    go_annots = zip(go_ids, totals, genes, pvals)
+                    go_annots = [(go_id, total, genes, pval)
+                                 for go_id, total, genes, pval in go_annots
+                                 if go_id in go_map]
+                else:
+                    go_annots = []
+
+                for go_id, total, genes, pval in go_annots:
+                    cur.execute(corem_go_query,
+                                [go_map[go_id],
+                                 to_int(total),
+                                 to_int(genes),
+                                 to_decimal(pval),
+                                 corem_id])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
