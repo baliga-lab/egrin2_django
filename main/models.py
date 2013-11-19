@@ -23,9 +23,15 @@ class Chromosome(models.Model):
     topology = models.CharField(max_length=64)
     refseq = models.CharField(max_length=64, blank=True, null=True)
     scaffoldId = models.IntegerField()
+    sequence = models.TextField()
     
     def __unicode__(self):
         return self.name
+
+
+    def subset(self, start, end):
+        """returns a subsequence"""
+        pass
 
 
 class Network(models.Model):
@@ -39,7 +45,7 @@ class Network(models.Model):
     def __unicode__(self):
         return self.name
 
- 
+
 
 class Gene(models.Model):
     species = models.ForeignKey(Species)
@@ -74,7 +80,7 @@ class Condition(models.Model):
         return str(self.cond_id)
     
     class Meta:
-        
+
         ordering = ['cond_id']
     
 class Expression(models.Model):
@@ -86,7 +92,7 @@ class Expression(models.Model):
         return '%s : %s : %s' % (self.gene,self.condition,self.value)
 
     class Meta:
-        
+
         ordering = ['gene']
         
 class Pssm(models.Model):
@@ -154,8 +160,7 @@ class Pssm(models.Model):
     def __unicode__(self):
         return '%s' % self.parent_id
 
-    
-        
+
 
 class Row(models.Model):
     pssm = models.ForeignKey(Pssm, verbose_name = "pssm name")
@@ -169,7 +174,7 @@ class Row(models.Model):
         return '%s' % self.pos
 
     class Meta:
-        
+
         ordering = ['pos']
     
 class Gre(models.Model):
@@ -188,7 +193,7 @@ class Gre(models.Model):
     def __unicode__(self):
         return '%s' % self.gre_id
     
-   
+
 
 class GO(models.Model):
     go_id = models.CharField(max_length=255)
@@ -200,7 +205,7 @@ class GO(models.Model):
     def __unicode__(self):
         return '%s' % self.go_id
 
-    
+
 
 class Cre(models.Model):
     network = models.ForeignKey(Network)
@@ -214,8 +219,25 @@ class Cre(models.Model):
     
     def __unicode__(self):
         return '%s' % self.cre_id
+
+
+class CrePos(models.Model):
+    network = models.ForeignKey(Network)
+    cre = models.ForeignKey(Cre)
+    start = models.IntegerField()
+    stop = models.IntegerField()
+    p_val = models.DecimalField(max_digits=16, decimal_places=4)
+
+    def __unicode__(self):
+        return '%s' % self.start
         
-    
+
+
+"""
+def cres_in_range(start, stop):
+  returns all Cre objects in the range
+"""
+
 
 class Bicluster(models.Model):
     network = models.ForeignKey(Network)
@@ -240,7 +262,7 @@ class Bicluster(models.Model):
     def __unicode__(self):
         return '%s' % self.bc_id
     
-    
+
 
 class Corem(models.Model):
     network = models.ForeignKey(Network)
@@ -269,7 +291,7 @@ class Corem(models.Model):
     def __unicode__(self):
         return '%s' % self.corem_id
 
-    
+
 
 class greTF(models.Model):
     network = models.ForeignKey(Network)
@@ -280,7 +302,7 @@ class greTF(models.Model):
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
 
-    
+
 ######################################################################
 ####  Many-to-many relationships with attributes
 ######################################################################

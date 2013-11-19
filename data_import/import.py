@@ -11,11 +11,12 @@ from decimal import Decimal
 # This prefix is used in the Postgres database, Django prepends that to the
 # model class name. If you named your application differently, this
 # is the place to change
-APP_PREFIX = 'egrin2_django_'
+APP_PREFIX = 'main_'
 
-PARENT_PATH = "/isb-1/tmp/fixtures/"
-ECO_PATH = "/isb-1/tmp/fixtures/511145/ecoli_"
-HAL_PATH = "/isb-1/tmp/fixtures/64091/hal_"
+#PARENT_PATH = "/isb-1/tmp/fixtures/"
+PARENT_PATH = "/home/weiju/Projects/ISB/egrin2_django/tmp/website/fixtures/"
+ECO_PATH = PARENT_PATH + "511145/ecoli_"
+HAL_PATH = PARENT_PATH + "64091/hal_"
 BASE_PATH = { 'eco': ECO_PATH, 'hal': HAL_PATH, 'parent': PARENT_PATH }
 
 # these maps reflect the ids established in the base fixtures
@@ -100,9 +101,13 @@ def get_corem_map(conn, organism):
 
 def get_go_map(conn):
     cur = conn.cursor()
-    query = "select id, go_id from " + APP_PREFIX + "go"
+    query = "select id, go_id, synonym from " + APP_PREFIX + "go"
     cur.execute(query)
-    result = { row[1]: row[0] for row in cur.fetchall() }
+    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+    result = {}
+    for pk, go_id, synonym in rows:
+        result[go_id] = pk
+        result[synonym] = pk
     cur.close()
     return result
 
@@ -116,7 +121,7 @@ def insert_go(cur, go_id, ontology, term, definition, synonym):
     
 def add_go(conn):
     print "Importing Gene Ontology Reference Table..."
-    with open(BASE_PATH['parent'] + "geneontology.txt") as infile:
+    with open(BASE_PATH['parent'] + "geneontology") as infile:
         cur = conn.cursor()
         infile.readline()  # skip header
         for line in infile.readlines():
@@ -321,14 +326,16 @@ def add_gre(organism, conn):
 ######################################################################
 
 def add_cre(organism, conn):
-    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,e_val) values (%s,%s,%s,%s,%s)"
+    cre_query = "insert into " + APP_PREFIX + "cre (network_id,cre_id,gre_id,pssm_id,e_val) values (%s,%s,%s,%s,%s) returning id"
+    cre_pos_query = "insert into " + APP_PREFIX + "crepos (network_id,cre_id,start,stop,p_val) values (%s,%s,%s,%s,%s) returning id"
+
     print "Importing CRE for ", organism
     with open(BASE_PATH[organism] + "cre.txt") as infile:
         gre_map = get_gre_map(conn, organism)
         cur = conn.cursor()
         infile.readline()
         try:
-            for line in infile.readlines():
+            for lineno, line in enumerate(infile.readlines()):
                 row = line.strip("\n").split("\t")
                 parent_id = "%s_%s" % (organism, row[0])
                 cur.execute(PSSM_QUERY, [parent_id])
@@ -345,6 +352,22 @@ def add_cre(organism, conn):
                 gre_id = "%s_%s" % (organism, row[1])
                 cur.execute(cre_query, [NETWORK[organism], cre_id, gre_map[gre_id],
                                         pssm_id, to_decimal(row[2])])
+                cre_pk = cur.fetchone()[0]
+
+                # make Cre_pos objects we zip together a list of
+                # start, stop, pval tuples
+                cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','))
+                for start, stop, pval in cre_pos:
+                    if start != 'NA' and stop != 'NA':  # only insert valid positions
+                        try:
+                            # The integer start/stop positions might be represented in
+                            # scientific format, so we do funny conversions here
+                            cur.execute(cre_pos_query, [NETWORK[organism], cre_pk,
+                                                        int(float(start)),
+                                                        int(float(stop)),
+                                                        to_decimal(pval)])
+                        except:
+                            print "ERROR in line %d, start = %s stop = %s pval = %s" % (lineno, start, stop, pval)
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -470,21 +493,32 @@ def add_corems(organism, conn):
                     else:
                         pval = '0.0'
                     cur.execute(corem_gre_query, [gre_ids[index], corem_id, to_decimal(pval)])
-                    
-                go_ids = [go_map[go_id]
-                           for go_id in row[5].split(",") if len(row[5]) > 0]
-                tot_annot = [tot_ann for tot_ann in row[6].split(",") if len(row[6]) > 0]
-                genes_annot = [gene_ann for gene_ann in row[7].split(",") if len(row[7]) > 0]
-                pvals = [pval for pval in row[8].split(',') if len(row[8]) > 0]
-                for index in xrange(len(go_ids)):
-                    if index < len(pvals):
-                        pval = pvals[index]
-                    else:
-                        tot_annot = '0'
-                        genes_annot = '0'
-                        pval = '0.0'
-                    cur.execute(corem_go_query, [go_ids[index], to_int(tot_annot[index]), to_int(genes_annot[index]),
-                                                 to_decimal(pval),corem_id])
+                
+                if (len(row[5]) > 0 and len(row[6]) > 0 and
+                    len(row[7]) > 0 and len(row[8]) > 0):
+                    # go_id, total_annot, genes_annot, pval
+                    go_ids = row[5].split(',')
+                    totals = row[6].split(',')
+                    genes = row[7].split(',')
+                    pvals = row[8].split(',')
+                    if len(go_ids) != len(pvals):
+                        print "# go_ids: %d, # pvals: %d" % (len(go_ids), len(pvals))
+                        raise Exception("|go_ids| != |pvals|")
+
+                    go_annots = zip(go_ids, totals, genes, pvals)
+                    go_annots = [(go_id, total, genes, pval)
+                                 for go_id, total, genes, pval in go_annots
+                                 if go_id in go_map]
+                else:
+                    go_annots = []
+
+                for go_id, total, genes, pval in go_annots:
+                    cur.execute(corem_go_query,
+                                [go_map[go_id],
+                                 to_int(total),
+                                 to_int(genes),
+                                 to_decimal(pval),
+                                 corem_id])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
@@ -649,7 +683,7 @@ def add_gre_regulator(organism, conn):
 
 if __name__ == '__main__':
     print "EGRIN2 data import"
-    conn = psycopg2.connect("dbname=egrin2 user=dj_ango")
+    conn = psycopg2.connect("dbname=egrin2 user=dj_ango password=django")
     add_go(conn)
     for organism in ['eco','hal']:
         print "organism: ", organism

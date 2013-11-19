@@ -34,7 +34,7 @@ SOLR_URL = 'http://localhost:8983/solr/egrin2/select'
 
 # This is the current table prefix that Django added. The custom SQL queries use
 # this setting
-TABLE_PREFIX = 'egrin2_django_'
+TABLE_PREFIX = 'main_'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

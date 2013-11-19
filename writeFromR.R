@@ -2,8 +2,8 @@
 # requires egrin/corem env of choice to be loaded
 # e.g.
 
-HALO = F
-ECO = T
+HALO = T
+ECO = F
 PLOTS = F
 
 #source("/docs/git/Link-communities/analyze_communities.R")
@@ -38,7 +38,7 @@ if (HALO) {
 	#o$corem_list$conditionontology <- gBg_backbone_0.59_clean_list$conditions.cvar.term.enrich
   
   outRoot="/isb-1/R/egrin2/website/fixtures/64091/hal"
-  load("/docs/EGRIN2/new/Hal_ensemble/hal_GRE_table.RData")
+  load("/docs/EGRIN2/new/Hal_ensemble_2/hal_GRE_table.RData")
   motClusts <- c(0,as.vector(m.table[,1]))
 }
 
@@ -297,28 +297,59 @@ writeInitials <- function(outRoot) {
   tmp[!tmp%in%motClusts] = 0
   names(tmp) = cre
   # get evals 
-  evals <- sapply(out$get.motif.info(cre),function(i) {
-    if (is.null(i$e.value)) {
-      i = 9999999
-      } else {
-      i = format(round(i$e.value,8),sci=F)
-      }
-    })
+  mot.info <- sapply(cre,function(i)try(out$get.motif.info(i)))
+  evals <- sapply(seq(1,length(mot.info)),function(i) {
+    #print(i)
+	  if(class(mot.info[[i]])=="character") {
+	    i = 9999999
+	  }
+	  else {
+		  if (is.null(mot.info[[i]]$e.value)) {
+		    i = 9999999
+		  } else {
+		  i = format(round(mot.info[[i]]$e.value,8),sci=F)
+		  }
+	  }
+    return(i)
+	 })
+    
   # pssms for motifs
-  pssms <- lapply(out$get.motif.info(cre),function(i){
-    tmp <- i$pssm
-    if (is.null(tmp)) {
+  pssms <- lapply(seq(1,length(mot.info)),function(i){
+    if(class(mot.info[[i]])=="character") {
       return(paste("1,0,0,0,0"))
     } else {
-      tmp.o <- lapply(seq(1,dim(tmp)[1]),function(j){paste(j,paste(round(tmp[j,],5),collapse=","),sep=",")})
-      tmp.o <- paste(tmp.o,collapse=":")
-      return(tmp.o)
+      tmp <- mot.info[[i]]$pssm
+      if (is.null(tmp)) {
+        return(paste("1,0,0,0,0"))
+      } else {
+        tmp.o <- lapply(seq(1,dim(tmp)[1]),function(j){paste(j,paste(round(tmp[j,],5),collapse=","),sep=",")})
+        tmp.o <- paste(tmp.o,collapse=":")
+        return(tmp.o)
+      }
     }
     })
+  setkey(out$pssm.scans,"bic","mots")
+  start.stops.pval <- do.call(rbind,lapply(seq(1,length(cre)), function(i){
+    if (i%%10000==0) {
+      cat(paste(round((i/length(cre))*100),"% done finding starts and stops\n",sep=""))
+    }
+    bc <- as.integer(strsplit(cre[i],split="_")[[1]][2])
+    mot <- abs(as.integer(strsplit(cre[i],split="_")[[1]][3]))
+    # find hits to this mot
+    tmp <- out$pssm.scans[J(bc,c(mot,-mot))]
+    # get width
+    width <- out$motif.widths[as.numeric(bc),as.numeric(mot)]
+    # get starts
+    to.r <- cbind(tmp$posns,(tmp$posns+width),tmp$pvals)
+    colnames(to.r) <- c("start","stop","pval")
+    to.rr <- c(paste(to.r[,"start"],collapse=","),paste(to.r[,"stop"],collapse=","),paste(to.r[,"pval"],collapse=","))
+    names(to.rr) <- c("start","stop","pval")
+    return(to.rr)
+  }))
   # cre_id, gre_id, eval, pssm
   # write header
-  write(paste(c("cre_id", "gre_id", "eval", "pssm"),collapse="\t"),file=paste(outRoot,"_cre.txt",sep=""))
-  write(paste(paste(gsub("MOT_","",names(tmp)),tmp,evals,pssms,sep="\t"),collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
+  write(paste(c("cre_id", "gre_id", "eval", "pssm","start","stop","pval"),collapse="\t"),file=paste(outRoot,"_cre.txt",sep=""))
+  write(paste(paste(gsub("MOT_","",names(tmp)),tmp,evals,pssms,start.stops.pval[,"start"],start.stops.pval[,"stop"],start.stops.pval[,"pval"],sep="\t"),collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
   
   ####################################
   # expression
