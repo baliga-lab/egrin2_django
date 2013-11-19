@@ -1,0 +1,221 @@
+table {
+  width:90%;
+  border-top:1px solid #e5eff8;
+  border-right:1px solid #e5eff8;
+  margin:1em auto;
+    border-collapse:collapse;
+  }
+caption {
+  color: #9ba9b4;
+  font-size:.94em;
+    letter-spacing:.1em;
+    margin:1em 0 0 0;
+    padding:0;
+    caption-side:top;
+    text-align:center;
+  } 
+tr.odd td {
+  background:#f7fbff
+  }
+tr.odd .column1 {
+  background:#f4f9fe;
+  } 
+.column1  {
+  background:#f9fcfe;
+  }
+td {
+  color:#678197;
+  border-bottom:1px solid #e5eff8;
+  border-left:1px solid #e5eff8;
+  padding:.3em 1em;
+  text-align:center;
+  }       
+th {
+  font-weight:normal;
+  color: #678197;
+  text-align:left;
+  border-bottom: 1px solid #e5eff8;
+  border-left:1px solid #e5eff8;
+  padding:.3em 1em;
+  }             
+thead th {
+  background:#f4f9fe;
+  text-align:center;
+  font:bold 1.2em/2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
+  color:#66a3d3
+  } 
+tfoot th {
+  text-align:center;
+  background:#f4f9fe;
+  } 
+tfoot th strong {
+  font:bold 1.2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
+  margin:.5em .5em .5em 0;
+  color:#66a3d3;
+    }   
+tfoot th em {
+  color:#f03b58;
+  font-weight: bold;
+  font-size: 1.1em;
+  font-style: normal;
+  } 
+
+#table-gene-info table
+{
+border-collapse:collapse;
+}
+#table-gene-info table, #table-gene-info th,#table-gene-info td
+{
+border: 1px solid black;
+padding:6px;
+}
+#table-gene-info tr:nth-child(odd)    { background-color:#eee; }
+#table-gene-info tr:nth-child(even)   { background-color:#fff; }
+
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+.ggbrowser-principal      { background-color:"white"; width:1000px; height:600px; float:left; overflow:hidden; border:none; }
+.bookmark_div      { background-color:#FFFFF0; width:350px; height:600px; float:left; overflow:hidden; border:none; }
+.bookmark_select      { background-color:#FFFFF0; width:350px; float:left; overflow:hidden; border:none; }
+.select_div      { background-color:#FFFFF0;width:150px; height:600px; float:left; overflow:auto; border:none; }
+
+circle {
+  -webkit-transition: fill-opacity 250ms linear;
+}
+ 
+.selecting circle {
+  fill-opacity: .2;
+}
+ 
+.selecting circle.selected {
+  stroke: #f00;
+}
+ 
+/*.resize path {
+  fill: #666;
+  fill-opacity: .8;
+  stroke: #000;
+  stroke-width: 1.5px;
+}*/
+
+svg {
+  font: 10px sans-serif;
+}
+
+#footer, label {
+  font: 18pt helvetica neue;
+  color: #666;
+}
+/*
+path {
+  fill: steelblue;
+}*/
+
+input {
+  font: 24pt helvetica neue;
+  background: none;
+  border: none;
+  outline: 0;
+}
+button {
+  font: 24pt helvetica neue;
+  outline: 0;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent, .brush2 {
+  stroke: #eee;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+
+.letter-A {
+  fill: green;
+  font-weight: bold;
+}
+.letter-C {
+    fill: blue;
+    font-weight: bold;
+}
+.letter-T {
+    fill: red;
+    font-weight: bold;
+}
+.letter-G {
+    fill: gold;
+    font-weight: bold;
+}
+
+select {
+   background: transparent;
+   width: 242px;
+   padding: 5px;
+   font-size: 12px;
+   border: none;
+   border-radius: none;
+   height: 100%;
+   -webkit-appearance: none;
+   }
+
+.select_cursor{
+  background: url('img/pointer_32.png');
+  background-position:center;
+  background-repeat:no-repeat;
+  height:1em;
+  width: 2em;
+  border:none;
+}
+
+
+.hand_cursor{
+  background: url('img/hand_32.png');
+  background-position:center;
+  background-repeat:no-repeat;
+  height:1em;
+  width: 2em;
+  border:none;
+}
+
+
+.brushFocus .extent {
+  stroke: #abb2fc;
+  fill: #abb2fc;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+   
+   label {
+     display: inline-block;
+     width: 5em;
+   }
+   
+   .ui-tooltip {
+
+     }
+     #bar1 { margin: 0 0 4em; }
+     
+     
+     .text{
+       margin: 0;
+       font-size: 14px;
+       font-family: "Helvetica Neue", Helvetica;
+       align: 'right';
+     }

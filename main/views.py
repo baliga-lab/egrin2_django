@@ -320,6 +320,55 @@ def genes_json(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+
+
+def genes_json_annotation(request, species):
+    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
+              'strand', 'chromosome']
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)
+	
+    some_data_to_dump = [{
+   'start': g.start,
+   'end': g.stop,
+   'strand': g.strand,
+   'attributes': g.description,
+   'type': "gene",
+} for g in batch]
+
+    data = {
+        'SequenceAnnotation': some_data_to_dump
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+def genes_json_annotation_range(request, species, start, stop):
+    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
+              'strand', 'chromosome']
+    dtparams = get_dtparams(request, fields, fields[0])
+    
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__gte=start, stop__lte=stop)
+    #query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__range=[start, start + str(5000)])
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)
+    
+    some_data_to_dump = [{
+   'name' : g.name,
+   'sys_name' : g.sys_name,
+   'start': g.start,
+   'end': g.stop,
+   'strand': g.strand,
+   'attributes': g.description,
+   'type': "gene",
+} for g in batch]
+
+    data = {
+        'SequenceAnnotation': some_data_to_dump
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
 def corem_genes_json(request, species=None, corem=None):
     """corem-specific gene list"""
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
