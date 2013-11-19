@@ -1436,3 +1436,25 @@ window["checked_global"]  = false;
       //console.log(ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)));
 //     setInterval(function(){showcaseMotifShrink()},2000);
   }
+    function drawCheckBoxAndGetMotData(){
+
+  drawBoxes();
+
+  }
+  function alterTrack(text){
+  
+  
+  
+  
+    if(text == "plus"){
+    genetrack.plus = genetrack.plus - 10;
+    genetrack.minus = genetrack.minus - 10;
+
+    } else{
+    genetrack.plus = genetrack.plus + 10;
+    genetrack.minus = genetrack.minus + 10;
+    }
+  
+    redraw();
+  }
+

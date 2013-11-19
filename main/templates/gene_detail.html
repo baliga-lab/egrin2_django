@@ -21,12 +21,6 @@ GGBrowser scripts to be imported
 
 <script src="/static/javascripts/js/select2.js"></script>
 
- 
-
-
-
-
-
 {% endblock %}
 {% block nav %}
 <!-- navigation starts-->
@@ -170,20 +164,10 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
       height3 = 50;    
     
       var svg = d3.select("#ggbrowser-principal").append("svg")//#principal
-          //.attr("width", width)
-    //.attr("width", width )
-          //.attr("height", height+100 + margin.top + margin.bottom)
-    //.attr("height", height )
-    
-    .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         ;
 
-        //style="background-color:white;width:1000px"
-    
-          //.append("g")
-          //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    //.attr("transform", "translate(" 0," + margin.top + ")");
     
     svg.append("defs").append("clipPath")
         .attr("id", "clip")
@@ -192,16 +176,14 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
       //.attr("id", "rectClip")
         .attr("width", width)
         .attr("height", height)
-
         ;
         
 
-        var focus = svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var focus = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-                var context_segment = svg.append("g")
-                    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+  var context_segment = svg.append("g")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
                 // I'll create a new path to fit context plot
               context_segment.append("defs").append("clipPath")
                       .attr("id", "clip2")
@@ -209,7 +191,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
                       .attr("width", width)
                       .attr("height", height2);
 
-        var context = svg.append("g")
+  var context = svg.append("g")
         .attr("id", "test")
         .attr("fill", "green")
         .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
@@ -224,16 +206,6 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
 
   d3.select(".hand_cursor").style('border-style','dashed').style('border-color','grey');
 
-
-  // end-of initializing
-
-
-
-
-  //window["id"] = parseInt(ReadCookie('id'));
-  window["id"] = parseInt(location.search.substring(1));
-
-
   // Ajax Stuff - retrieving data from my ws
   //var id = 1;
   var view = {};
@@ -241,14 +213,12 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   //view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500;
   //view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 2500;
 
-
+// read already populated info and use it to instanciate start/end fields
 if((parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500) <0) {
   view.left = 1;
   view.right = 5000;
   var left = 1;
   var right = 5000;
-  
-
 } 
 else {
   view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500;
@@ -257,55 +227,11 @@ else {
   var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 2500;
 }
 
-
-
-  //getMotifData_all(view.left,  view.right);
-  //getMotifData_all_rank(view.right/w);
-  
-  //getListSegmentsAll(view.left,  view.right, view.right/w);
-  
-  //getExpressionData(view.left, view.right);
-  
-  
-  
-
-  
-  
-  
-  
-  var color = d3.scale.category20().domain(mot_names); //category10()
-  //getData("1", view.left, view.right); //encodeURIComponent('-')
-  //getSequenceData(id);
-
-  //debugger;
-
-
-
-
-  
-
-  // end-of Ajax
-
+  var color = d3.scale.category20().domain(mot_names); //category10() 
 
   //var mot_names = ["MOT_1", "MOT_3", "MOT_4", "MOT_5", "MOT_10", "MOT_12", "MOT_16", "MOT_18", "MOT_30"];
   drawCheckBoxAndGetMotData();
-  function drawCheckBoxAndGetMotData(){
-
-
-
-
-
-
-  drawBoxes();
-
-  }
   //color for motif line and checkBox
-
-
-
-
-
-
 
 
   function drawBoxes(){
@@ -376,22 +302,7 @@ else {
 
   var genetrack = {plus:10, minus:30, height:18};
   /*{plus:20, minus:60};//*/
-  function alterTrack(text){
   
-  
-  
-  
-    if(text == "plus"){
-    genetrack.plus = genetrack.plus - 10;
-    genetrack.minus = genetrack.minus - 10;
-
-    } else{
-    genetrack.plus = genetrack.plus + 10;
-    genetrack.minus = genetrack.minus + 10;
-    }
-  
-    redraw();
-  }
   
   
   Array.prototype.contains = function(obj) {
@@ -629,12 +540,6 @@ else {
       .tickFormat(function(d) {return (d/1000) + 'k';});
     }
     
-
-
-    
-    
-   
-    
       //gene.attributes.split(";").forEach(function(d) {   var t = d.split("="); if(t[0]== "ID") console.log(t[1]);      })
 
   var brush = d3.svg.brush()
@@ -643,10 +548,7 @@ else {
       .on("brush", brushed)
 ;
       //***********************.on("brushend", brushEnd);
-    
-      
-      
-          
+              
   var brushFocus = d3.svg.brush()
       .x(x)
       .on("brush", brushedFocus)
