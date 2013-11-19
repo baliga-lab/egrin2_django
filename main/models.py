@@ -13,7 +13,6 @@ class Species(models.Model):
         return self.name
     
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['name']
         verbose_name_plural = "Species"
 
@@ -28,8 +27,6 @@ class Chromosome(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        app_label = 'egrin2_django'
 
 class Network(models.Model):
     species = models.ForeignKey(Species)
@@ -42,8 +39,7 @@ class Network(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        app_label = 'egrin2_django'
+ 
 
 class Gene(models.Model):
     species = models.ForeignKey(Species)
@@ -65,7 +61,6 @@ class Gene(models.Model):
         return self.sys_name
 
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['sys_name']
     
 class Condition(models.Model):
@@ -79,7 +74,7 @@ class Condition(models.Model):
         return str(self.cond_id)
     
     class Meta:
-        app_label = 'egrin2_django'
+        
         ordering = ['cond_id']
     
 class Expression(models.Model):
@@ -91,7 +86,7 @@ class Expression(models.Model):
         return '%s : %s : %s' % (self.gene,self.condition,self.value)
 
     class Meta:
-        app_label = 'egrin2_django'
+        
         ordering = ['gene']
         
 class Pssm(models.Model):
@@ -159,8 +154,8 @@ class Pssm(models.Model):
     def __unicode__(self):
         return '%s' % self.parent_id
 
-    class Meta:
-        app_label = 'egrin2_django'
+    
+        
 
 class Row(models.Model):
     pssm = models.ForeignKey(Pssm, verbose_name = "pssm name")
@@ -174,7 +169,7 @@ class Row(models.Model):
         return '%s' % self.pos
 
     class Meta:
-        app_label = 'egrin2_django'
+        
         ordering = ['pos']
     
 class Gre(models.Model):
@@ -193,8 +188,7 @@ class Gre(models.Model):
     def __unicode__(self):
         return '%s' % self.gre_id
     
-    class Meta:
-        app_label = 'egrin2_django'
+   
 
 class GO(models.Model):
     go_id = models.CharField(max_length=255)
@@ -206,8 +200,7 @@ class GO(models.Model):
     def __unicode__(self):
         return '%s' % self.go_id
 
-    class Meta:
-        app_label = 'egrin2_django'
+    
 
 class Cre(models.Model):
     network = models.ForeignKey(Network)
@@ -222,8 +215,7 @@ class Cre(models.Model):
     def __unicode__(self):
         return '%s' % self.cre_id
         
-    class Meta:
-        app_label = 'egrin2_django'
+    
 
 class Bicluster(models.Model):
     network = models.ForeignKey(Network)
@@ -248,8 +240,7 @@ class Bicluster(models.Model):
     def __unicode__(self):
         return '%s' % self.bc_id
     
-    class Meta:
-        app_label = 'egrin2_django'
+    
 
 class Corem(models.Model):
     network = models.ForeignKey(Network)
@@ -278,8 +269,7 @@ class Corem(models.Model):
     def __unicode__(self):
         return '%s' % self.corem_id
 
-    class Meta:
-        app_label = 'egrin2_django'
+    
 
 class greTF(models.Model):
     network = models.ForeignKey(Network)
@@ -290,9 +280,7 @@ class greTF(models.Model):
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
 
-    class Meta:
-        app_label = 'egrin2_django'
-
+    
 ######################################################################
 ####  Many-to-many relationships with attributes
 ######################################################################
@@ -306,7 +294,6 @@ class GreGeneMembership(models.Model):
         return '%s : %s : %s' % (self.gre_id,self.gene,self.p_val)
     
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['gre']
         
 class GeneConditionMembership(models.Model):
@@ -318,7 +305,6 @@ class GeneConditionMembership(models.Model):
         return '%s : %s : %s' % (self.cond_id,self.gene,self.p_val)
 
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['cond']
         
 class CoremConditionMembership(models.Model):
@@ -330,7 +316,6 @@ class CoremConditionMembership(models.Model):
         return '%s : %s : %s' % (self.cond_id,self.corem,self.p_val)
     
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['cond']
         
 class CoremGOMembership(models.Model):
@@ -348,7 +333,6 @@ class CoremGOMembership(models.Model):
         return '%s : %s : %s' % (self.go,self.corem,self.p_val)
 
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['go']
         
 class GreConditionMembership(models.Model):
@@ -360,7 +344,6 @@ class GreConditionMembership(models.Model):
         return '%s : %s : %s' % (self.cond_id,self.gre,self.p_val)
 
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['cond']
         
 class GreCoremMembership(models.Model):
@@ -372,7 +355,6 @@ class GreCoremMembership(models.Model):
         return '%s : %s : %s' % (self.gre_id,self.corem,self.p_val)
 
     class Meta:
-        app_label = 'egrin2_django'
         ordering = ['gre']
         
 # These are not implemented at the moment. For future use
