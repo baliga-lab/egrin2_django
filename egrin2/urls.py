@@ -103,6 +103,11 @@ urlpatterns = patterns('main.views',
     url(r'^genes_json/$', 'genes_json',name='genes_json'),
     url(r'^genes_json/(?P<species>[^/]*)/?$', 'genes_json', name='genes_json'),
 
+    # returning annotation data to populate ggbrowserweb - dsalvanha
+    url(r'^genes_json_annotation/$', 'genes_json_annotation',name='genes_json_annotation'),
+    url(r'^genes_json_annotation/(?P<species>[^/]*)/?$', 'genes_json_annotation', name='genes_json_annotation'),
+    url(r'^genes_json_annotation/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/?$', 'genes_json_annotation_range', name='genes_json_annotation_range'),
+
     # list of corem-specific genes
     url(r'^corem_genes_json/$', 'corem_genes_json',name='corem_genes_json'),
     url(r'^corem_genes_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
@@ -144,6 +149,7 @@ urlpatterns = patterns('main.views',
     url(r'^networks/$', 'networks',name='networks'),
     url(r'^networks/(?P<species>[^/]*)/?$', 'networks',name='networks'),
 
+  
     url(r'^regulators/(?P<species>[^/]*)/?$', 'regulators',name='regulators'),
     url(r'^regulators/(?P<species>[^/]*)/(?P<regulator>[^/]*)/?$', 'regulator_detail',name='regulator_detail'),
 
