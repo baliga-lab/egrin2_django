@@ -232,7 +232,7 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-def cres_in_range(network_id, start, stop, cre_ids=[], omit0=True):
+def cres_in_range(network_id, start, stop, top=None, cre_ids=[], omit0=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
@@ -270,11 +270,20 @@ select short_name from main_network n join main_species s on n.species_id = s.id
             count_map[i] += 1
             total_counts[i] += 1
 
-    for gre_id, count_map in gre_counts.items():
-        gre_counts[gre_id] = sorted(count_map.items())
+    if top != None:
+        # rank by sum of counts, highest counts first
+        ranks = sorted([(sum([count for pos, count in count_map.items()]), gre_id)
+                        for gre_id, count_map in gre_counts.items()], reverse=True)[:top]
+        toplist = [item[1] for item in ranks]
+    else:
+        toplist = gre_counts.keys()
+
+    final_gre_counts = {}
+    for gre_id in toplist:
+        final_gre_counts[gre_id] = sorted(gre_counts[gre_id].items())
     total_counts = sorted(total_counts.items())
 
-    return (gre_counts, total_counts)
+    return (final_gre_counts, total_counts)
     
 
 
