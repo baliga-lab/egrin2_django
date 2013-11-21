@@ -232,15 +232,11 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-#
-# 1. -> { 'GRE1': [(1, 1231) (2, 232)], 'GRE2': { 2: 12, 3: ...] }
-# 2. -> { 1: 1231, 2: 232 + 12, ...}
-# 3. -> <sequence between start and stop>
-# (per_gre, total, sequence)
-"""
-select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= 1000 and stop <= 6000 and network_id = 1 order by cre_id) and start >= 1000 and stop <= 6000 and g.gre_id != 'eco_0';
-"""
 def cres_in_range(network_id, start, stop, cre_ids=[], omit0=True):
+    """
+    1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
+    2. -> [ (1, 1231)  (2, 232), ...]
+    """
     cur = connection.cursor()
     query_part0 = """
 select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s
