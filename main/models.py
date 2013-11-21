@@ -274,6 +274,10 @@ select short_name from main_network n join main_species s on n.species_id = s.id
             count_map[i] += 1
             total_counts[i] += 1
 
+    for gre_id, count_map in gre_counts.items():
+        gre_counts[gre_id] = sorted(count_map.items())
+    total_counts = sorted(total_counts.items())
+
     return (gre_counts, total_counts)
     
 
