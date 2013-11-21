@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from numpy import  *
 
 # Create your models here.
@@ -221,6 +221,7 @@ class Cre(models.Model):
         return '%s' % self.cre_id
 
 
+# TODO: index main_crepos on start and stop
 class CrePos(models.Model):
     network = models.ForeignKey(Network)
     cre = models.ForeignKey(Cre)
@@ -230,13 +231,51 @@ class CrePos(models.Model):
 
     def __unicode__(self):
         return '%s' % self.start
+
+#
+# 1. -> { 'GRE1': [(1, 1231) (2, 232)], 'GRE2': { 2: 12, 3: ...] }
+# 2. -> { 1: 1231, 2: 232 + 12, ...}
+# 3. -> <sequence between start and stop>
+# (per_gre, total, sequence)
+"""
+select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= 1000 and stop <= 6000 and network_id = 1 order by cre_id) and start >= 1000 and stop <= 6000 and g.gre_id != 'eco_0';
+"""
+def cres_in_range(network_id, start, stop, cre_ids=[], omit0=True):
+    cur = connection.cursor()
+    query_part0 = """
+select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s
+"""
+    query_part1 = """ order by cre_id) and start >= %s and stop <= %s"""
+    query = query_part0
+    if len(cre_ids) > 0:
+        query += (" and cre_id in (%s)" % (",".join(map(str, cre_ids))))
         
-
-
+    query += query_part1
+    #print query
+    if omit0:
+        org_query = """
+select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s
 """
-def cres_in_range(start, stop):
-  returns all Cre objects in the range
-"""
+        cur.execute(org_query, [network_id])
+        query += " and g.gre_id != '" + cur.fetchone()[0] + "_0'"
+    cur.execute(query, [start, stop, network_id, start, stop])
+    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+    gre_counts = {}
+    total_counts = {}
+    for gre_id, start, stop in rows:
+        if gre_id not in gre_counts:
+            gre_counts[gre_id] = {}
+        count_map = gre_counts[gre_id]
+        for i in range(start, stop + 1):
+            if i not in count_map:
+                count_map[i] = 0
+            if i not in total_counts:
+                total_counts[i] = 0
+            count_map[i] += 1
+            total_counts[i] += 1
+
+    return (gre_counts, total_counts)
+    
 
 
 class Bicluster(models.Model):
