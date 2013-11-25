@@ -281,6 +281,24 @@ select short_name from main_network n join main_species s on n.species_id = s.id
     final_gre_counts = {}
     for gre_id in toplist:
         final_gre_counts[gre_id] = sorted(gre_counts[gre_id].items())
+        addlist = []
+        inlist = final_gre_counts[gre_id]
+
+        # This is a gap-plumber: D3 will interpolate the values between gaps,
+        # so this will add extra positions with a 0 count
+        for i in range(len(inlist) - 1):
+            l = inlist[i][0]
+            m = inlist[j][0]
+            addlist.append(inlist[i])
+            if m - l == 2:  # the length of the gap is exactly 1
+                addlist.append((l + 1, 0))
+            elif m - l > 2:
+                addlist.append((l + 1, 0))
+                addlist.append((m - 1, 0))
+            if i == len(inlist) - 2: # we are at the end of the list
+                addlist.append(inlist[j])
+
+        final_gre_counts[gre_id] = addlist
     total_counts = sorted(total_counts.items())
 
     return (final_gre_counts, total_counts)
