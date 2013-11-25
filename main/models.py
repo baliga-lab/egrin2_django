@@ -296,7 +296,7 @@ select short_name from main_network n join main_species s on n.species_id = s.id
                 addlist.append((l + 1, 0))
                 addlist.append((m - 1, 0))
             if i == len(inlist) - 2: # we are at the end of the list
-                addlist.append(inlist[j])
+                addlist.append(inlist[i + 1])
 
         final_gre_counts[gre_id] = addlist
     total_counts = sorted(total_counts.items())
