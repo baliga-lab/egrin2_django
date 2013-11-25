@@ -288,7 +288,7 @@ select short_name from main_network n join main_species s on n.species_id = s.id
         # so this will add extra positions with a 0 count
         for i in range(len(inlist) - 1):
             l = inlist[i][0]
-            m = inlist[j][0]
+            m = inlist[i + 1][0]
             addlist.append(inlist[i])
             if m - l == 2:  # the length of the gap is exactly 1
                 addlist.append((l + 1, 0))
