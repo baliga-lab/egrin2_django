@@ -300,7 +300,7 @@ select short_name from main_network n join main_species s on n.species_id = s.id
         # if not at the start, plumb in fillers at the start and end
         if addlist[0][0] > start:
             addlist.insert(0, (addlist[0][0] - 1, 0))
-        if addlist[-1][0] < end:
+        if addlist[-1][0] < stop:
             addlist.append((addlist[-1][0] + 1, 0))
 
         final_gre_counts[gre_id] = addlist
