@@ -167,7 +167,7 @@
         redraw();
     //redrawExpressionData();
     //redrawExpressionAsPath();
-    // voltar drawLine();
+    drawLine();
     console.log("resetView()")
       }
 
@@ -217,7 +217,7 @@
     //re//drawHeatmap();
     //redrawBasepair();
     //redrawExpressionAsPath();
-    //drawLine();
+    drawLine();
     //everytime I changeposition, I need to get new data, and bind it to chart as well (seqLogo)
     mot_names.forEach(function(d) {
       
@@ -238,7 +238,7 @@
    // redrawExpressionAsPath();
     //redrawExpressionData();
    // drawCheckBoxAndGetMotData();
-    // voltar drawLine();
+    drawLine();
     brush3End();
     //redrawSeqLogo();
   }
@@ -826,7 +826,86 @@
     .text(function(d){ return (d.attributes)})
     //.attr("data-tooltip", function(d){ return (d.attributes + " ---")})
   ;
+  };
+
+
+/*function drawLine(){
+  
+
+  //getMotifMax(view.left, view.right, "MOT_10");
+  mot_names.forEach(function(d){
+
+  svg.select(".motifs_"+d).selectAll(".line")
+     //.data(eval("max_"+d)) // set the new data --> old
+     .data(eval("pp_"+d))
+     .attr("d", line(eval("pp_"+d)[0].values.filter(function(f) {return (f.START >= (view.left-10000) && f.START <= (view.right+10000)   );}))); // apply the new data values
+     //.attr("d", line(eval("pp_"+d)[0].values) )
+      /*if((window[d + "checked_max"] == true)){
+            svg.select(".motifs_"+d).selectAll(".line")
+            .style("display", null);
+      }
+    else{
+            svg.select(".motifs_"+d).selectAll(".line")
+            .style("display", "none");
+    }*/
+  /* 
+   
+   })
+};*/
+
+function drawLine(){
+  
+  //console.log("inside drawLine()");
+  //getMotifMax(view.left, view.right, "MOT_10");
+
+  //svg.selectAll(".line").remove();
+  
+  //var temp__ = getMaxLocal(getNameWithoutUnchecked());
+  
+  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  
+  //var t = svg.transition().duration(750);
+  //t.selectAll
+  svg.selectAll("#max_local").call(yAxisMaxLocal);
+  
+  mot_names.forEach(function(d){
+    //debugger;
+    if((window[d + "checked"] == true)) {
+      //debugger;
+   // taking the domain localy
+  
+  //normalize.domain([0,eval("pp_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));}) ]);   
+  //console.log("domain : " + normalize.domain());
+  //eval("max_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));})
+  focus.select(".motifs_"+d).selectAll(".line")
+     .data(eval("pp_"+d))
+//     .transition() // set the new data
+     .attr("clip-path", "url(#clip)")
+     //.attr("transform", "translate(0, 0)")
+     .attr("d", line(eval("pp_"+d)[0].values))//.filter(function(f) {return (f.START >= (view.left-10000) && f.START <= (view.right+10000)   );}))); // apply the new data values
+//     .transition()
+//           .duration(500)
+
+
+  .style("fill", color(d.key))
+  //.style("stroke", color(d.key))
+  //.style("opacity", 1)
+  .append("svg:title")
+  .text(function(d) { return d.key; });
+  
+  focus.selectAll(".motifs_" + d ).style("display", null);
+  
+  }// end of if
+  else{
+    //svg.select(".motifs_"+d).selectAll(".line").remove();
+            focus.selectAll(".motifs_" + d ).style("display", "none");
+    //console.log(d + " --> isn't selected");
   }
+
+  
+  ;
+   }); //end of forEach
+}
 
   function drawLineChart(){
   
@@ -857,8 +936,9 @@
 //  .attr("transform", "translate(0, 0)")
 
   .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //old   values[0].MOTIF_NAME
-  .style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) )
-  .style("opacity", 0.5)
+  .style("stroke-width", 1.6)
+  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) )
+  //.style("opacity", 1)
   //.on("mouseover", function(){d3.select(this).style("stroke", "#999999").attr("stroke-opacity", "1.0");});  
     
   })};// voltar drawLineChart();
@@ -961,7 +1041,7 @@ function brushed() {
       redraw();
     //redrawExpressionData();
     //redrawExpressionAsPath();
-    // voltar drawLine();
+    drawLine();
     }
     else{ //correctiong when brush.empty() restables x.domain to general value
       resetView();
@@ -989,7 +1069,7 @@ function brushed() {
     //mot_names.forEach(function(n){
     //getMotifData(d3.round(view.left), d3.round(view.right), n); 
     //});
-    drawCheckBoxAndGetMotData();
+   // drawCheckBoxAndGetMotData();
 
 
     /*mot_names.forEach(function(d){
@@ -1132,9 +1212,10 @@ function brushed() {
       
       
       
-  //max_local = getMaxLocal(getNameWithoutUnchecked());
+  max_local = getMaxLocal(getNameWithoutUnchecked());
+  //console.log("changed2 called : max_local:"+max_local);
   // voltar redrawSeqLogo(this.id)// necessary for when I set checkbox to checked, then it shows again seqlogo
-  // voltar drawLine();
+  drawLine();
   }
   else {
 
@@ -1147,11 +1228,60 @@ function brushed() {
     
       svg.select(".motifs_"+this.id)//.selectAll(".line")
       .style("display", "none");
-
+      drawLine();
   }
   }
 
+function getNameWithoutUnchecked(){
+  var tt = this.id;
+  name_temp = [];
+  mot_names.forEach(function(e) {
+    //debugger;
+    if(eval(e+"checked") != false){
+      name_temp.push(e);
+    };
+  });
+  return name_temp;
+}
 
+function getMaxLocal(motif_checked){
+var max_temp = new Array();
+
+motif_checked.forEach(function(d) {
+  eval("pp_"+ d).forEach(function(q)  {
+    max_temp.push(d3.max(q.values.map(function(w) {return (w.MAX);})));
+  ;})
+});
+return(d3.max(max_temp));
+}
+
+
+
+function uncheckAll(){
+//  debugger;
+//  console.log(this.checked);
+  if(d3.selectAll("#checkAll")[0][1].checked) {
+    d3.selectAll("input[name=boxes]").property("checked", true);
+      mot_names.forEach(function(d){
+        window[d + "checked"] = true;
+        ;
+        //redrawSeqLogo(d);
+      });
+      
+      drawLine();
+  }
+  else{
+    d3.selectAll("input[name=boxes]").property("checked", false);
+      mot_names.forEach(function(d){
+        window[d + "checked"] = false;
+        ;
+        //redrawSeqLogo(d);
+      });
+      
+      drawLine();
+  }
+  drawLine();
+}
 
 
   function redraw(){
@@ -1218,11 +1348,13 @@ function brushed() {
       .text(function(d){ return (d.attributes)});
 
       
-      mot_names.forEach(function(d){ redrawSeqLogo(d);});
+      mot_names.forEach(function(d){ 
+        //redrawSeqLogo(d);
+      });
       mot_names.forEach(function(d) {
-        if(eval("_"+"All")[0].length !== 0 ) {
+       /* if(eval("_"+"All")[0].length !== 0 ) {
           //console.log(d)
-        }
+        }*/
       ;})
     
       redrawGeneLabels();

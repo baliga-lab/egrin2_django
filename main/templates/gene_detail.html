@@ -139,8 +139,23 @@ GGBrowser scripts to be imported
 <!-- GGBrowserweb starts-->
 
     <blockquote><p>Genome Browser</p></blockquote>
-    <div id="ggbrowser-principal" style="background-color:white;width:778px;"></div>
+    <table id="table-ggbrowserweb">
+      <td>
+        <div id="boxes" class='select_div'>
+        <div id="checkAll">
+        <input type="checkbox" id="checkAll" value="checkAll" onchange="uncheckAll()" checked="true">Select All</input>
+        </div></div>  
+      </td>
+      <td>
+          <div id="ggbrowser-principal" style="background-color:white;width:778px;"></div>
+      </td> 
+      
+      
+      
+      
     
+      
+    </table>
 
 <script>
     //style="background-color:white;width:950px"  
@@ -152,7 +167,7 @@ var line = d3.svg.area()
   
       //.defined(function(d) { return d.START != null; })
       //.interpolate("basis")
-  .x(function(d) { return x(d.START); })
+      .x(function(d) { return x(d.START); })
       .y(function(d) {return yLine(d.MAX) ; })
   //.y0(390)
   //.y1(function(d) {return yLine(d.MAX) ; })
@@ -239,7 +254,7 @@ else {
   var color = d3.scale.category20().domain(mot_names); //category10() 
 
   //var mot_names = ["MOT_1", "MOT_3", "MOT_4", "MOT_5", "MOT_10", "MOT_12", "MOT_16", "MOT_18", "MOT_30"];
-  drawCheckBoxAndGetMotData();
+  //drawCheckBoxAndGetMotData();
   //color for motif line and checkBox
 
 var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern to make gene clickable 
@@ -472,13 +487,13 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
       };
     });
     max_local = getMaxLocal(name_temp);
-    debugger;*/
+    //debugger;*/
     
     redraw();
     //redrawExpressionAsPath();
     //redrawExpressionData();
     //drawCheckBoxAndGetMotData();
-    // voltar drawLine();
+    drawLine();
     //brush3End();
     
     
@@ -524,7 +539,7 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
     .range([0,2]);
       
       //yLine = d3.scale.linear().range([height2, 0]).domain([0,90]);
-      var max_local = 100;
+      var max_local = 50;
       yLine = d3.scale.linear().range([height, 100]).domain([0,max_local]); // 100 because I need to have room for other tracks
       
       yExpression = d3.scale.linear().range([height, 0]).domain([-5,5]);
@@ -764,7 +779,7 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
 */
   
 getSequenceAnnotationData("{% url 'genes_json_annotation' %}{{species}}/",view.left);
-getCre("/cres_in_range/{{species}}/",  view.left, view.right, 3);
+getCre("/cres_in_range/{{species}}/",  view.left, view.right, 2);
 
 init();
 
