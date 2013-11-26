@@ -108,6 +108,9 @@ urlpatterns = patterns('main.views',
     url(r'^genes_json_annotation/(?P<species>[^/]*)/?$', 'genes_json_annotation', name='genes_json_annotation'),
     url(r'^genes_json_annotation/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/?$', 'genes_json_annotation_range', name='genes_json_annotation_range'),
 
+    # returnin CREs for ggbrowserweb
+    url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/?$', 'cres_in_range_json', name='cres_in_range_json'),
+
     # list of corem-specific genes
     url(r'^corem_genes_json/$', 'corem_genes_json',name='corem_genes_json'),
     url(r'^corem_genes_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
@@ -140,6 +143,9 @@ urlpatterns = patterns('main.views',
     url(r'^gre_cres_json/$', 'gre_cres_json',name='gre_cres_json'),
     url(r'^gre_cres_json/(?P<species>[^/]*)/(?P<gre>[^/]*)/?$',
         'gre_cres_json', name='gre_cres_json'),
+
+
+
 
     # list of corem-specific go_ids
     url(r'^corem_go_json/$', 'corem_go_json',name='corem_go_json'),
