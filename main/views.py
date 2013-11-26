@@ -553,6 +553,12 @@ def gres_json_generic(query, species, dtparams):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+def cres_in_range_json(request, species, start, stop, top): #dsalvanha
+    network = Network.objects.get(species__ncbi_taxonomy_id = species);
+
+    top_ = int(top)
+
+    return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_)), mimetype='application/json')
 
 def corem_gres_json(request, species, corem):
     fields = ['gre__gre_id', 'p_val']
@@ -627,6 +633,7 @@ def gre_cres_json(request, species, gre):
         'aaData': cres
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 def biclusters(request, species=None):
     # Return info about biclusters
