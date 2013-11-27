@@ -343,6 +343,30 @@ def genes_json_annotation(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+
+def xxxxx(request, species, start, stop):
+
+    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
+              'strand', 'chromosome']
+    dtparams = get_dtparams(request, fields, fields[0])
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)
+    
+    some_data_to_dump = [{
+   'start': g.start,
+   'end': g.stop,
+   'strand': g.strand,
+   'attributes': g.description,
+   'type': "gene",
+   'chromosome': g.chromosome.sequence[g.start,g.stop],
+} for g in batch]
+    
+    data = {
+        'SequenceAnnotation': some_data_to_dump
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 def genes_json_annotation_range(request, species, start, stop):
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
               'strand', 'chromosome']
@@ -361,6 +385,7 @@ def genes_json_annotation_range(request, species, start, stop):
    'strand': g.strand,
    'attributes': g.description,
    'type': "gene",
+   'basepairs': g.chromosome.sequence[g.start:g.stop],
 } for g in batch]
 
     data = {
@@ -368,6 +393,26 @@ def genes_json_annotation_range(request, species, start, stop):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
+def basepair_jsons_range(request, species, start, stop):
+    fields = ['sequence']
+    dtparams = get_dtparams(request, fields, fields[0])
+    
+    query = Chromosome.objects.filter(species__ncbi_taxonomy_id=species)
+    #this query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__gte=start, stop__lte=stop)
+    #query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__range=[start, start + str(5000)])
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)
+    
+    some_data_to_dump = [{
+   'start':int(start),
+   'stop':int(stop),
+   'basepairs': g.sequence[int(start):int(stop)],
+} for g in batch]
+
+    data = {
+        'Basepairs_range': some_data_to_dump
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 def corem_genes_json(request, species=None, corem=None):
     """corem-specific gene list"""
@@ -560,6 +605,7 @@ def cres_in_range_json(request, species, start, stop, top): #dsalvanha
 
     return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_)), mimetype='application/json')
 
+
 def corem_gres_json(request, species, corem):
     fields = ['gre__gre_id', 'p_val']
     dtparams = get_dtparams(request, fields, fields[0])
@@ -624,7 +670,7 @@ def gre_cres_json(request, species, gre):
     cres = [[item.cre_id,
              bicluster_detail_link(species, bicluster_id(item.cre_id), bicluster_id(item.cre_id)),
              ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (settings.STATIC_URL, species, item.cre_id)),
-             item.e_val
+             float(item.e_val)
              ] for item in batch]
 
     data = {

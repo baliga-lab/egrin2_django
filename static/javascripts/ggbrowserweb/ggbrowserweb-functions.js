@@ -1,3 +1,87 @@
+function legend_chart(){
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", x(view.right- 300) )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(30, 55)")
+
+  legend.selectAll('g').data(mot_names)
+      .enter()
+      .append('g')
+      .each(function(d, i) {
+        var g = d3.select(this);
+        g.append("line")
+          .attr("x1",x(view.right- 400) )
+          .attr("x2",x(view.right- 300) )
+          .attr("y1", i*10)
+          .attr("y2", i*10)
+          .attr("width", 10)
+          .attr("height", 10)
+          .attr("align", "bottom")
+          //.attr("fill", function(d) {color(d);})
+          .attr("stroke", function(d) { return color(d); } ) 
+        g.append("text")
+          .attr("x", x(view.right- 200) )
+          .attr("y", i * 10 + 8)
+          .attr("height",30)
+          .attr("width",100)
+          //.attr("fill", function(d) {color(d);})
+          .text(function(d){return d;})
+          .style("fill", function(d) { return color(d); } ); 
+
+      });
+
+}
+
+
+function redrawSeqLogo(names){
+  
+    if (  (view.right - view.left) <= 310 && (window[names + "checked"] == true) && (checked_global == true) ) { 
+      
+
+
+      var sequence = focus.selectAll("#" + names).remove();
+      //debugger;    
+      //debugger;
+      normalize.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
+      
+      xSeqLogo.domain(d3.range(view.left,view.right,1))
+      
+    eval("_"+names)
+    .selectAll("#" + names)
+     .data(function(d){  return d.values.filter(function(f) {  return f.START >= view.left && f.START <= view.right  ;});})
+     //.data(function(d){ debugger; return d.values.filter(function(f) {  return f.POSITION >= view.left && f.POSITION <= view.right  ;});})
+      .enter().append("text")
+        .attr("id", names)
+        .attr("clip-path", "url(#clip)")
+        .attr("y", 235)//function(e,i) {return ySeqLogo(normalize(2)); }
+        .attr("x", function(d) { return x(d.START); })
+        //.attr("fill", "white")
+        .text( function(e) { return e.LETTER; } )//e.LETTER
+        .attr("class", function(e) { return "letter-" + e.LETTER; } )
+        .style( "text-anchor", "start" )
+        .style( "font", "corrier" )
+//        .style("text-size-adjust", "inherit")
+        .attr( "textLength", xSeqLogo.rangeBand() )//(xSeqLogo.rangeBand()) / 2
+        .attr("transform", "translate(0, 195)")
+//          .attr( "textLength", 10)
+        .attr( "lengthAdjust", "spacingAndGlyphs" )
+        .attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
+        .style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
+        //.attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
+        //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
+
+        
+        ;
+
+  } else{
+    eval("_"+names)
+    .selectAll("#" + names).remove();  
+  }
+}
+
   function changeLabelForMotifAtt(){
     //console.log("change");
     var e = document.getElementById("motif_class");
@@ -240,7 +324,7 @@
    // drawCheckBoxAndGetMotData();
     drawLine();
     brush3End();
-    //redrawSeqLogo();
+    redrawSeqLogo();
   }
   
   
@@ -1214,7 +1298,7 @@ function brushed() {
       
   max_local = getMaxLocal(getNameWithoutUnchecked());
   //console.log("changed2 called : max_local:"+max_local);
-  // voltar redrawSeqLogo(this.id)// necessary for when I set checkbox to checked, then it shows again seqlogo
+  redrawSeqLogo(this.id)// necessary for when I set checkbox to checked, then it shows again seqlogo
   drawLine();
   }
   else {
@@ -1265,7 +1349,7 @@ function uncheckAll(){
       mot_names.forEach(function(d){
         window[d + "checked"] = true;
         ;
-        //redrawSeqLogo(d);
+        redrawSeqLogo(d);
       });
       
       drawLine();
@@ -1275,7 +1359,7 @@ function uncheckAll(){
       mot_names.forEach(function(d){
         window[d + "checked"] = false;
         ;
-        //redrawSeqLogo(d);
+        redrawSeqLogo(d);
       });
       
       drawLine();
@@ -1349,7 +1433,7 @@ function uncheckAll(){
 
       
       mot_names.forEach(function(d){ 
-        //redrawSeqLogo(d);
+        redrawSeqLogo(d);
       });
       mot_names.forEach(function(d) {
        /* if(eval("_"+"All")[0].length !== 0 ) {
@@ -1486,12 +1570,12 @@ window["checked_global"]  = false;
     if(checked_global == true){
       window["checked_global"] = false;
       mot_names.forEach(function(d){ 
-        // voltar redrawSeqLogo(d);
+        redrawSeqLogo(d);
       });
     } else {
       window["checked_global"] = true;
       mot_names.forEach(function(d){ 
-        // voltar redrawSeqLogo(d);
+        redrawSeqLogo(d);
       });
     }
     //console.log(checked_global);

@@ -140,7 +140,13 @@ GGBrowser scripts to be imported
 
     <blockquote><p>Genome Browser</p></blockquote>
     <table id="table-ggbrowserweb">
+      
+        <div id="displayStatus"></div>
+
       <td>
+        <div id="showSeqLogo">
+          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence Logo</input>
+        </div>
         <div id="boxes" class='select_div'>
         <div id="checkAll">
         <input type="checkbox" id="checkAll" value="checkAll" onchange="uncheckAll()" checked="true">Select All</input>
@@ -161,6 +167,8 @@ GGBrowser scripts to be imported
     //style="background-color:white;width:950px"  
     //#F9F9FF --> table-content-backgroung color      
           
+jQuery('#displayStatus').prepend('<img id="loading" src="/static/images/ajax-loader.gif" />');
+//jQuery('#displayStatus').html('Loading');
 
 //
 var line = d3.svg.area()
@@ -779,7 +787,7 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
 */
   
 getSequenceAnnotationData("{% url 'genes_json_annotation' %}{{species}}/",view.left);
-getCre("/cres_in_range/{{species}}/",  view.left, view.right, 2);
+getCre("/cres_in_range/{{species}}/",  view.left, view.right, 4, "{{species}}");
 
 init();
 
