@@ -91,6 +91,7 @@ var max_local = new Array();
                 // now I have all data as needed, let's draw the charts
                 drawBoxes();
                 drawLineChart();
+                legend_chart();
               //drawLineChart();
               },
               error: function(e, xhr){

@@ -782,7 +782,7 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
 */
   
 getSequenceAnnotationData("{% url 'genes_json_annotation' %}{{species}}/",view.left);
-getCre("/cres_in_range/{{species}}/",  view.left, view.right, 2, "{{species}}");
+getCre("/cres_in_range/{{species}}/",  view.left, view.right, 4, "{{species}}");
 
 init();
 

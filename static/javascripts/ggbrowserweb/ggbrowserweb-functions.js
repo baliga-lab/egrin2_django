@@ -1,3 +1,41 @@
+function legend_chart(){
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", x(view.right- 300) )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(30, 55)")
+
+  legend.selectAll('g').data(mot_names)
+      .enter()
+      .append('g')
+      .each(function(d, i) {
+        var g = d3.select(this);
+        g.append("line")
+          .attr("x1",x(view.right- 400) )
+          .attr("x2",x(view.right- 300) )
+          .attr("y1", i*10)
+          .attr("y2", i*10)
+          .attr("width", 10)
+          .attr("height", 10)
+          .attr("align", "bottom")
+          //.attr("fill", function(d) {color(d);})
+          .attr("stroke", function(d) { return color(d); } ) 
+        g.append("text")
+          .attr("x", x(view.right- 200) )
+          .attr("y", i * 10 + 8)
+          .attr("height",30)
+          .attr("width",100)
+          //.attr("fill", function(d) {color(d);})
+          .text(function(d){return d;})
+          .style("fill", function(d) { return color(d); } ); 
+
+      });
+
+}
+
+
 function redrawSeqLogo(names){
   
     if (  (view.right - view.left) <= 310 && (window[names + "checked"] == true) && (checked_global == true) ) { 
