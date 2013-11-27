@@ -46,6 +46,7 @@ class Network(models.Model):
         return self.name
 
 
+
 class Gene(models.Model):
     species = models.ForeignKey(Species)
     accession = models.CharField(max_length=128)
@@ -257,11 +258,11 @@ select short_name from main_network n join main_species s on n.species_id = s.id
     rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
     gre_counts = {}
     total_counts = {}
-    for gre_id, start, stop in rows:
+    for gre_id, sstart, sstop in rows:
         if gre_id not in gre_counts:
             gre_counts[gre_id] = {}
         count_map = gre_counts[gre_id]
-        for i in range(start, stop + 1):
+        for i in range(sstart, sstop + 1):
             if i not in count_map:
                 count_map[i] = 0
             if i not in total_counts:
