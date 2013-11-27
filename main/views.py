@@ -670,7 +670,7 @@ def gre_cres_json(request, species, gre):
     cres = [[item.cre_id,
              bicluster_detail_link(species, bicluster_id(item.cre_id), bicluster_id(item.cre_id)),
              ('<img src="%simages/cres/%s/%s.png" background-color="black" width="220" height="120" class="float-center" />' % (settings.STATIC_URL, species, item.cre_id)),
-             item.e_val
+             float(item.e_val)
              ] for item in batch]
 
     data = {

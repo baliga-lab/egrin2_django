@@ -164,16 +164,6 @@ button {
     font-weight: bold;
 }
 
-select {
-   background: transparent;
-   width: 242px;
-   padding: 5px;
-   font-size: 12px;
-   border: none;
-   border-radius: none;
-   height: 100%;
-   -webkit-appearance: none;
-   }
 
 .select_cursor{
   background: url('img/pointer_32.png');

@@ -92,6 +92,7 @@ var max_local = new Array();
                 drawBoxes();
                 drawLineChart();
                 legend_chart();
+                jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
               //drawLineChart();
               },
               error: function(e, xhr){
