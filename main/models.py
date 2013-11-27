@@ -46,7 +46,6 @@ class Network(models.Model):
         return self.name
 
 
-
 class Gene(models.Model):
     species = models.ForeignKey(Species)
     accession = models.CharField(max_length=128)

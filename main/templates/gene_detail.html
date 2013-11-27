@@ -141,6 +141,9 @@ GGBrowser scripts to be imported
     <blockquote><p>Genome Browser</p></blockquote>
     <table id="table-ggbrowserweb">
       <td>
+        <div id="showSeqLogo">
+          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence Logo</input>
+        </div>
         <div id="boxes" class='select_div'>
         <div id="checkAll">
         <input type="checkbox" id="checkAll" value="checkAll" onchange="uncheckAll()" checked="true">Select All</input>
@@ -779,7 +782,7 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
 */
   
 getSequenceAnnotationData("{% url 'genes_json_annotation' %}{{species}}/",view.left);
-getCre("/cres_in_range/{{species}}/",  view.left, view.right, 2);
+getCre("/cres_in_range/{{species}}/",  view.left, view.right, 2, "{{species}}");
 
 init();
 
