@@ -581,8 +581,7 @@ def cres_in_range_json(request, species, start, stop, top): #dsalvanha
     network = Network.objects.get(species__ncbi_taxonomy_id = species);
 
     top_ = int(top)
-
-    return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_)), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(cres_in_range(network.id, int(start), int(stop), int(top_))), mimetype='application/json')
 
 
 def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
