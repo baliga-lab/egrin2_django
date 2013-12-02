@@ -531,7 +531,10 @@ var url_ = "{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern
 
   var padding = 20; // DO I NEED IT ?
 
+//var yLogo = d3.scale.linear()
+  //  .range([( (height+margin.left))/2, 100]);
 
+  var yLogo = d3.scale.linear().range([430, 100]).domain([0,max_local]);
 
   var x = d3.scale.linear().range([0, width]).domain([view.left, view.right]),
       x2 = d3.scale.linear().range([0, width]).domain([view.left, view.right]),

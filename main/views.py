@@ -344,29 +344,6 @@ def genes_json_annotation(request, species):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
-def xxxxx(request, species, start, stop):
-
-    fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
-              'strand', 'chromosome']
-    dtparams = get_dtparams(request, fields, fields[0])
-    query = Gene.objects.filter(species__ncbi_taxonomy_id=species)
-    num_total = query.count()
-    batch = dtparams.ordered_batch(query)
-    
-    some_data_to_dump = [{
-   'start': g.start,
-   'end': g.stop,
-   'strand': g.strand,
-   'attributes': g.description,
-   'type': "gene",
-   'chromosome': g.chromosome.sequence[g.start,g.stop],
-} for g in batch]
-    
-    data = {
-        'SequenceAnnotation': some_data_to_dump
-        }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
-
 def genes_json_annotation_range(request, species, start, stop):
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
               'strand', 'chromosome']
@@ -386,6 +363,8 @@ def genes_json_annotation_range(request, species, start, stop):
    'attributes': g.description,
    'type': "gene",
    'basepairs': g.chromosome.sequence[g.start:g.stop],
+   #'bc': [b.bc_id for b in g.bicluster_set.all()][:10],
+   
 } for g in batch]
 
     data = {
@@ -604,6 +583,25 @@ def cres_in_range_json(request, species, start, stop, top): #dsalvanha
     top_ = int(top)
 
     return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_)), mimetype='application/json')
+
+
+def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
+    network = Network.objects.get(species__ncbi_taxonomy_id=species)
+    #gene = Gene.objects.filter(species__ncbi_taxonomy_id=species, name=gene_name);
+    #corem = Corem.objects.filter(genes=gene_name)
+    #cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
+    #cre_ids = gene.bicluster_set.all();
+    g = Gene.objects.get(sys_name='b0035')
+    #cre_ids = [cre.pr for cre in [b.cres for c in g.corem_set.all() for b in c.bicluster_set.all()]]
+
+    cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
+
+    #cre_ids = [b.bc_id for b in c.bicluster_set.all() for c in g.corem_set.all()]
+    #cre_ids = [c.bicluster_set.all() for c.bc_id in g.corem_set.all()]
+
+    top_ = int(top)
+
+    return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_, cre_ids)), mimetype='application/json')    
 
 
 def corem_gres_json(request, species, corem):
