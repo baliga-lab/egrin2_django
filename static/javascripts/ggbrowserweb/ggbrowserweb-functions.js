@@ -36,6 +36,7 @@ var legend = svg.append("g")
 }
 
 
+
 function redrawSeqLogo(names){
   
     if (  (view.right - view.left) <= 310 && (window[names + "checked"] == true) && (checked_global == true) ) { 
@@ -45,8 +46,10 @@ function redrawSeqLogo(names){
       var sequence = focus.selectAll("#" + names).remove();
       //debugger;    
       //debugger;
-      normalize.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
-      
+      //normalize.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
+      yLogo.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      //yLogo.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
+      console.log(yLogo.domain());
       xSeqLogo.domain(d3.range(view.left,view.right,1))
       
     eval("_"+names)
@@ -56,7 +59,7 @@ function redrawSeqLogo(names){
       .enter().append("text")
         .attr("id", names)
         .attr("clip-path", "url(#clip)")
-        .attr("y", 235)//function(e,i) {return ySeqLogo(normalize(2)); }
+        .attr("y",function(e,i) {return yLogo(0); })
         .attr("x", function(d) { return x(d.START); })
         //.attr("fill", "white")
         .text( function(e) { return e.LETTER; } )//e.LETTER
@@ -65,11 +68,15 @@ function redrawSeqLogo(names){
         .style( "font", "corrier" )
 //        .style("text-size-adjust", "inherit")
         .attr( "textLength", xSeqLogo.rangeBand() )//(xSeqLogo.rangeBand()) / 2
-        .attr("transform", "translate(0, 195)")
+        //.attr("transform", "translate(0, 195)")
 //          .attr( "textLength", 10)
         .attr( "lengthAdjust", "spacingAndGlyphs" )
-        .attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
-        .style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
+        //.attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
+        //.style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
+
+        .attr( "font-size", function(e) {  return   yLogo(e.MAX)* capHeightAdjust; } )
+        .style( "font-size", function(e) { return  yLogo(e.MAX) * capHeightAdjust ; } )
+
         //.attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
         //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
 

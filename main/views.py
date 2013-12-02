@@ -586,11 +586,18 @@ def cres_in_range_json(request, species, start, stop, top): #dsalvanha
 
 
 def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
-    network = Network.objects.get(species__ncbi_taxonomy_id = species);
+    network = Network.objects.get(species__ncbi_taxonomy_id=species)
     #gene = Gene.objects.filter(species__ncbi_taxonomy_id=species, name=gene_name);
-    corem = Corem.objects.filter(genes=gene_name)
-    cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
+    #corem = Corem.objects.filter(genes=gene_name)
+    #cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
     #cre_ids = gene.bicluster_set.all();
+    g = Gene.objects.get(sys_name='b0035')
+    #cre_ids = [cre.pr for cre in [b.cres for c in g.corem_set.all() for b in c.bicluster_set.all()]]
+
+    cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
+
+    #cre_ids = [b.bc_id for b in c.bicluster_set.all() for c in g.corem_set.all()]
+    #cre_ids = [c.bicluster_set.all() for c.bc_id in g.corem_set.all()]
 
     top_ = int(top)
 
