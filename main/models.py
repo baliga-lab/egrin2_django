@@ -232,7 +232,7 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-def cres_in_range(network_id, start, stop, top=None, cre_ids=[], omit0=True):
+def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
@@ -243,7 +243,10 @@ select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id
 """
     query_part1 = """ order by cre_id) and start >= %s and stop <= %s"""
     query = query_part0
-    if len(cre_ids) > 0:
+    if corem_id != None:
+        cre_query = """select distinct cre.id from main_grecoremmembership gcm join main_cre cre on gcm.gre_id = cre.gre_id  where corem_id = %s union select cre_id from main_bicluster_corems bco join main_bicluster_cres bcr on bco.bicluster_id = bcr.bicluster_id where corem_id = %s"""
+        cur.execute(cre_query, [corem_id, corem_id])
+        cre_ids = [row[0] for row in cur.fetchall()]
         query += (" and cre_id in (%s)" % (",".join(map(str, cre_ids))))
         
     query += query_part1
