@@ -978,9 +978,13 @@ function drawLine(){
 //           .duration(500)
 
 
-  .style("fill", color(d.key))
-  //.style("stroke", color(d.key))
-  //.style("opacity", 1)
+  .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME)  ) //old   values[0].MOTIF_NAME
+  .style("stroke-width", 1.6)
+  //.style("fill", color(d.key))
+  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //for area
+  //.style("opacity", 0.5) // for area
+  
+
   .append("svg:title")
   .text(function(d) { return d.key; });
   
@@ -998,10 +1002,54 @@ function drawLine(){
    }); //end of forEach
 }
 
+  function animatedLineChart(){
+  
+    //svg.selectAll('.line').remove();
+    
+  //getMotifMax(view.left, view.right, d);
+
+
+  //normalize.domain([0,d3.max(eval("p_"+d).map(function(d) {return(d.max);}))]);   //eval("max_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));}) ]);    
+  
+  //console.log("domain : " + normalize.domain());
+
+  var lll = focus.select(".motifs_"+"eco_12").selectAll(".line")
+  //old  .data(eval("max_"+d));
+  //.data(eval("pp_corem"+track_name));
+//    .data(pp_corem_ec516031);  
+  
+ // lll.exit().remove();
+ // lll.enter().append("g");
+  
+ /* lll
+  
+        .attr("class", "motifs_" + "eco_5");
+  lll.append("path")*/
+      .data(pp_corem_ec516031)  
+  //.attr("class", "line")
+  //.attr("clip-path", "url(#clip)")
+  //old  .attr("d", line(eval("max_"+d)[0].values))
+  
+  
+  .transition()
+        .duration(2000)
+        .attr("d", line(eval(pp_corem_ec516031)[0].values) )
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+//  .attr("transform", "translate(0, 0)")
+.style("stroke", color("eco_12") ) //old   values[0].MOTIF_NAME
+  .style("stroke-width", 1.6)
+  
+  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) )
+  //.style("opacity", 1)
+  //.on("mouseover", function(){d3.select(this).style("stroke", "#999999").attr("stroke-opacity", "1.0");});  
+    
+  };
+
   function drawLineChart(){
   
     svg.selectAll('.line').remove();
-  mot_names.forEach(function(d){
+    mot_names.forEach(function(d){
   //getMotifMax(view.left, view.right, d);
 
 
@@ -1015,7 +1063,7 @@ function drawLine(){
   .data(eval("pp_"+d));
       
   lll.enter().append("g");
-  lll.exit().remove();
+  
   lll
   
         .attr("class", "motifs_" + d);
@@ -1028,8 +1076,8 @@ function drawLine(){
 
   .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //old   values[0].MOTIF_NAME
   .style("stroke-width", 1.6)
-  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) )
-  //.style("opacity", 1)
+  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //area
+  //.style("opacity", 0.5) 
   //.on("mouseover", function(){d3.select(this).style("stroke", "#999999").attr("stroke-opacity", "1.0");});  
     
   })};// voltar drawLineChart();

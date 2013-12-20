@@ -587,20 +587,31 @@ def cres_in_range_json(request, species, start, stop, top): #dsalvanha
 def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
     network = Network.objects.get(species__ncbi_taxonomy_id=species)
     #gene = Gene.objects.filter(species__ncbi_taxonomy_id=species, name=gene_name);
-    #corem = Corem.objects.filter(genes=gene_name)
+    corem = Corem.objects.filter(genes__sys_name=str(gene_name))
     #cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
     #cre_ids = gene.bicluster_set.all();
-    g = Gene.objects.get(sys_name='b0035')
+    # Wei-Ju g = Gene.objects.get(sys_name='b0035')
     #cre_ids = [cre.pr for cre in [b.cres for c in g.corem_set.all() for b in c.bicluster_set.all()]]
 
-    cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
+    # Wei-Ju cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
+    print corem.all()
+
+    top_ = int(top)
+    corem_ = [cor.id for cor in corem.all()]
+    cres = [cres_in_range(network.id, start, stop, top_, corem_id) for corem_id in corem_]
+    corem_name = [cor.corem_id for cor in corem.all()]
+    print corem_name
+
+    data = {
+        'corem_name': corem_name,
+        'cre_data':cres
+
+    }
 
     #cre_ids = [b.bc_id for b in c.bicluster_set.all() for c in g.corem_set.all()]
     #cre_ids = [c.bicluster_set.all() for c.bc_id in g.corem_set.all()]
 
-    top_ = int(top)
-
-    return HttpResponse(simplejson.dumps(cres_in_range(network.id, start, stop, top_, cre_ids)), mimetype='application/json')    
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')    
 
 
 def corem_gres_json(request, species, corem):
