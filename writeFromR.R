@@ -22,7 +22,8 @@ if (ECO) {
   outRoot="/isb-1/R/egrin2/website/fixtures/511145/ecoli"
   # from Dave final list of motif.clusters
   # m.table
-  load("/docs/EGRIN2/new/Eco_ensemble_2/eco_GRE_table.RData")
+  load("/home/abrooks/Documents/EGRIN2/Eco_ensemble_2/eco_GRE_table.RData")
+  m.table.new = read.delim("/home/abrooks/Documents/EGRIN2/Eco_ensemble_2/GRE_vs_regulondb_FINAL.tsv",sep="\t")
   motClusts <- c(0,as.vector(m.table[,1]))
 }
 
@@ -38,7 +39,7 @@ if (HALO) {
 	#o$corem_list$conditionontology <- gBg_backbone_0.59_clean_list$conditions.cvar.term.enrich
   
   outRoot="/isb-1/R/egrin2/website/fixtures/64091/hal"
-  load("/docs/EGRIN2/new/Hal_ensemble_2/hal_GRE_table.RData")
+  load("/home/abrooks/Documents/EGRIN2/Hal_ensemble_2/hal_GRE_table.RData")
   motClusts <- c(0,as.vector(m.table[,1]))
 }
 
@@ -93,6 +94,34 @@ writeInitials <- function(outRoot) {
     return(o2)
   })
   names(corem_gres) <- o$corem_list$corems
+
+  # find condition-specific corem cre's
+  corem_cres <- lapply(seq(1,length(o$corem_list$genes)),function(i) {
+    print(i)
+    corem = o$corem_list$corems[[i]]
+    # get best bcs for conditions assigned to corem
+    bcs <- sort(table(unlist(out$get.biclusters(conditions = names(o$corem_list$conditions[[corem]])))),decreasing=T)
+    q <- rev(quantile(bcs,probs=seq(0,1,.1)))[2]
+    # filter bcs below user supplied quantile
+    bcs <- names(bcs)[bcs>=q]
+    # make sure biclusters have at least one of corem genes
+    g.bcs <- unlist(out$get.biclusters(genes = o$corem_list$genes[[corem]]))
+    bcs <- intersect(bcs,g.bcs)
+    # motifs 
+    mots <- unlist(out$get.motifs(biclusters=bcs))
+    corem.gre.mots <- unlist(out$get.motifs(motif.clusters=paste("MOTC_",names(corem_gres[[corem]]),sep="")))
+    to.r <- intersect(mots,corem.gre.mots)
+    if (length(to.r)>0) {
+      to.r = gsub("MOT_","",to.r)
+    } else {
+      to.r = ""
+    }
+    return(to.r)
+    })
+  names(corem_cres) <- o$corem_list$corems
+
+  #sapply(corem_cres,function(i){table(unlist(out$get.motif.clusters(motifs=paste("MOT_",i,sep=""))))})
+
   # process for writing
   corem_bcs <- lapply(corem_bcs,function(i) paste(gsub("BIC_","",i),collapse=","))
   corem_genes <- lapply(seq(1,length(o$corem_list$genes)),function(i){
@@ -135,11 +164,13 @@ writeInitials <- function(outRoot) {
   })
   # order corem, genes, bcs, gres, gre_pvals,go_ids,term_descriptions,genes_annotated,go_pval
   # write header
-  write(paste(c("corem", "genes", "bcs", "gres", "gre_pvals","go_ids","tot_annotated","genes_annotated","go_pval"),collapse="\t"),file=paste(outRoot,"_corems.txt",sep=""))
+  write(paste(c("corem", "genes", "bcs", "gres", "gre_pvals","go_ids","tot_annotated","genes_annotated","go_pval","cres"),collapse="\t"),
+    file=paste(outRoot,"_corems.txt",sep=""))
   write(paste(paste(o$corem_list$corems,corem_genes,corem_bcs,
                     sapply(corem_gres,function(i)paste(names(i),collapse=",")),
                     sapply(corem_gres,function(i)paste(i,collapse=",")),
                     corem_go,
+                    sapply(corem_cres,function(i)paste(i,collapse=",")),
                     sep="\t"),collapse="\n"),
         file=paste(outRoot,"_corems.txt",sep=""),append=T)
   
@@ -217,30 +248,34 @@ writeInitials <- function(outRoot) {
   relevant.bcs.lookup <- sapply(relevant.bcs,function(i)gsub("BIC_","",i))
   bc.info <- lapply(out$get.bicluster.info(relevant.bcs),
                      function(i){
-                       o <- list()
+                      #print(i$k)
+                       tmp <- list()
                        # genes
-                       o[["genes"]] <- paste(i$rows,collapse=",")
+                       tmp[["genes"]] <- paste(i$rows,collapse=",")
                        # conditions
-                       o[["conditions"]] <- paste(unlist(names(conds)[conds%in%i$cols]),collapse=",")
+                       tmp[["conditions"]] <- paste(unlist(names(conds)[conds%in%i$cols]),collapse=",")
                        # resid
-                       o[["resid"]] <- round(i$resid,5)
-                       o[["resid"]][is.na(o[["resid"]])] = 1
-                       o[["cre"]] <- paste(relevant.bcs.lookup[count],seq(1,dim(i$e.val)[1]),sep="_")
-                       o[["gre"]] <- lapply(o[["cre"]],function(i){
+                       tmp[["resid"]] <- round(i$resid,5)
+                       tmp[["resid"]][is.na(tmp[["resid"]])] = 1
+                       tmp[["cre"]] <- paste(relevant.bcs.lookup[count],seq(1,dim(i$e.val)[1]),sep="_")
+                       tmp[["gre"]] <- lapply(tmp[["cre"]],function(j){
                          #print(i)
-                         i <- out$get.motif.clusters(motif=paste("MOT_",i,sep=""))
-                         if (length(i)==0) {
+                         j <- out$get.motif.clusters(motif=paste("MOT_",j,sep=""))
+                         if (is.null(j[[1]])) {
+                          #print("yes")
                            return(0)
-                         } else {
-                           if (i[[1]]%in%as.character(motClusts)) {
-                             return(i[[1]])
+                         } else if (length(j)==0) {
+                            return(0)
+                          } else {
+                            if (j[[1]]%in%as.character(motClusts)) {
+                             return(j[[1]])
                            } else {
                              return(0)
                            }
                          }
                        })
                        count <<- count+1
-                       return(o)
+                       return(tmp)
                        })
   bc.resid <- sapply(bc.info,function(i)i$resid)
   bc.genes <- sapply(bc.info,function(i)paste(i$genes,collapse=","))
@@ -400,9 +435,9 @@ writeInitials <- function(outRoot) {
   if (ECO) {
     # matches in m.table
     # limit to GREs with match
-    m.table.sub <- m.table[which(sapply(as.character(m.table[,7]),nchar)>1),]
+    m.table.new.sub <- m.table.new[which(sapply(as.character(m.table.new[,2]),nchar)>1),]
     write(paste(c("gre_id", "regulator", "pval"),collapse="\t"),file=paste(outRoot,"_gre_matches.txt",sep=""))
-    write(paste(paste(m.table.sub[,1],gsub(" ",",",as.character(m.table.sub[,7])),gsub(" ",",",as.character(m.table.sub[,8])),sep="\t"),collapse="\n"),
+    write(paste(paste(m.table.new.sub[,1],gsub(" ",",",as.character(m.table.new.sub[,2])),gsub(" ",",",as.character(m.table.new.sub[,3])),sep="\t"),collapse="\n"),
           file=paste(outRoot,"_gre_matches.txt",sep=""),append=T)
   }
 }
@@ -424,7 +459,9 @@ writeInitials <- function(outRoot) {
 
 
 if (PLOTS) {
-  writeExpression <- function(outDir) {
+ 
+  
+  writeExpression.corems <- function(outDir) {
     require(RColorBrewer)
     require(gplots)
     # read array info
@@ -437,6 +474,7 @@ if (PLOTS) {
       names(condition.categories_inv) = condition.categories
       condition_category_map = array_info[,6]
       names(condition_category_map) = array_info[,2]
+      n.append = "eco_"
     }
     if (HALO) {
       array_info=read.delim("/isb-1/R/egrin2/basic_env_mapping.txt",sep="\t",header=F)
@@ -509,7 +547,6 @@ if (PLOTS) {
       count=count+1
     }
   }
-  
   writeExpression.bcs <- function(outDir) {
     require(RColorBrewer)
     require(gplots)
@@ -533,8 +570,13 @@ if (PLOTS) {
       names(condition.categories_inv) = condition.categories
       condition_category_map = array_info[,2]
       names(condition_category_map) = array_info[,1]
-      n.append = "hal_"
     }
+    # plot legend pdf
+    pdf(paste(outDir,"key_labels.pdf",sep=""))
+    plot.new()
+    legend("topleft",legend=condition.categories,fill=condition.categories_inv)
+    dev.off()
+    require(gplots)
     blue2yellow <- colorpanel(200,"blue","black","yellow")
     ratios.norm <- t(scale(t(e$ratios[[1]]), 
                            center = apply(e$ratios[[1]], 1, median, 

@@ -353,6 +353,7 @@ class Corem(models.Model):
                                   through='GreCoremMembership')
     conditions = models.ManyToManyField(Condition, verbose_name="Condition members",
                                         through='CoremConditionMembership')
+    cre = models.ManyToManyField(Cre, verbose_name="Cre members")
     
     def expMatrix(self):
         m = [ [ 0 for i in range(len(self.genes)) ] for j in range(len(self.conditions)) ]
