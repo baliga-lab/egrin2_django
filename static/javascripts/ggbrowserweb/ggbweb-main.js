@@ -28,7 +28,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   var margin = {top: 10, right: 30, bottom: 160, left: 40},
       margin2 = {top: 470, right: 30, bottom: 20, left: 40},
       margin3 = {top: 470, right: 30, bottom: 20, left: 40},
-      width = 800 - margin.left - margin.right,
+      width = 750 - margin.left - margin.right,
       height = 600 - margin.top - margin.bottom,
       height2 = 600 - margin2.top - margin2.bottom;
 
@@ -126,6 +126,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   .append("input")
       .attr("id", "box_selected")
       .attr("name", "boxes")
+      //.attr("class", "squaredThree")
       //.attr("checked", function(d) { debugger; eval(d + "checked");})
       /*.attr("checked", function(d) {
             if (typeof window[d + "checked"] != 'undefined'){

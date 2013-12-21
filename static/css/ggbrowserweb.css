@@ -88,7 +88,7 @@ padding:6px;
 .ggbrowser-principal      { background-color:"white"; width:1000px; height:600px; float:left; overflow:hidden; border:none; }
 .bookmark_div      { background-color:#FFFFF0; width:350px; height:600px; float:left; overflow:hidden; border:none; }
 .bookmark_select      { background-color:#FFFFF0; width:350px; float:left; overflow:hidden; border:none; }
-.select_div      { background-color:#FFFFF0;width:150px; height:600px; float:left; overflow:auto; border:none; }
+.select_div      { background-color:#FFFFF0; float:left; overflow:auto; border:none;  }
 
 circle {
   -webkit-transition: fill-opacity 250ms linear;
