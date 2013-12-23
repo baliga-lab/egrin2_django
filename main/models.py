@@ -238,27 +238,21 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     2. -> [ (1, 1231)  (2, 232), ...]
     """
     cur = connection.cursor()
-    query_part0 = """
-select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s
-"""
-    query_part1 = """ order by cre_id) and start >= %s and stop <= %s"""
-    query = query_part0
-    if corem_id != None:
-        cre_query = """select distinct cre.id from main_grecoremmembership gcm join main_cre cre on gcm.gre_id = cre.gre_id  where corem_id = %s union select cre_id from main_bicluster_corems bco join main_bicluster_cres bcr on bco.bicluster_id = bcr.bicluster_id where corem_id = %s"""
-        cur.execute(cre_query, [corem_id, corem_id])
-        cre_ids = [row[0] for row in cur.fetchall()]
-        query += (" and cre_id in (%s)" % (",".join(map(str, cre_ids))))
-        
-    query += query_part1
-    #print query
+    if corem_id:
+        query = "select distinct gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s order by cre_id) and start >= %s and stop <= %s"
+        #print "QUERY1: ", query
+        cur.execute(query, [corem_id, start, stop])
+    else:
+        query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
+        #print "QUERY2: ", query
+        cur.execute(query, [start, stop, network_id, start, stop])
+    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+
     if omit0:
-        org_query = """
-select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s
-"""
+        org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"
         cur.execute(org_query, [network_id])
         query += " and g.gre_id != '" + cur.fetchone()[0] + "_0'"
-    cur.execute(query, [start, stop, network_id, start, stop])
-    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+
     gre_counts = {}
     total_counts = {}
     for gre_id, sstart, sstop in rows:
@@ -353,7 +347,7 @@ class Corem(models.Model):
                                   through='GreCoremMembership')
     conditions = models.ManyToManyField(Condition, verbose_name="Condition members",
                                         through='CoremConditionMembership')
-    cre = models.ManyToManyField(Cre, verbose_name="Cre members")
+    cres = models.ManyToManyField(Cre, verbose_name="Cre members")
     
     def expMatrix(self):
         m = [ [ 0 for i in range(len(self.genes)) ] for j in range(len(self.conditions)) ]
