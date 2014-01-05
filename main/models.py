@@ -232,19 +232,23 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
+def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True, fillGap=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
     """
+
+    print ("corem ids passed --> ", corem_id)
+
+
     cur = connection.cursor()
     if corem_id:
         query = "select distinct gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s order by cre_id) and start >= %s and stop <= %s"
-        #print "QUERY1: ", query
+        print "QUERY1: ", query
         cur.execute(query, [corem_id, start, stop])
     else:
         query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
-        #print "QUERY2: ", query
+        print "QUERY2: ", query
         cur.execute(query, [start, stop, network_id, start, stop])
     rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
 

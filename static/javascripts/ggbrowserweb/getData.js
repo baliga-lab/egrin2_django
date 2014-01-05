@@ -5,11 +5,11 @@ var max_local = new Array();
 
 
 // ajax call
-        function getSequenceAnnotationData(url, start){
+        function getSequenceAnnotationData(url, start, stop){
         $.ajax( {
               type:'Get',
 
-              url: url + (start) + "/" + (start + 10000) + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + (start) + "/" + (stop + 2000) + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
               window["g"] = JSON.parse(json);
@@ -38,10 +38,40 @@ var max_local = new Array();
             this.LETTER = LETTER;
         };
 
+        function createPosArray(inputArray, s, e){
+          //var s = 27151;
+          //var e = 33299;
+          //var t = new Array()
+          //inputArray.forEach(function(d){
+          //  t.push(d.START)
+          //});
+          //window["array_zero"] = new Array();
+          //debugger;
+          var arr = new Array();
 
+          for (var i = s; i < e; i++) {
+            arr.push(new Populate(inputArray[0].MOTIF_NAME, i, 0, "") );  
+          };
+          inputArray.forEach(function(d){
+            if (d.START >= s) arr[d.START - s] = d;
+          });
+          window["array_zero"] = arr;
+        }
 
         function getCre(url, start, stop, top, specie, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
         
+        $('#ggbrowser-principal').block({   
+              message: '<img id="loading" src="/static/images/ajax-loader.gif" /> <h1>Loading</h1>', 
+              css: { 
+            border: 'none', 
+            padding: '25px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: .5, 
+            color: '#fff' }
+        });//css: { border: '3px solid rgba(250, 250, 250, 0); ' }
+
         $.ajax( {
               type:'Get',
 
@@ -65,6 +95,7 @@ var max_local = new Array();
                 window["temp_"+d] = new Array();
                 window["temp_pp_"+d] = {};
                 window["pp_"+d] = new Array();
+                window["pp_original_"+d] = new Array();
                 window["max_temp_"+d] = new Array();
                 
                 //console.log("do something for "+ d);
@@ -81,7 +112,26 @@ var max_local = new Array();
                 eval("max_").push(d3.max(eval("max_temp_"+d)));
                 eval("temp_pp_"+d).values = eval("temp_"+d);
                 eval("pp_"+d).push(eval("temp_pp_"+d));
+
+
+                //if(d != "All" && d != "eco_0"){  
+                    //debugger;
+                    window["array_zero"] = 0;
+                    createPosArray(eval("pp_"+d)[0].values, start, stop)
+                    array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
+                    eval("pp_"+d)[0].values = array_zero
+                    eval("pp_original_"+d).push(array_zero);
+                //}
+                /*else{
+                  window["pp_original_"+d] = (eval("temp_pp_"+d));  
+                }*/
+                
+
               });
+
+
+
+
               //max_local = d3.max(max_);
 
                 // binding data to draw seqLogo
@@ -92,12 +142,13 @@ var max_local = new Array();
                   .append("g")
                   .attr("class", "sequence-column");
                 })
-
+                  //debugger;
                 // now I have all data as needed, let's draw the charts
                 drawBoxes(mot_names, "boxes");
                 drawLineChart();
                 legend_chart();
-                jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
+                //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
+                $('#ggbrowser-principal').unblock()
               //drawLineChart();
 
               getCre_per_corem("/cres_in_range_list/" + specie + "/",  view.left, view.right, 4, specie,gene_name);
@@ -183,16 +234,22 @@ var max_local = new Array();
               
 
               window["cre_corem"] = JSON.parse(json);
+              
+              //cre_corem["cre_data"][0][0].All = cre_corem["cre_data"][1][1];
+              //debugger;
               window["corem_name"] = cre_corem["corem_name"];
               window["max_corem"] = new Array();
               
 
 
               corem_name.forEach(function(d,i){
-
+                //debugger;
+                cre_corem["cre_data"][i][0].All = cre_corem["cre_data"][i][1];
+                //debugger;
                 window["temp_corem_"+d] = new Array();
                 window["temp_pp_corem_"+d] = {};
                 window["pp_corem_"+d] = new Array();
+                //window["pp_corem_original"+d] = new Array();
                 window["max_temp_corem_"+d] = new Array();
                 window["corem_to_animate"] = new Array();
                 mot_names.forEach(function(w) {
@@ -209,9 +266,14 @@ var max_local = new Array();
                 eval("temp_pp_corem_"+d).values = eval("temp_corem_"+d);
                 eval("pp_corem_"+d).push(eval("temp_pp_corem_"+d));
 
+
                 //window["corem_" + d] = new Array();
               })
-                drawBoxes(corem_name, "a");
+                corem_name.push("Reset")
+                drawButton(corem_name, "corem_box");
+
+                yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+
                 //drawLineChart();
                 //legend_chart();
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();

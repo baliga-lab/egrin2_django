@@ -5,23 +5,25 @@ var legend = svg.append("g")
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
-    .attr("transform", "translate(30, 55)")
+    .attr("transform", "translate(30, 60)")
 
   legend.selectAll('g').data(mot_names)
       .enter()
       .append('g')
       .each(function(d, i) {
         var g = d3.select(this);
-        g.append("line")
-          .attr("x1",x(view.right- 400) )
-          .attr("x2",x(view.right- 300) )
-          .attr("y1", i*10)
-          .attr("y2", i*10)
-          .attr("width", 10)
-          .attr("height", 10)
-          .attr("align", "bottom")
-          //.attr("fill", function(d) {color(d);})
-          .attr("stroke", function(d) { return color(d); } ) 
+        g.append("rect")
+          .attr("x",x(view.right- 400) )
+          //.attr("x2",x(view.right- 300) )
+          .attr("y", i*10)
+          //.attr("y2", i*10)
+          .attr("width", 8)
+          .attr("height", 8)
+          //.attr("align", "bottom")
+          //.attr("dy", ".35em")
+          .style("fill", function(d) {return color(d);})
+          //.style("fill", function(d, i) { return color(i); });
+          //.attr("stroke", function(d) { return color(d); } ) 
         g.append("text")
           .attr("x", x(view.right- 200) )
           .attr("y", i * 10 + 8)
@@ -37,29 +39,34 @@ var legend = svg.append("g")
 
 
 
+  
 function redrawSeqLogo(names){
   
-    if (  (view.right - view.left) <= 310 && (window[names + "checked"] == true) && (checked_global == true) ) { 
+    if (  (view.right - view.left) <= 410 && (window[names + "checked"] == true) && (checked_global == true) ) { 
       
 
-
+      
       var sequence = focus.selectAll("#" + names).remove();
       //debugger;    
       //debugger;
       //normalize.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
-      yLogo.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      //yLogo.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      //yLogo.domain = yLine.domain
+      yLogo.domain(yLine.domain())
+      yLogo.range([100,430])
       //yLogo.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
-      console.log(yLogo.domain());
+      //console.log(yLogo.domain());
       xSeqLogo.domain(d3.range(view.left,view.right,1))
       
     eval("_"+names)
     .selectAll("#" + names)
-     .data(function(d){  return d.values.filter(function(f) {  return f.START >= view.left && f.START <= view.right  ;});})
+     .data(function(d){  return d.values.filter(function(f) {  return f.START >= view.left && f.START <= view.right ;});})
      //.data(function(d){ debugger; return d.values.filter(function(f) {  return f.POSITION >= view.left && f.POSITION <= view.right  ;});})
       .enter().append("text")
         .attr("id", names)
         .attr("clip-path", "url(#clip)")
-        .attr("y",function(e,i) {return yLogo(0); })
+        //.attr("y",function(e,i) { return yLogo(0); })
+        .attr("y", 430)
         .attr("x", function(d) { return x(d.START); })
         //.attr("fill", "white")
         .text( function(e) { return e.LETTER; } )//e.LETTER
@@ -74,8 +81,9 @@ function redrawSeqLogo(names){
         //.attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
         //.style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
 
-        .attr( "font-size", function(e) {  return   yLogo(e.MAX)* capHeightAdjust; } )
-        .style( "font-size", function(e) { return  yLogo(e.MAX) * capHeightAdjust ; } )
+        .attr( "font-size", function(e) { return   yFont(e.MAX) } )
+        .style("opacity", 0.8)
+        //.style( "font-size", function(e) { return  yLogo(e.MAX)* capHeightAdjust ; } )
 
         //.attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
         //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
@@ -381,20 +389,20 @@ function redrawSeqLogo(names){
         
         //getMotifData_all(view.left, view.right);
         
-        //(2500 * d3.round(15000/5000) + 5000)
+        //(1500 * d3.round(15000/5000) + 5000)
         
         
         //cleaning motif_names
         
-        view.left = +res.split(",")[0] ; //-1000
-        view.right = +res.split(",")[1] ;//+1000
+        view.left = +res.split(",")[0] ; //-1500
+        view.right = +res.split(",")[1] ;//+1500
         
         final_right = +res.split(",")[1];
         final_left = +res.split(",")[0];
 
         //debugger;
-        //view.right  = ((( ((2500 * d3.round(view.right/w) + 5000))/w) ) * w);
-        //view.left = ((( ((2500 * d3.round(view.right/w) + 5000))/w))* w) - w;
+        //view.right  = ((( ((1500 * d3.round(view.right/w) + 5000))/w) ) * w);
+        //view.left = ((( ((1500 * d3.round(view.right/w) + 5000))/w))* w) - w;
         view.left = (d3.round(view.right/w) * 5000);
         view.right = ((d3.round(view.right/w) * 5000 ) + 5000);
         //debugger;
@@ -406,21 +414,21 @@ function redrawSeqLogo(names){
           if(final_left >= view.left) {
             //debugger;
             console.log("right is out, let's sum")
-            view.left = view.left + 2500;
-            view.right = view.right + 2500;
+            view.left = view.left + 1500;
+            view.right = view.right + 1500;
             //getMotifData_all_rank(d3.round(view.right/w) + 0.5);
           }
           else{
             var temp_r = view.right;
-            view.left = view.left - 2500;
-            view.right = view.right - 2500;
+            view.left = view.left - 1500;
+            view.right = view.right - 1500;
             
             //debugger;
             if( !(  final_left >= view.left )   ){
               //debugger;
               console.log("left is out, let's dim")
-              view.left = view.left - 2500;
-              view.right = view.right - 2500;
+              view.left = view.left - 1500;
+              view.right = view.right - 1500;
               //getMotifData_all_rank(d3.round(temp_r/w) - 1.0);            
             }
             else{
@@ -443,7 +451,7 @@ function redrawSeqLogo(names){
         del = new Array();
         del = [];
         old_names = mot_names;  
-        //getMotifData_all_rank( ( ((2500 * d3.round(+res.split(",")[1]/w) + 5000))/w)  );
+        //getMotifData_all_rank( ( ((1500 * d3.round(+res.split(",")[1]/w) + 5000))/w)  );
         
         //getListSegmentsAll(view.left,  view.right,view.right/w);
         //getSequenceAnnotationData(id, d3.round(view.left), d3.round(view.right), "gene");
@@ -484,15 +492,15 @@ function redrawSeqLogo(names){
       if( res !== null) {
         
         // let's get some extra data and plot some extra info on whole genome space 
-        view.left = +res.split(",")[0] ; //-1000
-        view.right = +res.split(",")[1] ;//+1000
+        view.left = +res.split(",")[0] ; //-1500
+        view.right = +res.split(",")[1] ;//+1500
         
         final_right = +res.split(",")[1];
         final_left = +res.split(",")[0];
 
         //debugger;
-        //view.right  = ((( ((2500 * d3.round(view.right/w) + 5000))/w) ) * w);
-        //view.left = ((( ((2500 * d3.round(view.right/w) + 5000))/w))* w) - w;
+        //view.right  = ((( ((1500 * d3.round(view.right/w) + 5000))/w) ) * w);
+        //view.left = ((( ((1500 * d3.round(view.right/w) + 5000))/w))* w) - w;
         view.left = (d3.round(view.right/w) * 5000);
         view.right = ((d3.round(view.right/w) * 5000 ) + 5000);
         //debugger;
@@ -504,21 +512,21 @@ function redrawSeqLogo(names){
           if(final_left >= view.left) {
             //debugger;
             //console.log("right is out, let's sum")
-            view.left = view.left + 2500;
-            view.right = view.right + 2500;
+            view.left = view.left + 1500;
+            view.right = view.right + 1500;
             //getMotifData_all_rank(d3.round(view.right/w) + 0.5);
           }
           else{
             var temp_r = view.right;
-            view.left = view.left - 2500;
-            view.right = view.right - 2500;
+            view.left = view.left - 1500;
+            view.right = view.right - 1500;
             
             //debugger;
             if( !(  final_left >= view.left )   ){
               //debugger;
               //console.log("left is out, let's dim")
-              view.left = view.left - 2500;
-              view.right = view.right - 2500;
+              view.left = view.left - 1500;
+              view.right = view.right - 1500;
               //getMotifData_all_rank(d3.round(temp_r/w) - 1.0);            
             }
             else{
@@ -540,7 +548,7 @@ function redrawSeqLogo(names){
         del = new Array();
         del = [];
         old_names = mot_names;  
-        //getMotifData_all_rank( ( ((2500 * d3.round(+res.split(",")[1]/w) + 5000))/w)  );
+        //getMotifData_all_rank( ( ((1500 * d3.round(+res.split(",")[1]/w) + 5000))/w)  );
         
         //getListSegmentsAll(view.left,  view.right,view.right/w);
         //getSequenceAnnotationData(id, d3.round(view.left), d3.round(view.right), "gene");
@@ -929,7 +937,7 @@ function redrawSeqLogo(names){
   svg.select(".motifs_"+d).selectAll(".line")
      //.data(eval("max_"+d)) // set the new data --> old
      .data(eval("pp_"+d))
-     .attr("d", line(eval("pp_"+d)[0].values.filter(function(f) {return (f.START >= (view.left-10000) && f.START <= (view.right+10000)   );}))); // apply the new data values
+     .attr("d", line(eval("pp_"+d)[0].values.filter(function(f) {return (f.START >= (view.left-15000) && f.START <= (view.right+15000)   );}))); // apply the new data values
      //.attr("d", line(eval("pp_"+d)[0].values) )
       /*if((window[d + "checked_max"] == true)){
             svg.select(".motifs_"+d).selectAll(".line")
@@ -945,7 +953,7 @@ function redrawSeqLogo(names){
 };*/
 
 function drawLine(){
-  
+  console.log("drawLine")
   //console.log("inside drawLine()");
   //getMotifMax(view.left, view.right, "MOT_10");
 
@@ -953,11 +961,11 @@ function drawLine(){
   
   //var temp__ = getMaxLocal(getNameWithoutUnchecked());
   
-  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  //yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]); deleted
   
   //var t = svg.transition().duration(750);
   //t.selectAll
-  svg.selectAll("#max_local").call(yAxisMaxLocal);
+  //svg.selectAll("#max_local").call(yAxisMaxLocal); deleted
   
   mot_names.forEach(function(d){
     //debugger;
@@ -968,12 +976,12 @@ function drawLine(){
   //normalize.domain([0,eval("pp_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));}) ]);   
   //console.log("domain : " + normalize.domain());
   //eval("max_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));})
-  focus.select(".motifs_"+d).selectAll(".line")
+  focus.select(".motifs_"+d).selectAll(".line-")
      .data(eval("pp_"+d))
 //     .transition() // set the new data
      .attr("clip-path", "url(#clip)")
      //.attr("transform", "translate(0, 0)")
-     .attr("d", line(eval("pp_"+d)[0].values))//.filter(function(f) {return (f.START >= (view.left-10000) && f.START <= (view.right+10000)   );}))); // apply the new data values
+     .attr("d", line(eval("pp_"+d)[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     })    ))//.filter(function(f) {return (f.START >= (view.left-15000) && f.START <= (view.right+15000)   );}))); // apply the new data values
 //     .transition()
 //           .duration(500)
 
@@ -985,8 +993,8 @@ function drawLine(){
   //.style("opacity", 0.5) // for area
   
 
-  .append("svg:title")
-  .text(function(d) { return d.key; });
+  //.append("svg:title")
+  //.text(function(d) { return d.key; });
   
   focus.selectAll(".motifs_" + d ).style("display", null);
   
@@ -1002,8 +1010,44 @@ function drawLine(){
    }); //end of forEach
 }
 
-  function animatedLineChart(){
+  function resetLineChartData(){
+    mot_names.forEach(function(d){
+
+      eval("pp_" + d)[0].values = eval("pp_original_"+d)[0]
+      animatedLineChart(eval("pp_" + d)[0].values, d, true)
+      transitionExample(eval("pp_" + d)[0].values, d)
+
+
+    })
+
+  }
+
+  function animatedLineChart(data, name, reset){
+
+  //var eco = pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == "eco_12")  } ) 
+  //createPosArray(pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == name)  } ) )
+  createPosArray(data.filter(function(d) {  return (d.MOTIF_NAME == name)  } ), left, right )
+  //var eco = array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
   
+  if(!reset){
+    console.log("inside reset")
+  //debugger;
+  eval("pp_" + name)[0].values = array_zero
+  }
+  
+  //var eco = array_zero
+  //debugger;
+  //var t_ = $.extend(true, array_zero, eco);
+ // debugger;
+  //t_.sort(function(a,b) {return d3.ascending(a.START, b.START)})
+  
+
+
+
+
+
+  //var f_data = pp_corem_ec512157[0].values.filter(function(q){ return (q.MOTIF_NAME =="All")   } )
+//debugger;
     //svg.selectAll('.line').remove();
     
   //getMotifMax(view.left, view.right, d);
@@ -1012,8 +1056,11 @@ function drawLine(){
   //normalize.domain([0,d3.max(eval("p_"+d).map(function(d) {return(d.max);}))]);   //eval("max_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));}) ]);    
   
   //console.log("domain : " + normalize.domain());
+  //debugger;
+  var lll = focus.select(".motifs_"+ name).selectAll(".line-"); //changed*
 
-  var lll = focus.select(".motifs_"+"eco_12").selectAll(".line")
+//debugger;
+
   //old  .data(eval("max_"+d));
   //.data(eval("pp_corem"+track_name));
 //    .data(pp_corem_ec516031);  
@@ -1025,20 +1072,66 @@ function drawLine(){
   
         .attr("class", "motifs_" + "eco_5");
   lll.append("path")*/
-      .data(pp_corem_ec516031)  
+      //.data(pp_corem_ec516031)  //changed*
+
+      /*
+      .data(pp_corem_ec516031.filter(function(d){
+        return if(d.MOTIF_NAME = "All") {return d}
+      }))  //changed*
+*/
   //.attr("class", "line")
   //.attr("clip-path", "url(#clip)")
   //old  .attr("d", line(eval("max_"+d)[0].values))
   
+
+
+  /*
+# here we create the transition
+17
+  t = svg.selectAll(".request")
+18
+    .transition()
+19
+    .duration(duration)
+20
   
+21
+  # D3 will take care of the details of transitioning
+22
+  t.select("path.area")
+23
+    .style("fill-opacity", 1.0)
+24
+    .attr("d", (d) -> area(d.values))
+
+  */
+
+//var totalLength = lll.node().getTotalLength();
+
+lll
+  //.attr("stroke-dasharray", totalLength + " " + totalLength)
+  //.attr("stroke-dashoffset", totalLength)
+  .style("fill-opacity", 0)
   .transition()
-        .duration(2000)
-        .attr("d", line(eval(pp_corem_ec516031)[0].values) )
-        .ease("linear")
-        .attr("stroke-dashoffset", 0)
+  //.ease("linear")
+  .delay(500)
+  //.duration(1500)
+
+    //    .style("fill", "white")
+  //.duration(8000)
+  //.attr("stroke-dashoffset", 0)
+
+  //lll.select(".line")
+    //.attr("stroke-dashoffset", 5000)
+    //.style("fill-opacity", 0)
+    //.attr("d", line(pp_eco_0[0].values)) //voltar
+    .attr("d", line(eval("pp_" + name)[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     }) )) // pp_eco_12[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     })
+        //.ease("linear")
+        //.attr("d", line(eval(pp_corem_ec516031)[0].values) )
+        //.attr("stroke-dashoffset", 0)
 //  .attr("transform", "translate(0, 0)")
-.style("stroke", color("eco_12") ) //old   values[0].MOTIF_NAME
-  .style("stroke-width", 1.6)
+//.style("stroke", color("eco_12") ) //old   values[0].MOTIF_NAME
+  //.style("stroke-width", 1.6)
   
   //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) )
   //.style("opacity", 1)
@@ -1046,11 +1139,50 @@ function drawLine(){
     
   };
 
-  function drawLineChart(){
+/*var distinct = []
+for (var i = 0; i < pp_corem_ec512157[0].values.length; i++) {
+   if (pp_corem_ec512157[0].values[i].MOTIF_NAME not in distinct) {
+      distinct.push(pp_corem_ec512157[0].values[i].MOTIF_NAME)
+    }
+  }
+*/
+
+function animateCorem(coremName){
   
-    svg.selectAll('.line').remove();
+
+  // getting corem GRE names to animate.
+  var a = []
+  eval("pp_corem_"+coremName)[0].values.forEach(function(d){
+    if(a.indexOf(d.MOTIF_NAME) < 0) {a.push(d.MOTIF_NAME)} 
+  })
+
+  a.forEach(function(d){
+    console.log("animating --> Corem: " + coremName + " GRE : "+ d)
+    animatedLineChart(eval("pp_corem_" + coremName)[0].values, d, false)
+    console.log("transitioning seqLogo : GRE : "+ d)
+    transitionExample(eval("pp_" + d)[0].values, d)
+  })
+}
+
+
+
+  function drawLineChart(){
+
+    //max_local = d3.max(max_temp_All);
+
+
+    console.log("drawLineChart")
+  
+    svg.selectAll('.line-').remove();
     mot_names.forEach(function(d){
   //getMotifMax(view.left, view.right, d);
+
+  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+
+  
+  //var t = svg.transition().duration(750);
+  //t.selectAll
+  svg.selectAll("#max_local").call(yAxisMaxLocal);
 
 
   //normalize.domain([0,d3.max(eval("p_"+d).map(function(d) {return(d.max);}))]);   //eval("max_" + d).map(function(d) { return d3.max(d.values.map(function(f) { return(f.MAX);}));}) ]);    
@@ -1068,10 +1200,10 @@ function drawLine(){
   
         .attr("class", "motifs_" + d);
   lll.append("path")
-  .attr("class", "line")
+  .attr("class", "line-")
   .attr("clip-path", "url(#clip)")
   //old  .attr("d", line(eval("max_"+d)[0].values))
-  .attr("d", line(eval("pp_"+d)[0].values) )
+  .attr("d", line(eval("pp_"+d)[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     })    ) )
 //  .attr("transform", "translate(0, 0)")
 
   .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //old   values[0].MOTIF_NAME
@@ -1092,8 +1224,8 @@ function drawLine(){
       var bk_end = +bkSelected.split(",")[3]; 
             if(bk_start <= view.right  && bk_end >= view.left) {
        // console.log("bookmark inside data range");
-        view.left =  bk_start - 1000;
-              view.right = bk_end + 1000;
+        view.left =  bk_start - 1500;
+              view.right = bk_end + 1500;
               //getSequenceAnnotationData(id, d3.round(view.left), d3.round(view.right), "gene");
               x.domain([view.left, view.right]);
               focus.select(".x.axis").call(xAxis)
@@ -1271,9 +1403,9 @@ function brushed() {
 
     
     var s = d3.event.target.extent();
-    if (  (s[1]-s[0] < 11000)   ) {
+    if (  (s[1]-s[0] < 11500)   ) {
           //if(!brush3.empty()){
-      //console.log( (s[1]-s[0] < 11000) )
+      //console.log( (s[1]-s[0] < 11500) )
             //svg2.select(".brush").style('pointer-events', 'none');
       //var s = d3.event.target.extent();
       //debugger;
@@ -1303,7 +1435,7 @@ function brushed() {
     }
     else {
       //console.log(s );
-      d3.event.target.extent([s[0],s[0]+11000]); 
+      d3.event.target.extent([s[0],s[0]+11500]); 
       d3.event.target(d3.select(this));
     } 
       //}
@@ -1635,8 +1767,8 @@ window["checked_global"]  = false;
     }
     //console.log(checked_global);
   }
-    function transitionExample(){
-    var m = svg.selectAll("#GRE4").data(CarA_4_1["motif"]);
+    function transitionExample(data, name){
+    var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right;}));
     m.exit().remove();
     m.transition()
 //    .attr( "textLength", xSeqLogo.rangeBand()+10 )
@@ -1650,22 +1782,21 @@ window["checked_global"]  = false;
           return ySeqLogo(normalize(e.INIT));
       }
     })*/
-      .attr("y", function(e,i) {return ySeqLogo(normalize(e.INIT)); })
-      //.attr("x", function(d) { return x(d.POSITION); })
+
+
+      .attr("y", 430)
+      .attr("x", function(d) { return x(d.START); })
       .text( function(e) { return e.LETTER; } )
       .attr("class", function(e) { return "letter-" + e.LETTER; } )
       .style( "text-anchor", "start" )
       .style( "font", "corrier" )
       .attr( "textLength", xSeqLogo.rangeBand() )//(xSeqLogo.rangeBand()) / 2
-      .attr("transform", "translate(0, 195)")
+      //.attr("transform", "translate(0, 195)")
       .attr( "lengthAdjust", "spacingAndGlyphs" )
-      .attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
-      
+      .attr( "font-size", function(e) { return   yFont(e.MAX) } )
+      .style("opacity", 0.8)      
     //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust+10; } );
-    
-    .style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } );
-    
-    setInterval(function(){transitionExample2()},3000);
+    //setInterval(function(){transitionExample2()},3000);
       
       
       //console.log(ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)));

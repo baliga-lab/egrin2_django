@@ -3,7 +3,7 @@
 //style="background-color:white;width:950px"  
     //#F9F9FF --> table-content-backgroung color      
           
-jQuery('#displayStatus').prepend('<img id="loading" src="/static/images/ajax-loader.gif" />');
+//jQuery('#displayStatus').prepend('<img id="loading" src="/static/images/ajax-loader.gif" />');
 //jQuery('#displayStatus').html('Loading');
 
 
@@ -12,7 +12,7 @@ jQuery('#displayStatus').prepend('<img id="loading" src="/static/images/ajax-loa
 
 //
 var line = d3.svg.area()
-  
+      //.defined(function(d) { return d.MAX > 0; })
       //.defined(function(d) { return d.START != null; })
       //.interpolate("basis")
       .x(function(d) { return x(d.START); })
@@ -82,21 +82,21 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   //var id = 1;
   var view = {};
   var w = right - left
-  //view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500;
-  //view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 2500;
+  //view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
+  //view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
 
 // read already populated info and use it to instanciate start/end fields
-if((parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500) <0) {
+if((parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500) <0) {
   view.left = 1;
   view.right = 5000;
   var left = 1;
   var right = 5000;
 } 
 else {
-  view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500;
-  view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 2500;
-  var left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 2500;
-  var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 2500;
+  view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
+  view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
+  var left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
+  var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
 }
 
   var color = d3.scale.category20().domain(mot_names); //category10() 
@@ -106,6 +106,27 @@ else {
   //color for motif line and checkBox
 
 var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/"; // capturing url patern to make gene clickable 
+
+ 
+
+
+
+
+  function drawButton(data, div){
+    
+
+    //debugger;
+  var box = d3.select("#" + div).selectAll("input")
+  .data(data);
+  box.enter().append("input").attr("class", "btGGB").attr("type","button").attr("name", "bt").attr("value", function (d){return d;} ).on("click", function(d){ if(d == "Reset"){return resetLineChartData()} else{  animateCorem(d)}})
+  
+
+  //var buttonClicked = d3.selectAll("input[name=bt]").on("click", animateCorem("a"));
+
+  }
+
+
+
 
   function drawBoxes(data, div){
     
@@ -123,6 +144,14 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       .style( "text-anchor", "left" )
       .style( "font", "corrier")
       .style( "font-size", "16px")
+      .style("display", "inline-block")
+      .style("width", "5em")
+      /*
+   label {
+     display: inline-block;
+     width: 5em;
+   }
+      */
   .append("input")
       .attr("id", "box_selected")
       .attr("name", "boxes")
@@ -200,8 +229,8 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   
     if(text == "plus" && genomeInfo.end >= view.right){
     
-      view.left = left + 2500;
-      view.right = right + 2500;
+      view.left = left + 1500;
+      view.right = right + 1500;
       x.domain([view.left, view.right]);
       x2.domain([view.left, view.right]);
       
@@ -259,8 +288,8 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
     }
     if(text == "minus" && genomeInfo.start < view.left){
-      view.left = left - 2500;
-      view.right = right - 2500;
+      view.left = left - 1500;
+      view.right = right - 1500;
       
       /*mot_names.forEach(function(d) {
       
@@ -391,10 +420,10 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     .range([0,2]);
       
       //yLine = d3.scale.linear().range([height2, 0]).domain([0,90]);
-      var max_local = 50;
+      var max_local = 100;
       yLine = d3.scale.linear().range([height, 100]).domain([0,max_local]); // 100 because I need to have room for other tracks
-      
       yExpression = d3.scale.linear().range([height, 0]).domain([-5,5]);
+      var yFont = d3.scale.linear().range([0, 450]).domain([0,getMaxLocal(getNameWithoutUnchecked())]); // fix font for seqLogo
       
   var xAxis = d3.svg.axis()
     .scale(x)
@@ -407,15 +436,15 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
   var xAxis3 = d3.svg.axis().scale(x3).orient("bottom");
 
-    if ( (genomeInfo.end - genomeInfo.start) / 1000 > 1000){
+    if ( (genomeInfo.end - genomeInfo.start) / 1500 > 1500){
       xAxis3
-      .tickValues(d3.range(0, genomeInfo.end, 1000000))
-      .tickFormat(function(d) {return (d/1000000) + 'M';});
+      .tickValues(d3.range(0, genomeInfo.end, 1500000))
+      .tickFormat(function(d) {return (d/1500000) + 'M';});
     }
     else {
       xAxis3
-      .tickValues(d3.range(10000, genomeInfo.end, 10000))
-      .tickFormat(function(d) {return (d/1000) + 'k';});
+      .tickValues(d3.range(15000, genomeInfo.end, 15000))
+      .tickFormat(function(d) {return (d/1500) + 'k';});
     }
     
       //gene.attributes.split(";").forEach(function(d) {   var t = d.split("="); if(t[0]== "ID") console.log(t[1]);      })
@@ -481,7 +510,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       // Reserved space for sequence logo vars etc. 
   
   
-    var capHeightAdjust = 1.2;
+    var capHeightAdjust = 1.1;
     var xSeqLogo = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);//.domain([29451, 29465])
 
@@ -489,7 +518,9 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
 
   // remove it 'cause I added the same code inside redrawSeqLogo; (then I update at once everytime I need to redraw)
-  mot_names.forEach(function(d){
+ 
+  // jan - removed
+ /* mot_names.forEach(function(d){
     //debugger;
     //debugger;
     window["_"+d] = focus.selectAll(".sequence-column" + d)
@@ -503,7 +534,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     ;
   //  delete(window[d]);
   //  console.log("called delete");
-    })
+    })*/
   
     
   var yPos_ = 0;    
@@ -587,7 +618,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
             .attr("class", "y axis")
         //.attr("transform", "translate(-1, 0)")
         .attr("transform", "translate(0, 195)") //--apaguei
-            .call(yAxisSeqLogo);
+            //.call(yAxisSeqLogo);
         
         
         focus.append("g")
@@ -630,7 +661,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
               .attr("height", height3 + 7);
 */
   
-getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left);
+getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, view.right);
 getCre("/cres_in_range/"+ species_ + "/",  view.left, view.right, 4, species_, gene_);
 
 
