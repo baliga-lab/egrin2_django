@@ -109,7 +109,8 @@ var max_local = new Array();
                   //window["ppp_"+d] = eval("pp_"+d).push(new values(eval("pp_"+d)))
                 })
                 //debugger;
-                eval("max_").push(d3.max(eval("max_temp_"+d)));
+
+                if(d != "All"){eval("max_").push(d3.max(eval("max_temp_"+d)));}
                 eval("temp_pp_"+d).values = eval("temp_"+d);
                 eval("pp_"+d).push(eval("temp_pp_"+d));
 
