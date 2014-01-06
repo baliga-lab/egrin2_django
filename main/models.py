@@ -232,33 +232,35 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True, fillGap=True):
+def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
     """
-
-    print ("corem ids passed --> ", corem_id)
-
-
     cur = connection.cursor()
+    org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"
+    cur.execute(org_query, [network_id])
+    orgcode = cur.fetchone()[0]
+
     if corem_id:
         query = "select distinct gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s order by cre_id) and start >= %s and stop <= %s"
-        print "QUERY1: ", query
+        if omit0:
+            query += " and gre.gre_id != '" + orgcode + "_0'"
+        #print "QUERY1: ", query
         cur.execute(query, [corem_id, start, stop])
-    else:
-        query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
-        print "QUERY2: ", query
-        cur.execute(query, [start, stop, network_id, start, stop])
-    rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+        rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
 
+    query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
     if omit0:
-        org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"
-        cur.execute(org_query, [network_id])
-        query += " and g.gre_id != '" + cur.fetchone()[0] + "_0'"
+        query += " and g.gre_id != '" + orgcode + "_0'"
+    #print "QUERY2: ", query
+    cur.execute(query, [start, stop, network_id, start, stop])
+    all_rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+    if not corem_id:
+        rows = all_rows
 
+    # sum in two separate rows, to allow for handling restricted sets
     gre_counts = {}
-    total_counts = {}
     for gre_id, sstart, sstop in rows:
         if gre_id not in gre_counts:
             gre_counts[gre_id] = {}
@@ -266,12 +268,18 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True, 
         for i in range(sstart, sstop + 1):
             if i not in count_map:
                 count_map[i] = 0
+            count_map[i] += 1
+
+    # even in a restricted set, we want to have total counts
+    total_counts = {}
+    for gre_id, sstart, sstop in all_rows:
+        for i in range(sstart, sstop + 1):
             if i not in total_counts:
                 total_counts[i] = 0
-            count_map[i] += 1
             total_counts[i] += 1
 
-    if top != None:
+
+    if corem_id == None and top != None:
         # rank by sum of counts, highest counts first
         ranks = sorted([(sum([count for pos, count in count_map.items()]), gre_id)
                         for gre_id, count_map in gre_counts.items()], reverse=True)[:top]

@@ -99,7 +99,7 @@ else {
   var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
 }
 
-  var color = d3.scale.category20().domain(mot_names); //category10() 
+  var color = d3.scale.category20().domain(mot_names).range(["black","red","#00cd00","blue","cyan","magenta","yellow","gray" ]); //category10() 
 
   //var mot_names = ["MOT_1", "MOT_3", "MOT_4", "MOT_5", "MOT_10", "MOT_12", "MOT_16", "MOT_18", "MOT_30"];
   //drawCheckBoxAndGetMotData();

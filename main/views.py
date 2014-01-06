@@ -598,8 +598,11 @@ def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsa
 
     top_ = int(top)
     corem_ = [cor.id for cor in corem.all()]
+    
     cres = [cres_in_range(network.id, start, stop, top_, corem_id) for corem_id in corem_]
     corem_name = [cor.corem_id for cor in corem.all()]
+    cor_id = [cor.id for cor in corem.all()]
+    print "ids corem: --> " , cor_id
     print corem_name
 
     data = {
