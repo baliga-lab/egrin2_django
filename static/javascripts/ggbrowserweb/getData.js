@@ -55,7 +55,7 @@ var max_local = new Array();
           inputArray.forEach(function(d){
             if (d.START >= s) arr[d.START - s] = d;
           });
-          window["array_zero"] = arr;
+          return arr; //window["array_zero"] =
         }
 
         function getCre(url, start, stop, top, specie, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
@@ -117,7 +117,7 @@ var max_local = new Array();
                 //if(d != "All" && d != "eco_0"){  
                     //debugger;
                     window["array_zero"] = 0;
-                    createPosArray(eval("pp_"+d)[0].values, start, stop)
+                    var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop)
                     array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
                     eval("pp_"+d)[0].values = array_zero
                     eval("pp_original_"+d).push(array_zero);
@@ -265,7 +265,7 @@ var max_local = new Array();
                 eval("max_corem").push(d3.max(eval("max_temp_corem_"+d)));
                 eval("temp_pp_corem_"+d).values = eval("temp_corem_"+d);
                 eval("pp_corem_"+d).push(eval("temp_pp_corem_"+d));
-
+                //debugger;
 
                 //window["corem_" + d] = new Array();
               })
