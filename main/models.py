@@ -279,7 +279,7 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
             total_counts[i] += 1
 
 
-    if top != None:
+    if corem_id == None and top != None:
         # rank by sum of counts, highest counts first
         ranks = sorted([(sum([count for pos, count in count_map.items()]), gre_id)
                         for gre_id, count_map in gre_counts.items()], reverse=True)[:top]
