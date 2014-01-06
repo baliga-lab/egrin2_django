@@ -75,7 +75,7 @@ var max_local = new Array();
         $.ajax( {
               type:'Get',
 
-              url: url + (start) + "/" + (stop) + "/" + top +   "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + (start) + "/" + (stop) + "/" + top + "/" + gene_name + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
 

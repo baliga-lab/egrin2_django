@@ -577,11 +577,30 @@ def gres_json_generic(query, species, dtparams):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def cres_in_range_json(request, species, start, stop, top): #dsalvanha
+def cres_in_range_json(request, species, start, stop, top, gene_name): #dsalvanha
     network = Network.objects.get(species__ncbi_taxonomy_id = species);
 
+    corem = Corem.objects.filter(genes__sys_name=str(gene_name))
+    corem_ = [cor.id for cor in corem]
     top_ = int(top)
-    return HttpResponse(simplejson.dumps(cres_in_range(network.id, int(start), int(stop), int(top_))), mimetype='application/json')
+    
+    if corem.count() > 0:
+        everything = cres_in_range(network.id, int(start), int(stop), None)
+        gres = [cres_in_range(network.id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
+        gre_keys = set()
+        for elem in gres:
+            for key in elem[0].keys():
+                gre_keys.add(key)
+
+        gre_counts = everything[0]
+        delkeys = [key for key in gre_counts if key not in gre_keys]
+        for key in delkeys:
+            del gre_counts[key]
+    else:
+        everything = cres_in_range(network.id, int(start), int(stop), top_)
+
+    result = everything
+    return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
 
 def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
@@ -595,11 +614,10 @@ def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsa
 
     # Wei-Ju cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
     print corem.all()
-
-    top_ = int(top)
     corem_ = [cor.id for cor in corem.all()]
+    top_ = int(top)
     
-    cres = [cres_in_range(network.id, start, stop, top_, corem_id) for corem_id in corem_]
+    cres = [cres_in_range(network.id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
     corem_name = [cor.corem_id for cor in corem.all()]
     cor_id = [cor.id for cor in corem.all()]
     print "ids corem: --> " , cor_id
