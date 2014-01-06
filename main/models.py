@@ -249,8 +249,8 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
         #print "QUERY1: ", query
         cur.execute(query, [corem_id, start, stop])
         rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
-        all_query = "select id, start, stop from main_crepos where id in (select cre_id from main_corem_cres where corem_id = %s)"
-        cur.execute(all_query, [corem_id])
+        all_query = "select id, start, stop from main_crepos where id in (select cre_id from main_corem_cres where corem_id = %s) and start >= %s and stop <= %s"
+        cur.execute(all_query, [corem_id, start, stop])
         all_rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
     else:
         query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
