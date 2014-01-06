@@ -1026,9 +1026,11 @@ function drawLine(){
 
   //var eco = pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == "eco_12")  } ) 
   //createPosArray(pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == name)  } ) )
+  
+  var array_zero = createPosArray(data.filter(function(d) {  return (d.MOTIF_NAME == name)  } ), left, right )
   //debugger;
   /*if(name != "All"){
-    var array_zero = createPosArray(data.filter(function(d) {  return (d.MOTIF_NAME == name)  } ), left, right )
+    
   }
   else {
     var array_zero = data

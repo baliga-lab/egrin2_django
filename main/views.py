@@ -613,10 +613,11 @@ def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsa
     #cre_ids = [cre.pr for cre in [b.cres for c in g.corem_set.all() for b in c.bicluster_set.all()]]
 
     # Wei-Ju cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
-    print corem.all()
     corem_ = [cor.id for cor in corem.all()]
     top_ = int(top)
-    
+    for corem_id in corem_:
+        print "start: %s stop: %s top: %s corem_id: %s"  % (str(start), str(stop), str(top_), str(corem_id))
+
     cres = [cres_in_range(network.id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
     corem_name = [cor.corem_id for cor in corem.all()]
     cor_id = [cor.id for cor in corem.all()]
