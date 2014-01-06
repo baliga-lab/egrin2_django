@@ -99,7 +99,7 @@ else {
   var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
 }
 
-  var color = d3.scale.category20().domain(mot_names).range(["black","red","#00cd00","blue","cyan","magenta","yellow","gray" ]); //category10() 
+  var color = d3.scale.category20().domain(mot_names); //category10() //.range(["black","red","#00cd00","blue","cyan","magenta","yellow","gray" ])
 
   //var mot_names = ["MOT_1", "MOT_3", "MOT_4", "MOT_5", "MOT_10", "MOT_12", "MOT_16", "MOT_18", "MOT_30"];
   //drawCheckBoxAndGetMotData();
@@ -128,7 +128,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
 
 
-  function drawBoxes(data, div){
+  function drawBoxes(data, div, uncheckName){
     
 
     //debugger;
@@ -421,7 +421,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       
       //yLine = d3.scale.linear().range([height2, 0]).domain([0,90]);
       var max_local = 100;
-      yLine = d3.scale.linear().range([height, 100]).domain([0,max_local]); // 100 because I need to have room for other tracks
+      yLine = d3.scale.linear().range([height, 150]).domain([0,max_local]); // 100 because I need to have room for other tracks
       yExpression = d3.scale.linear().range([height, 0]).domain([-5,5]);
       var yFont = d3.scale.linear().range([0, 450]).domain([0,getMaxLocal(getNameWithoutUnchecked())]); // fix font for seqLogo
       
