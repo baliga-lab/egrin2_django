@@ -115,10 +115,20 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   function drawButton(data, div){
     
 
-    //debugger;
+  //debugger;
   var box = d3.select("#" + div).selectAll("input")
-  .data(data);
-  box.enter().append("input").attr("class", "btGGB").attr("type","button").attr("name", "bt").attr("value", function (d){return d;} ).on("click", function(d){ if(d == "Reset"){return resetLineChartData()} else{  animateCorem(d)}})
+  .data(data.sort());
+  box.enter().append("input").attr("class", "btGGB")
+  .attr("type","button")
+  .attr("name", "bt")
+  .attr("value", function (d){return d;} )
+  .on("click", function(d){
+    if(d == "Default"){
+      d3.selectAll("input[class=btGGB]").style("color", "white");return resetLineChartData()
+    } else{  
+     d3.selectAll("input[class=btGGB]").style("color", "white"); return animateCorem(d)
+    }
+    })
   
 
   //var buttonClicked = d3.selectAll("input[name=bt]").on("click", animateCorem("a"));
@@ -422,7 +432,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       var max_local = 100;
       yLine = d3.scale.linear().range([height, 150]).domain([0,max_local]); // 100 because I need to have room for other tracks
       yExpression = d3.scale.linear().range([height, 0]).domain([-5,5]);
-      var yFont = d3.scale.linear().range([0, 450]).domain([0,getMaxLocal(getNameWithoutUnchecked())]); // fix font for seqLogo
+      var yFont = d3.scale.linear().range([0, 310]).domain([0,getMaxLocal(getNameWithoutUnchecked())]); // fix font for seqLogo
       
   var xAxis = d3.svg.axis()
     .scale(x)

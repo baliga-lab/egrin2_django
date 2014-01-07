@@ -149,6 +149,10 @@ var max_local = new Array();
                 drawLineChart();
                 removeAll();
                 legend_chart();
+                //view.left = parseInt(gene_start)-300
+                //view.right = parseInt(gene_start)+50
+                //drawLine()
+                brushed()
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
                 $('#ggbrowser-principal').unblock()
               //drawLineChart();
@@ -271,8 +275,9 @@ var max_local = new Array();
 
                 //window["corem_" + d] = new Array();
               })
-                corem_name.push("Reset")
+                corem_name.push("Default")
                 drawButton(corem_name, "corem_box");
+                d3.selectAll("input[value=Default]").style("color", "red")
 
                 yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
 

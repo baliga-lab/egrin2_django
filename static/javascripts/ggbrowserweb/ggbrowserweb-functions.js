@@ -5,7 +5,7 @@ var legend = svg.append("g")
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
-    .attr("transform", "translate(30, 60)")
+    .attr("transform", "translate(30, 10)")
 
   legend.selectAll('g').data(mot_names)
       .enter()
@@ -39,12 +39,13 @@ var legend = svg.append("g")
 
 
 
+
   
 function redrawSeqLogo(names){
-  
-    if (  (view.right - view.left) <= 410 && (window[names + "checked"] == true) && (checked_global == true) ) { 
+    
+    if (  (view.right - view.left) <= 410 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
       
-
+      yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
       
       var sequence = focus.selectAll("#" + names).remove();
       //debugger;    
@@ -66,7 +67,7 @@ function redrawSeqLogo(names){
         .attr("id", names)
         .attr("clip-path", "url(#clip)")
         //.attr("y",function(e,i) { return yLogo(0); })
-        .attr("y", 430)
+        .attr("y", 270)
         .attr("x", function(d) { return x(d.START); })
         //.attr("fill", "white")
         .text( function(e) { return e.LETTER; } )//e.LETTER
@@ -80,8 +81,8 @@ function redrawSeqLogo(names){
         .attr( "lengthAdjust", "spacingAndGlyphs" )
         //.attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
         //.style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
-
-        .attr( "font-size", function(e) { return   yFont(e.MAX) } )
+        //.attr("transform", "translate(0, -120)")
+        .attr( "font-size", function(e) {return   yFont(e.MAX) } )
         .style("opacity", 0.8)
         //.style( "font-size", function(e) { return  yLogo(e.MAX)* capHeightAdjust ; } )
 
@@ -272,15 +273,6 @@ function redrawSeqLogo(names){
 
 
 
-
-   function rightClick() { 
-           if (d3.event.sourceEvent.which == 3 || d3.event.sourceEvent.button 
-  == 2) { //3==firefox, 2==ie 
-                   return true; 
-           } else { 
-                   return false; 
-           } 
-   }
   // when I brushFocus my focus component
  
 
@@ -952,6 +944,48 @@ function redrawSeqLogo(names){
    })
 };*/
 
+
+
+function drawLineEspecialForAxisTransition(){
+  console.log("special")
+  mot_names.forEach(function(d){
+    if((window[d + "checked"] == true)) {
+  focus.select(".motifs_"+d).selectAll(".line-")
+     .data(eval("pp_"+d))
+     .transition() // set the new data
+     .attr("clip-path", "url(#clip)")
+     //.attr("transform", "translate(0, 0)")
+     .attr("d", line(eval("pp_"+d)[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     })    ))//.filter(function(f) {return (f.START >= (view.left-15000) && f.START <= (view.right+15000)   );}))); // apply the new data values
+//     .transition()
+//           .duration(500)
+
+
+  .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME)  ) //old   values[0].MOTIF_NAME
+  .style("stroke-width", 1.6)
+  //.style("fill", color(d.key))
+  //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //for area
+  //.style("opacity", 0.5) // for area
+  
+
+  //.append("svg:title")
+  //.text(function(d) { return d.key; });
+  
+  focus.selectAll(".motifs_" + d ).style("display", null);
+  
+  }// end of if
+  else{
+    //svg.select(".motifs_"+d).selectAll(".line").remove();
+            focus.selectAll(".motifs_" + d ).style("display", "none");
+    //console.log(d + " --> isn't selected");
+  }
+
+  
+  ;
+   }); //end of forEach
+}
+
+
+
 function drawLine(){
   console.log("drawLine")
   //console.log("inside drawLine()");
@@ -961,11 +995,11 @@ function drawLine(){
   
   //var temp__ = getMaxLocal(getNameWithoutUnchecked());
   
-  //yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]); deleted
+  //yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]); 
   
   //var t = svg.transition().duration(750);
   //t.selectAll
-  //svg.selectAll("#max_local").call(yAxisMaxLocal); deleted
+  //svg.selectAll("#max_local").transition().call(yAxisMaxLocal); 
   
   mot_names.forEach(function(d){
     //debugger;
@@ -1011,6 +1045,7 @@ function drawLine(){
 }
 
   function resetLineChartData(){
+    d3.selectAll("input[value=Default]").style("color", "red")
     mot_names.forEach(function(d){
 
       eval("pp_" + d)[0].values = eval("pp_original_"+d)[0]
@@ -1156,7 +1191,7 @@ for (var i = 0; i < pp_corem_ec512157[0].values.length; i++) {
 */
 
 function animateCorem(coremName){
-  
+  d3.selectAll("input[value="+coremName+"]").style("color", "red")
 
   // getting corem GRE names to animate.
   var a = []
@@ -1177,7 +1212,8 @@ function animateCorem(coremName){
   function drawLineChart(){
 
     //max_local = d3.max(max_temp_All);
-
+    yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    //debugger;
     //##### Don't display All track at first 
     d3.selectAll("input[id=All]").property("checked", false);
     
@@ -1190,8 +1226,8 @@ function animateCorem(coremName){
     mot_names.forEach(function(d){ //.filter(function(a){if(a!="All"){return a}})
   //getMotifMax(view.left, view.right, d);
 
-  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
-
+  
+  //getMaxLocal(getNameWithoutUnchecked());
   
   //var t = svg.transition().duration(750);
   //t.selectAll
@@ -1230,9 +1266,22 @@ function animateCorem(coremName){
   
   function removeAll(){
     svg.select(".motifs_All").style("display", "none")
+    window["Allchecked"] = false
+    yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    svg.selectAll("#max_local").call(yAxisMaxLocal);
+    drawLine()
   }
   
-  
+  function getSecondHighest(arrCheck){
+    var first=0,second=0;
+    for(var i=0;i<arrCheck.length;i++){
+        if(arrCheck[i] > first){
+            second = first;
+            first = arrCheck[i];
+        }
+    }
+    return second;
+}
   
   function bookmarkClick(){ // zoomingBookmark
 
@@ -1301,12 +1350,7 @@ function animateCorem(coremName){
 function brushed() {
 
     //console.log("brushed");
-    if(rightClick()){
-      console.log("Right click : " + rightClick());
-      svg.classed("selecting", false);
-      contextmenu.show(); 
-    }
-    else {
+
       //console.log("Right click <false> : " + rightClick())
   
     x.domain(brush.empty() ? x.domain() : brush.extent());
@@ -1335,7 +1379,7 @@ function brushed() {
     else{ //correctiong when brush.empty() restables x.domain to general value
       resetView();
     }
-    }//end-f first else
+   
   }
   function brushedFocus(){
           if(!brushFocus.empty()){
@@ -1483,6 +1527,7 @@ function brushed() {
   }
     function changed2(){
     //degugger;
+
       if(this.checked){
      // console.log("value : " + this.value);
      // console.log("id : " + this.id);
@@ -1501,14 +1546,24 @@ function brushed() {
       
       
       
-  max_local = getMaxLocal(getNameWithoutUnchecked());
+  //max_local = getMaxLocal(getNameWithoutUnchecked());
+  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  svg.selectAll("#max_local").call(yAxisMaxLocal); 
+  svg.select("#max_local").transition().call(yAxisMaxLocal);
+  //svg.selectAll("#max_local").call(yAxisMaxLocal); 
+  console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
   //console.log("changed2 called : max_local:"+max_local);
   redrawSeqLogo(this.id)// necessary for when I set checkbox to checked, then it shows again seqlogo
-  drawLine();
+  //drawLine();
+  drawLineEspecialForAxisTransition()
+
+  mot_names.forEach(function(d){
+    transitionExample(eval("pp_" + d)[0].values, d)  
+  })
+  
   }
   else {
 
-    
       //console.log(this)
       window[this.id + "checked"] = false;
      // debugger;
@@ -1517,7 +1572,19 @@ function brushed() {
     
       svg.select(".motifs_"+this.id)//.selectAll(".line")
       .style("display", "none");
-      drawLine();
+
+
+      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    svg.select("#max_local").transition().call(yAxisMaxLocal);
+    //svg.selectAll("#max_local").call(yAxisMaxLocal); 
+    console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+    
+
+      //drawLine();
+      drawLineEspecialForAxisTransition()
+      mot_names.forEach(function(d){
+        transitionExample(eval("pp_" + d)[0].values, d)  
+      })
   }
   }
 
@@ -1537,8 +1604,8 @@ function getMaxLocal(motif_checked){
 var max_temp = new Array();
 
 motif_checked.forEach(function(d) {
-  eval("pp_"+ d).forEach(function(q)  {
-    max_temp.push(d3.max(q.values.map(function(w) {return (w.MAX);})));
+  eval("pp_original_"+ d).forEach(function(q)  {
+    max_temp.push(d3.max(q.map(function(w) {return (w.MAX);})));
   ;})
 });
 return(d3.max(max_temp));
@@ -1761,7 +1828,8 @@ function uncheckAll(){
   }
     function init(){
     // let's set brush
-    brush.extent([view.left, view.left + 500]);
+    //brush.extent([view.left, view.left + 500]);
+    brush.extent([parseInt(gene_start)-200, parseInt(gene_start)+50]);
     svg.select(".x.brush").call(brush);
     //brushed();
   }
@@ -1786,23 +1854,12 @@ window["checked_global"]  = false;
     //console.log(checked_global);
   }
     function transitionExample(data, name){
+
+    yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
     var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right;}));
     m.exit().remove();
     m.transition()
-//    .attr( "textLength", xSeqLogo.rangeBand()+10 )
-    //.attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust+10; } )
-    /*.attr("y", function(e,i) {
-      
-      if(e.INIT != 0){
-          return ySeqLogo(normalize(e.INIT+1));
-      }
-      else{
-          return ySeqLogo(normalize(e.INIT));
-      }
-    })*/
-
-
-      .attr("y", 430)
+      .attr("y", 270)
       .attr("x", function(d) { return x(d.START); })
       .text( function(e) { return e.LETTER; } )
       .attr("class", function(e) { return "letter-" + e.LETTER; } )
