@@ -1,5 +1,6 @@
 from django.db import models, connection
 from numpy import  *
+from collections import defaultdict
 
 # Create your models here.
 class Species(models.Model):
@@ -239,30 +240,21 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     """
     def make_total_counts(cur):
         """just sum up the total occurrence of CREs for each position"""
-        total_counts = {}
+        total_counts = defaultdict(int)
         for gre_id, sstart, sstop in cur.fetchall():
             for i in range(sstart, sstop + 1):
-                if i not in total_counts:
-                    total_counts[i] = 0
                 total_counts[i] += 1
         return sorted(total_counts.items())
 
     def make_gre_counts(cur):
         """sum in two separate rows, to allow for handling restricted sets
         """
-        gre_counts = {}
-        num12 = 0
+        # a default dictionary containing default dictionaries of int
+        gre_counts = defaultdict(lambda: defaultdict(int))
         for gre_id, sstart, sstop in cur.fetchall():
-            if gre_id == 'eco_12':
-                num12 += 1
-            if gre_id not in gre_counts:
-                gre_counts[gre_id] = {}
             count_map = gre_counts[gre_id]
             for i in range(sstart, sstop + 1):
-                if i not in count_map:
-                    count_map[i] = 0
                 count_map[i] += 1
-        print "# ECO12: ", num12
         return gre_counts
 
     cur = connection.cursor()
