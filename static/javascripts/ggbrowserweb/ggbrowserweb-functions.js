@@ -891,7 +891,7 @@ function redrawSeqLogo(names){
         })
         .attr('y', function(d){ 
           //if(d.strand=='+') return 450; else return 430;
-      return 0;
+      return 40;
         })
         .attr("x", function(d,i) { 
       if(d.start < d.end){
@@ -1217,7 +1217,7 @@ function animateCorem(coremName){
   .attr("clip-path", "url(#clip)")
   //old  .attr("d", line(eval("max_"+d)[0].values))
   .attr("d", line(eval("pp_"+d)[0].values.filter(function(d){  if(d.START >= view.left && d.START <= view.right) {return d}     })    ) )
-//  .attr("transform", "translate(0, 0)")
+  .attr("transform", "translate(0, -110)")
 
   .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //old   values[0].MOTIF_NAME
   .style("stroke-width", 1.6)

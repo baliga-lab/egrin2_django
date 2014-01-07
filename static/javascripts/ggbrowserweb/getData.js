@@ -247,7 +247,7 @@ var max_local = new Array();
               corem_name.forEach(function(d,i){
                 //debugger;
                 cre_corem["cre_data"][i][0].All = cre_corem["cre_data"][i][1];
-                debugger;
+                //debugger;
                 window["temp_corem_"+d] = new Array();
                 window["temp_pp_corem_"+d] = {};
                 window["pp_corem_"+d] = new Array();

@@ -25,11 +25,11 @@ var line = d3.svg.area()
 var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":202301,"left":0,"right":5000}');
 
  
-  var margin = {top: 10, right: 30, bottom: 160, left: 40},
-      margin2 = {top: 470, right: 30, bottom: 20, left: 40},
+  var margin = {top: 10, right: 30, bottom: 10, left: 40},
+      margin2 = {top: 340, right: 30, bottom: 20, left: 40},
       margin3 = {top: 470, right: 30, bottom: 20, left: 40},
       width = 750 - margin.left - margin.right,
-      height = 600 - margin.top - margin.bottom,
+      height = 400 - margin.top - margin.bottom,
       height2 = 600 - margin2.top - margin2.bottom;
 
     
@@ -202,9 +202,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   }
 
 
-
-
-  var genetrack = {plus:10, minus:30, height:18};
+  var genetrack = {plus:300, minus:300, height:18};
   /*{plus:20, minus:60};//*/
   
   
@@ -612,7 +610,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
     focus.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + (height-110) + ")")
             .call(xAxis);
 
         focus.append("g")
@@ -625,7 +623,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
         focus.append("g")
         .attr("class", "y axis")
         .attr("id", "max_local")
-            .attr("transform", "translate(" + width + ",0)")
+            .attr("transform", "translate(" + width + ",-110)")
         .call(yAxisMaxLocal);
       
         
