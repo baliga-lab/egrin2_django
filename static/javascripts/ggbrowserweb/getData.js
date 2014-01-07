@@ -60,7 +60,7 @@ var max_local = new Array();
 
         function getCre(url, start, stop, top, specie, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
         
-        $('#ggbrowser-principal').block({   
+        $('#freeze').block({   
               message: '<img id="loading" src="/static/images/ajax-loader.gif" /> <h1>Loading</h1>', 
               css: { 
             border: 'none', 
@@ -154,10 +154,17 @@ var max_local = new Array();
                 //drawLine()
                 brushed()
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
-                $('#ggbrowser-principal').unblock()
+                $('#freeze').unblock()
               //drawLineChart();
 
-              getCre_per_corem("/cres_in_range_list/" + specie + "/",  view.left, view.right, 4, specie,gene_name);
+              if(view.left < view.right){
+                console.log("less")
+                getCre_per_corem("/cres_in_range_list/" + specie + "/",  left, right, 4, specie,gene_name);
+              }
+              else{
+                console.log("highier")
+                getCre_per_corem("/cres_in_range_list/" + specie + "/",  right, left,  4, specie,gene_name); 
+              }
 
 
               },
@@ -277,8 +284,8 @@ var max_local = new Array();
               })
                 corem_name.push("Default")
                 drawButton(corem_name, "corem_box");
-                d3.selectAll("input[value=Default]").style("color", "red")
-
+                d3.selectAll("input[value=Default]").attr("class", "pressed")
+                //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
                 yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
 
                 //drawLineChart();

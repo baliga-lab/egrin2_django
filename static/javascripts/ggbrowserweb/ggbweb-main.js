@@ -28,7 +28,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   var margin = {top: 10, right: 30, bottom: 10, left: 40},
       margin2 = {top: 340, right: 30, bottom: 20, left: 40},
       margin3 = {top: 470, right: 30, bottom: 20, left: 40},
-      width = 750 - margin.left - margin.right,
+      width = 620 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom,
       height2 = 600 - margin2.top - margin2.bottom;
 
@@ -119,14 +119,15 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   var box = d3.select("#" + div).selectAll("input")
   .data(data.sort());
   box.enter().append("input").attr("class", "btGGB")
+  .attr("id", function(d){return d})
   .attr("type","button")
   .attr("name", "bt")
   .attr("value", function (d){return d;} )
   .on("click", function(d){
     if(d == "Default"){
-      d3.selectAll("input[class=btGGB]").style("color", "white");return resetLineChartData()
+      d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
     } else{  
-     d3.selectAll("input[class=btGGB]").style("color", "white"); return animateCorem(d)
+     d3.selectAll("input[class=btGGB]").attr("class", "btGGB"); return animateCorem(d)
     }
     })
   
@@ -445,15 +446,15 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
   var xAxis3 = d3.svg.axis().scale(x3).orient("bottom");
 
-    if ( (genomeInfo.end - genomeInfo.start) / 1500 > 1500){
+    if ( (right - left) / 1500 > 1500){
       xAxis3
-      .tickValues(d3.range(0, genomeInfo.end, 1500000))
-      .tickFormat(function(d) {return (d/1500000) + 'M';});
+      .tickValues(d3.range(0, genomeInfo.end, 1800000))
+      .tickFormat(function(d) {return (d/1800000) + 'M';});
     }
     else {
       xAxis3
-      .tickValues(d3.range(15000, genomeInfo.end, 15000))
-      .tickFormat(function(d) {return (d/1500) + 'k';});
+      .tickValues(d3.range(15000, genomeInfo.end, 18000))
+      .tickFormat(function(d) {return (d/1800) + 'k';});
     }
     
       //gene.attributes.split(";").forEach(function(d) {   var t = d.split("="); if(t[0]== "ID") console.log(t[1]);      })
@@ -671,7 +672,13 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 */
   
 getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, view.right);
-getCre("/cres_in_range/"+ species_ + "/",  view.left, view.right, 4, species_, gene_);
+
+//if(gene_strand == "+"){
+  getCre("/cres_in_range/"+ species_ + "/",  view.left, view.right, 4, species_, gene_);
+//}
+//else{
+//  getCre("/cres_in_range/"+ species_ + "/",  view.right,view.left, 4, species_, gene_); 
+//}
 
 
 init();

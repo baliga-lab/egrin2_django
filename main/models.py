@@ -256,6 +256,7 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
             for i in range(sstart, sstop + 1):
                 count_map[i] += 1
         return gre_counts
+    print "CRES_IN_RANGE(): nw: %s start: %s stop: %s top: %s corem_id: %s" % (str(network_id), str(start), str(stop), str(top), str(corem_id))
 
     cur = connection.cursor()
     org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"

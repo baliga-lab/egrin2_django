@@ -31,7 +31,17 @@ var legend = svg.append("g")
           .attr("width",100)
           //.attr("fill", function(d) {color(d);})
           .text(function(d){return d;})
-          .style("fill", function(d) { return color(d); } ); 
+          .style("fill", function(d) { return color(d); } )
+          .on('click', function(c){
+              if(c != "All"){
+                window.open('/gres/' + species_ + "/" + c, '_blank')
+              }
+            })///gres/511145/eco_87
+          .style('cursor', function(d){
+            if(d != "All"){
+              return 'hand'
+            }
+          })
 
       });
 
@@ -640,14 +650,14 @@ function redrawSeqLogo(names){
        return ""; 
       }
        else{
-        return d.sys_name;}
+        return d.sys_name + " (" + d.strand + ")";}
       }
       else{
               if( (d.sys_name.length)*7 > x(d.start - d.end + view.left) ) {
        return ""; 
       }
        else{
-        return d.sys_name;}
+        return d.sys_name+ " (" + d.strand + ")";}
       }
     })
     .style('cursor', 'hand')
@@ -708,14 +718,14 @@ function redrawSeqLogo(names){
        return ""; 
       }
        else{
-        return d.sys_name;}
+        return d.sys_name+ " (" + d.strand + ")";}
       }
       else{
               if( (d.sys_name.length)*7 > x(d.start - d.end + view.left) ) {
        return ""; 
       }
        else{
-        return d.sys_name;}
+        return d.sys_name+ " (" + d.strand + ")";}
       }
     })
     .style('cursor', 'hand')
@@ -829,7 +839,7 @@ function redrawSeqLogo(names){
     .on('click', function(c){
       //window.open('http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank')
 
-      window.open("{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/" + c.sys_name, '_blank')
+      window.open(url_ + c.sys_name, '_blank')
     d3.select('#geneAnnotation').selectAll("p").remove();
     //d3.selectAll('#geneAnnotation').append("p").text(c.attributes + ' :  http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank');
       ;})
@@ -1045,7 +1055,9 @@ function drawLine(){
 }
 
   function resetLineChartData(){
-    d3.selectAll("input[value=Default]").style("color", "red")
+    //d3.selectAll("input[value=Default]").style("background-color", "#d3d6ff")
+    d3.selectAll("input[name=bt]").attr("class", "btGGB")
+    d3.selectAll("input[value=Default]").attr("class", "pressed")
     mot_names.forEach(function(d){
 
       eval("pp_" + d)[0].values = eval("pp_original_"+d)[0]
@@ -1191,8 +1203,9 @@ for (var i = 0; i < pp_corem_ec512157[0].values.length; i++) {
 */
 
 function animateCorem(coremName){
-  d3.selectAll("input[value="+coremName+"]").style("color", "red")
-
+  d3.selectAll("input[name=bt]").attr("class", "btGGB")
+  d3.selectAll("input[value="+coremName+"]").attr("class", "pressed")
+  //d3.selectAll("input[value=Default]").style("background", "#d3d6ff").style("border", "#d3d6ff")
   // getting corem GRE names to animate.
   var a = []
   eval("pp_corem_"+coremName)[0].values.forEach(function(d){
@@ -1691,7 +1704,8 @@ function uncheckAll(){
             .attr("height",genetrack.height)
             .attr('stroke', 'rgba(0,0,0,0.5)')
       .on('click', function(c){
-        window.open("{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/" + c.sys_name, '_blank')
+        //window.open("{% url 'genes' %}{{ s.ncbi_taxonomy_id }}/" + c.sys_name, '_blank')
+        window.open(url_ + c.sys_name, '_blank')
     d3.select('#geneAnnotation').selectAll("p").remove();
     //d3.selectAll('#geneAnnotation').append("p").text(c.attributes + ' :  http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank');
       ;})
@@ -1829,7 +1843,13 @@ function uncheckAll(){
     function init(){
     // let's set brush
     //brush.extent([view.left, view.left + 500]);
-    brush.extent([parseInt(gene_start)-200, parseInt(gene_start)+50]);
+    if(gene_strand =="+"){
+      brush.extent([parseInt(gene_start)-200, parseInt(gene_start)+100]);  
+    }
+    else{
+      brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+200]);
+    }
+    
     svg.select(".x.brush").call(brush);
     //brushed();
   }
