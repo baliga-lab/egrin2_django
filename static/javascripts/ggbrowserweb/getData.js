@@ -110,7 +110,7 @@ var max_local = new Array();
                 })
                 //debugger;
 
-                if(d != "All"){eval("max_").push(d3.max(eval("max_temp_"+d)));}
+                eval("max_").push(d3.max(eval("max_temp_"+d)));
                 eval("temp_pp_"+d).values = eval("temp_"+d);
                 eval("pp_"+d).push(eval("temp_pp_"+d));
 
@@ -147,6 +147,7 @@ var max_local = new Array();
                 // now I have all data as needed, let's draw the charts
                 drawBoxes(mot_names, "boxes");
                 drawLineChart();
+                removeAll();
                 legend_chart();
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
                 $('#ggbrowser-principal').unblock()

@@ -185,6 +185,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     if (typeof window[d + "checked"] === 'undefined'){
       window[d + "checked"] = true;
     }
+
     /*else{
       if(window[d + "checked"] === false){
         console.log("exists : " +d)

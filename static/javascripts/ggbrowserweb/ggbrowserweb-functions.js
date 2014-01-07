@@ -1178,11 +1178,16 @@ function animateCorem(coremName){
 
     //max_local = d3.max(max_temp_All);
 
+    //##### Don't display All track at first 
+    d3.selectAll("input[id=All]").property("checked", false);
+    
+
+
 
     console.log("drawLineChart")
   
     svg.selectAll('.line-').remove();
-    mot_names.forEach(function(d){
+    mot_names.forEach(function(d){ //.filter(function(a){if(a!="All"){return a}})
   //getMotifMax(view.left, view.right, d);
 
   yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
@@ -1216,11 +1221,16 @@ function animateCorem(coremName){
 
   .style("stroke", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //old   values[0].MOTIF_NAME
   .style("stroke-width", 1.6)
+  ;
   //.style("fill", color(eval("pp_"+d)[0].values[0].MOTIF_NAME) ) //area
   //.style("opacity", 0.5) 
   //.on("mouseover", function(){d3.select(this).style("stroke", "#999999").attr("stroke-opacity", "1.0");});  
     
   })};// voltar drawLineChart();
+  
+  function removeAll(){
+    svg.select(".motifs_All").style("display", "none")
+  }
   
   
   
