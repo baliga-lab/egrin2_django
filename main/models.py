@@ -253,11 +253,14 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
         cur.execute(all_query, [corem_id, start, stop])
         all_rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
     else:
-        query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
+        #query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
+        query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where start >= %s and stop <= %s and c.network_id = %s"
+
         if omit0:
             query += " and g.gre_id != '" + orgcode + "_0'"
         #print "QUERY2: ", query
-        cur.execute(query, [start, stop, network_id, start, stop])
+        #cur.execute(query, [start, stop, network_id, start, stop])
+        cur.execute(query, [start, stop, network_id])
         rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
 
         all_query = "select distinct cre_id, start, stop from main_crepos where start >= %s and stop <= %s and network_id = %s"
