@@ -71,35 +71,35 @@
             "aoColumnDefs": [ { 'bSortable': false, 'aTargets': [2, 3]}]
           });  
 		$("#expression_tip").qtip({
-			content: 'Standardized relative expression of all genes in corem in conditions where the corem is actively co-regulated (see Conditions below for details). Color blocks denote related experimental conditions (determined by array annotations, key below).',
+			content: 'Standardized relative expression of all genes in corem in conditions where genes in the corem are co-regulated (see Conditions below for details). Color blocks denote related experimental conditions (determined by array annotations, key below).',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },         
 		    style: 'dark' 
 		   	});
 		$("#function_tip").qtip({
-			content: 'Functions enriched for corem. Computed by topGO R package using GO annotations from MicrobesOnline. NOTE: reported pvals are not corrected for multiple testing.',
+			content: 'Functions enriched for corem. Computed by DAVID.',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },        
 		    style: 'dark' 
 		   	});
 		$("#bicluster_tip").qtip({
-			content: 'Most representative biclusters (i.e. biclusters containing largest fraction of genes in corem, top decile)',
+			content: 'Representative biclusters',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },          
 		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
-			content: 'GRE: gene regulatory element. Reported GREs are discovered in biclusters most representative of the corem (i.e. biclusters containing largest fraction of genes in corem, top decile), suggesting that these GREs are responsible for regulating the corem. qval is BH-corrected pval from hypergeometric test.',
+			content: 'GRE: gene regulatory element. Reported GREs are discovered in biclusters most representative of the corem (i.e. biclusters containing largest fraction of genes in corem, top decile), suggesting that these GREs are responsible for regulating genes in the corem. qval is BH-corrected pval from hypergeometric test.',
 			position: { target: 'mouse' },
 			show: 'click',
           	hide: { when: { event: 'click' } },       
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditional activity computed by relative standard deviation given resampling. All conditions with pval<=0.05 are reported.',
+			content: 'Conditions in which corem genes have significantly low relative standard deviation. All conditions with resampled pval<=0.05 are reported.',
 			position: { target: 'mouse' },
 			show: 'click',
           	hide: { when: { event: 'click' } },          
@@ -155,7 +155,7 @@
         <tbody>
         </tbody>
       </table>
-      <blockquote><p>Conditional Activity <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Conditional co-regulation <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <table id="conditions" class="table">
         <thead>
           <tr>
@@ -166,7 +166,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <blockquote><p>Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Representative Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <table id="biclusters" class="table">
         <thead>
           <tr>
