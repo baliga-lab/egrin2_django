@@ -237,56 +237,60 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
     """
+    def make_total_counts(cur):
+        """just sum up the total occurrence of CREs for each position"""
+        total_counts = {}
+        for gre_id, sstart, sstop in cur.fetchall():
+            for i in range(sstart, sstop + 1):
+                if i not in total_counts:
+                    total_counts[i] = 0
+                total_counts[i] += 1
+        return sorted(total_counts.items())
+
+    def make_gre_counts(cur):
+        """sum in two separate rows, to allow for handling restricted sets
+        """
+        gre_counts = {}
+        num12 = 0
+        for gre_id, sstart, sstop in cur.fetchall():
+            if gre_id == 'eco_12':
+                num12 += 1
+            if gre_id not in gre_counts:
+                gre_counts[gre_id] = {}
+            count_map = gre_counts[gre_id]
+            for i in range(sstart, sstop + 1):
+                if i not in count_map:
+                    count_map[i] = 0
+                count_map[i] += 1
+        print "# ECO12: ", num12
+        return gre_counts
+
     cur = connection.cursor()
     org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"
     cur.execute(org_query, [network_id])
     orgcode = cur.fetchone()[0]
 
     if corem_id:
-        query = "select distinct gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s order by cre_id) and start >= %s and stop <= %s"
+        query = "select gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s order by cre_id) and start >= %s and stop <= %s"
         if omit0:
             query += " and gre.gre_id != '" + orgcode + "_0'"
-        #print "QUERY1: ", query
         cur.execute(query, [corem_id, start, stop])
-        rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+        gre_counts = make_gre_counts(cur)
         all_query = "select cre_id, start, stop from main_crepos where cre_id in (select cre_id from main_corem_cres where corem_id = %s) and start >= %s and stop <= %s"
         cur.execute(all_query, [corem_id, start, stop])
-        all_rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+        total_counts = make_total_counts(cur)
     else:
-        #query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where c.id in (select distinct cre_id from main_crepos where start >= %s and stop <= %s and network_id = %s order by cre_id) and start >= %s and stop <= %s"
-        query = "select distinct g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where start >= %s and stop <= %s and c.network_id = %s"
-
+        query = "select g.gre_id, start, stop from main_cre c join main_crepos p on c.id = p.cre_id join main_gre g on g.id = c.gre_id where start >= %s and stop <= %s and c.network_id = %s"
         if omit0:
             query += " and g.gre_id != '" + orgcode + "_0'"
-        #print "QUERY2: ", query
-        #cur.execute(query, [start, stop, network_id, start, stop])
         cur.execute(query, [start, stop, network_id])
-        rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
-
+        gre_counts = make_gre_counts(cur)
         all_query = "select distinct cre_id, start, stop from main_crepos where start >= %s and stop <= %s and network_id = %s"
         cur.execute(all_query, [start, stop, network_id])
-        all_rows = [(row[0], row[1], row[2]) for row in cur.fetchall()]
+        total_counts = make_total_counts(cur)
 
-    # sum in two separate rows, to allow for handling restricted sets
-    gre_counts = {}
-    for gre_id, sstart, sstop in rows:
-        if gre_id not in gre_counts:
-            gre_counts[gre_id] = {}
-        count_map = gre_counts[gre_id]
-        for i in range(sstart, sstop + 1):
-            if i not in count_map:
-                count_map[i] = 0
-            count_map[i] += 1
-
-    # even in a restricted set, we want to have total counts
-    total_counts = {}
-    for gre_id, sstart, sstop in all_rows:
-        for i in range(sstart, sstop + 1):
-            if i not in total_counts:
-                total_counts[i] = 0
-            total_counts[i] += 1
-
-
+    # special behaviour: if corem is set, we deactivate the top-n behaviour
+    # and return what we've got
     if corem_id == None and top != None:
         # rank by sum of counts, highest counts first
         ranks = sorted([(sum([count for pos, count in count_map.items()]), gre_id)
@@ -295,6 +299,7 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     else:
         toplist = gre_counts.keys()
 
+    # Fill gaps with leading/ending zeroes
     final_gre_counts = {}
     for gre_id in toplist:
         final_gre_counts[gre_id] = sorted(gre_counts[gre_id].items())
@@ -319,9 +324,7 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
             addlist.insert(0, (addlist[0][0] - 1, 0))
         if addlist[-1][0] < stop:
             addlist.append((addlist[-1][0] + 1, 0))
-
         final_gre_counts[gre_id] = addlist
-    total_counts = sorted(total_counts.items())
 
     return (final_gre_counts, total_counts)
     
