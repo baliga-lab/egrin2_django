@@ -227,7 +227,7 @@ class CrePos(models.Model):
     cre = models.ForeignKey(Cre)
     start = models.IntegerField()
     stop = models.IntegerField()
-    p_val = models.DecimalField(max_digits=16, decimal_places=4)
+    p_val = models.DecimalField(max_digits=16, decimal_places=13)
 
     def __unicode__(self):
         return '%s' % self.start
