@@ -81,7 +81,7 @@ GGBrowser scripts to be imported
 		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
-			content: 'Enriched GREs computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
+			content: 'Putative regulatory mechanisms for this gene or gene regulatory elements (GREs). Enriched GREs computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },            
@@ -95,14 +95,14 @@ GGBrowser scripts to be imported
         style: 'dark' 
         });
 		$("#condition_tip").qtip({
-			content: 'Enriched conditions computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
+			content: 'Conditions in which this gene is co-regulated with other genes (i.e. discovered in biclusters). Enriched conditions computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },            
 		    style: 'dark' 
 		   	});
 		$("#bicluster_tip").qtip({
-			content: 'Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression, over subsets of conditions (biclusters) (2) similar de novo detected sequence motifs in their promoters and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
+			content: 'Biclusters containing this gene.',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },          
@@ -207,7 +207,7 @@ ggbrowserweb_tip - alter text
     <blockquote><p>Promoter Architecture <a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a> <a id="prom_arch" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></p></blockquote>
     <img src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
 
-    <blockquote><p>GREs <a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Putative Regulatory Mechanisms (GREs) <a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="gres" class="table">
       <thead>
         <tr>
@@ -220,7 +220,7 @@ ggbrowserweb_tip - alter text
       </tbody>
     </table>
             
-    <blockquote><p>Conditions <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Regulated Conditions <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="conditions" class="table">
       <thead>
         <tr>
