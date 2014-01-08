@@ -54,13 +54,39 @@
 		      });
 	    </script>
 				
-			<a name="What is EGRIN 2.0?"></a>
+	    	<a name="What is EGRIN 2.0?"></a>
 			<h2><a href="index" title="">What is EGRIN 2.0?</a></h2>
+			<blockquote>A systems-level model of gene regulation that delineates the complex relationship between environment, gene regulation, and phenotype in prokaryotes.</blockquote>
+            
+			<a name="Why EGRIN 2.0?"></a>
+			<h2><a href="index" title="">Why EGRIN 2.0?</a></h2>
 					
-            <p>A foremost challenge in systems biology is to understand how, with just a few transcription factors (TFs), a simple prokaryote is able to tailor responses to complex and varying environmental challenges.  <strong>EGRIN2.0</strong> is a single nucleotide resolution model that describes how the genome-wide distribution of gene regulatory elements (GREs; i.e. binding sites for TFs) encodes sophisticated regulatory programs for environmental responses. Currently, we have comprehesive models for two prokaryotic organisms: a bacterium (<i>Escherichia coli K-12</i>) and an archaeon (<i>Halobacterium salinarum NRC-1</i>). The complex organization of GREs within intergenic and intragenic promoters encodes combinatorial influences of TFs to dynamically split regulons and even operons, regrouping genes into conditionally co-regulated modules or <strong>‘corems’</strong> that stitch together distinct processes into environment-specific responses.  Corems accurately predict similarities in fitness contributions of genes across diverse environments, while simultaneously revealing active regulatory mechanisms responsible for the operational state of a TRN in each environment. </p>
-            <p><code>This website's aim is to facilitate <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+            <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) can coordinated nuanced responses to varying environmental challenges.  <strong>EGRIN 2.0</strong> is a new method for reverse-engineering the complete gene regulatory network (GRN) of any prokaryote directly from gene expression data and genomic sequence.</p>
+            <p></p>
+            <p>EGRIN 2.0 is <strong>remarkably accurate</strong>. It was able to discover nearly two-thirds of the TFs in RegulonDB <i>de novo</i>.</p>
+            <p></p>
+			<p>In addition, EGRIN 2.0 describes how gene regulatory mechanisms and the environment integrate to coordinate cellular function, including:
+				<ul>
+					<li>The existence of gene regulatory elements (GREs) in both cannonical promoters and non-canonical locations, such as genes and operons</li>
+					<li></li>
+					<li>How environment-specific TF influences at GREs reorganizes functionally-related genes from different operons and regulons into conditionally co-regulated modules or <strong>corems</strong></li>
+					<li>High fitness similarities between genes organized in corems</li>
+				</ul>
+			</p>
+			<p>We have inferred comprehesive models for two prokaryotic organisms: a bacterium (<i>Escherichia coli K-12</i>) and an archaeon (<i>Halobacterium salinarum NRC-1</i>).</p>
+
+            <h3>Highlights<h3>
+            	<p> To explore examples highlighted in the paper, please follow this links below:
+            		<ul>
+            			<li><a>carA (b0032)</a></li>
+            		</ul>
+            	</p>
+            
+            <p><code>This website facilitates <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+
+            <p></p>
 			
-			<blockquote><p>EGRIN 2.0 statistics</p></blockquote>
+			<!-- <blockquote><p>EGRIN 2.0 statistics</p></blockquote>
 				
 			<table>
 				<tr>
@@ -99,7 +125,7 @@
 					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
 					<td>RegulonDB annotated TFs mapped to GREs (E. coli only)</td>
 				</tr>
-			</table>
+			</table> -->
 								
 			<br />		
 		<!-- main ends -->	
