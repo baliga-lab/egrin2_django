@@ -114,7 +114,7 @@ urlpatterns = patterns('main.views',
     url(r'^basepair_json_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/?$', 'basepair_jsons_range', name='basepair_jsons_range'),
 
     # returnin CREs for ggbrowserweb
-    url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/?$', 'cres_in_range_json', name='cres_in_range_json'),
+    url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/?$', 'cres_in_range_json', name='cres_in_range_json'),
 
 
 # returnin CREs for ggbrowserweb given a list of biclusters

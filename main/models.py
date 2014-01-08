@@ -256,6 +256,7 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
             for i in range(sstart, sstop + 1):
                 count_map[i] += 1
         return gre_counts
+    print "CRES_IN_RANGE(): nw: %s start: %s stop: %s top: %s corem_id: %s" % (str(network_id), str(start), str(stop), str(top), str(corem_id))
 
     cur = connection.cursor()
     org_query = "select short_name from main_network n join main_species s on n.species_id = s.id where n.id = %s"
@@ -284,11 +285,13 @@ def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
     # special behaviour: if corem is set, we deactivate the top-n behaviour
     # and return what we've got
     if corem_id == None and top != None:
+        print "With top list"
         # rank by sum of counts, highest counts first
         ranks = sorted([(sum([count for pos, count in count_map.items()]), gre_id)
                         for gre_id, count_map in gre_counts.items()], reverse=True)[:top]
         toplist = [item[1] for item in ranks]
     else:
+        print "Without top list"
         toplist = gre_counts.keys()
 
     # Fill gaps with leading/ending zeroes
