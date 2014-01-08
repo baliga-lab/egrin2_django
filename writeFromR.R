@@ -2,8 +2,8 @@
 # requires egrin/corem env of choice to be loaded
 # e.g.
 
-HALO = T
-ECO = F
+HALO = F
+ECO = T
 PLOTS = F
 
 #source("/docs/git/Link-communities/analyze_communities.R")
@@ -375,7 +375,7 @@ writeInitials <- function(outRoot) {
     # get width
     width <- out$motif.widths[as.numeric(bc),as.numeric(mot)]
     # get starts
-    to.r <- cbind(tmp$posns,(tmp$posns+width),tmp$pvals,tmp$gene)
+    to.r <- cbind(tmp$posns,(tmp$posns+width),tmp$pvals,as.character(tmp$gene))
     colnames(to.r) <- c("start","stop","pval","chr")
     to.rr <- c(paste(to.r[,"start"],collapse=","),paste(to.r[,"stop"],collapse=","),paste(to.r[,"pval"],collapse=","),paste(to.r[,"chr"],collapse=","))
     names(to.rr) <- c("start","stop","pval","chr")
@@ -383,8 +383,9 @@ writeInitials <- function(outRoot) {
   }))
   # cre_id, gre_id, eval, pssm
   # write header
-  write(paste(c("cre_id", "gre_id", "eval", "pssm","start","stop","pval"),collapse="\t"),file=paste(outRoot,"_cre.txt",sep=""))
-  write(paste(paste(gsub("MOT_","",names(tmp)),tmp,evals,pssms,start.stops.pval[,"start"],start.stops.pval[,"stop"],start.stops.pval[,"pval"],sep="\t"),collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
+  write(paste(c("cre_id", "gre_id", "eval", "pssm","start","stop","pval","chr"),collapse="\t"),file=paste(outRoot,"_cre.txt",sep=""))
+  write(paste(paste(gsub("MOT_","",names(tmp)),tmp,evals,pssms,start.stops.pval.chr[,"start"],start.stops.pval.chr[,"stop"],
+    start.stops.pval.chr[,"pval"],sep="\t"),start.stops.pval.chr[,"chr"],collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
   
   ####################################
   # expression
