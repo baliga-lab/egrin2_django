@@ -343,13 +343,13 @@ def genes_json_annotation(request, species):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-
-def genes_json_annotation_range(request, species, start, stop):
+# including chr to filter query - dsalvanha
+def genes_json_annotation_range(request, species, start, stop, refseq):
     fields = ['sys_name', 'name', 'accession', 'description', 'start', 'stop',
               'strand', 'chromosome']
     dtparams = get_dtparams(request, fields, fields[0])
-    
-    query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__gte=start, stop__lte=stop)
+    chr_id = Chromosome.objects.filter(refseq=refseq)
+    query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__gte=start, stop__lte=stop, chromosome=chr_id[0].id)
     #query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__range=[start, start + str(5000)])
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
@@ -371,6 +371,7 @@ def genes_json_annotation_range(request, species, start, stop):
         'SequenceAnnotation': some_data_to_dump
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
 
 def basepair_jsons_range(request, species, start, stop):
     fields = ['sequence']

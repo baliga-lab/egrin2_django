@@ -106,7 +106,7 @@ urlpatterns = patterns('main.views',
     # returning annotation data to populate ggbrowserweb - dsalvanha
     url(r'^genes_json_annotation/$', 'genes_json_annotation',name='genes_json_annotation'),
     url(r'^genes_json_annotation/(?P<species>[^/]*)/?$', 'genes_json_annotation', name='genes_json_annotation'),
-    url(r'^genes_json_annotation/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/?$', 'genes_json_annotation_range', name='genes_json_annotation_range'),
+    url(r'^genes_json_annotation/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<refseq>[^/]*)/?$', 'genes_json_annotation_range', name='genes_json_annotation_range'),
 
 
     #returning basepairs given a range - dsalvanha
