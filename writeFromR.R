@@ -364,7 +364,7 @@ writeInitials <- function(outRoot) {
     }
     })
   setkey(out$pssm.scans,"bic","mots")
-  start.stops.pval <- do.call(rbind,lapply(seq(1,length(cre)), function(i){
+  start.stops.pval.chr <- do.call(rbind,lapply(seq(1,length(cre)), function(i){
     if (i%%10000==0) {
       cat(paste(round((i/length(cre))*100),"% done finding starts and stops\n",sep=""))
     }
@@ -375,10 +375,10 @@ writeInitials <- function(outRoot) {
     # get width
     width <- out$motif.widths[as.numeric(bc),as.numeric(mot)]
     # get starts
-    to.r <- cbind(tmp$posns,(tmp$posns+width),tmp$pvals)
-    colnames(to.r) <- c("start","stop","pval")
-    to.rr <- c(paste(to.r[,"start"],collapse=","),paste(to.r[,"stop"],collapse=","),paste(to.r[,"pval"],collapse=","))
-    names(to.rr) <- c("start","stop","pval")
+    to.r <- cbind(tmp$posns,(tmp$posns+width),tmp$pvals,tmp$gene)
+    colnames(to.r) <- c("start","stop","pval","chr")
+    to.rr <- c(paste(to.r[,"start"],collapse=","),paste(to.r[,"stop"],collapse=","),paste(to.r[,"pval"],collapse=","),paste(to.r[,"chr"],collapse=","))
+    names(to.rr) <- c("start","stop","pval","chr")
     return(to.rr)
   }))
   # cre_id, gre_id, eval, pssm
