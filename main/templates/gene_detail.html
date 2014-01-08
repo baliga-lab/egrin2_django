@@ -73,10 +73,6 @@ GGBrowser scripts to be imported
           "bServerSide": true,
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
-        $("#geneinfo").dataTable({
-          "bFilter": false,
-          "bSort": true
-        });
 
 		$("#prom_arch").qtip({
 			content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
