@@ -671,7 +671,8 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
               .attr("height", height3 + 7);
 */
   
-getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, view.right);
+getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, view.right, refseq);
+
 
 //if(gene_strand == "+"){
   getCre("/cres_in_range/"+ species_ + "/",  view.left, view.right, 4, species_, gene_);
