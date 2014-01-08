@@ -24,8 +24,6 @@ var max_local = new Array();
                async:false,
                     dataType:"text",
               });
-
-
             }
 
         function values(populate) {
