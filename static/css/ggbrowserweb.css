@@ -1,19 +1,4 @@
-table {
-  width:90%;
-  border-top:1px solid #e5eff8;
-  border-right:1px solid #e5eff8;
-  margin:1em auto;
-    border-collapse:collapse;
-  }
-caption {
-  color: #9ba9b4;
-  font-size:.94em;
-    letter-spacing:.1em;
-    margin:1em 0 0 0;
-    padding:0;
-    caption-side:top;
-    text-align:center;
-  } 
+
 tr.odd td {
   background:#f7fbff
   }
@@ -113,7 +98,7 @@ svg {
   font: 10px sans-serif;
 }
 
-#footer, label {
+#footer {
   font: 18pt helvetica neue;
   color: #666;
 }
