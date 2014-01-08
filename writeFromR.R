@@ -385,7 +385,7 @@ writeInitials <- function(outRoot) {
   # write header
   write(paste(c("cre_id", "gre_id", "eval", "pssm","start","stop","pval","chr"),collapse="\t"),file=paste(outRoot,"_cre.txt",sep=""))
   write(paste(paste(gsub("MOT_","",names(tmp)),tmp,evals,pssms,start.stops.pval.chr[,"start"],start.stops.pval.chr[,"stop"],
-    start.stops.pval.chr[,"pval"],sep="\t"),start.stops.pval.chr[,"chr"],collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
+    start.stops.pval.chr[,"pval"],start.stops.pval.chr[,"chr"],sep="\t"),collapse="\n"),file=paste(outRoot,"_cre.txt",sep=""),append=T)
   
   ####################################
   # expression
