@@ -225,6 +225,7 @@ class Cre(models.Model):
 # TODO: index main_crepos on start and stop
 class CrePos(models.Model):
     network = models.ForeignKey(Network)
+    chromosome = models.ForeignKey(Chromosome)
     cre = models.ForeignKey(Cre)
     start = models.IntegerField()
     stop = models.IntegerField()
@@ -233,7 +234,7 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
-def cres_in_range(network_id, start, stop, top=None, corem_id=None, omit0=True):
+def cres_in_range(network_id, chromosome_id, start, stop, top=None, corem_id=None, omit0=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
     2. -> [ (1, 1231)  (2, 232), ...]
