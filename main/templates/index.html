@@ -54,13 +54,45 @@
 		      });
 	    </script>
 				
-			<a name="What is EGRIN 2.0?"></a>
-			<h2><a href="index" title="">What is EGRIN 2.0?</a></h2>
+			<h3><strong>EGRIN 2.0 is a systems-level model that delineates the complex relationship between environment, gene regulation, and phenotype in prokaryotes</strong></h3>
+            
+			<a name="Why EGRIN 2.0?"></a>
+			<h2><a href="index" title="">Why EGRIN 2.0?</a></h2>
 					
-            <p>A foremost challenge in systems biology is to understand how, with just a few transcription factors (TFs), a simple prokaryote is able to tailor responses to complex and varying environmental challenges.  <strong>EGRIN2.0</strong> is a single nucleotide resolution model that describes how the genome-wide distribution of gene regulatory elements (GREs; i.e. binding sites for TFs) encodes sophisticated regulatory programs for environmental responses. Currently, we have comprehesive models for two prokaryotic organisms: a bacterium (<i>Escherichia coli K-12</i>) and an archaeon (<i>Halobacterium salinarum NRC-1</i>). The complex organization of GREs within intergenic and intragenic promoters encodes combinatorial influences of TFs to dynamically split regulons and even operons, regrouping genes into conditionally co-regulated modules or <strong>‘corems’</strong> that stitch together distinct processes into environment-specific responses.  Corems accurately predict similarities in fitness contributions of genes across diverse environments, while simultaneously revealing active regulatory mechanisms responsible for the operational state of a TRN in each environment. </p>
-            <p><code>This website's aim is to facilitate <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+            <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) manage to coordinate nuanced responses to varied environmental challenges.  <strong>EGRIN 2.0</strong> is a new method for reverse-engineering the complete gene regulatory network (GRN) of any prokaryote directly from gene expression data and genomic sequence.</p>
+            <p>EGRIN 2.0 is <strong>remarkably accurate</strong>. It was able to discover nearly two-thirds of the <i>E. coli</i> TFs in RegulonDB <i>de novo</i>.</p>
+			<p>In addition, EGRIN 2.0 describes how gene regulatory mechanisms and the environment integrate to coordinate cellular function, including:
+				<ul>
+					<li>The existence of gene regulatory elements (GREs) in both cannonical promoters and non-canonical locations, such as genes and operons</li>
+					<li>How environment-specific TF influences at GREs reorganize functionally-related genes from different operons and regulons into conditionally co-regulated modules or <strong>corems</strong></li>
+					<li>The highly similar fitness consequences of genes organized in corems</li>
+				</ul>
+			</p>
+			<p>
+			We have inferred comprehesive models for two prokaryotic organisms: a bacterium (<i><a href="http://egrin2.systemsbiology.net/networks/511145">Escherichia coli K-12</a></i>) and an archaeon (<i><a href="http://egrin2.systemsbiology.net/networks/64091">Halobacterium salinarum NRC-1</a></i>).
+			</p>
+
+			<p><code>This website facilitates <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
+
+            <h2>Highlights from the paper</h2>
+            	<h3>Genes</h3>
+            		<ul>
+            			<li><a href="http://egrin2.systemsbiology.net/genes/511145/b0032"><i>E. coli</i> carA (b0032)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/genes/511145/b4246"><i>E. coli</i> pyrL (b4246)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/genes/64091/VNG6176G"><i>H. salinarum</i> kdpA (VNG6176G)</a></li>
+            		</ul>
+            	<h3>Corems</h3>
+            		<ul>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/511145/ec516031"><i>E. coli</i> nucleotide corem (ec516031)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/511145/ec516034"><i>E. coli</i> purine corem (ec516034)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/511145/ec512157"><i>E. coli</i> pyrimidine corem (ec512157)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/64091/hc21645"><i>H. salinarum</i> dpp corem (hc21645)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/64091/hc6326"><i>H. salinarum</i> dpp leader corem (hc6326)</a></li>
+            			<li><a href="http://egrin2.systemsbiology.net/corems/64091/hc21279"><i>H. salinarum</i> dpp permease corem (hc21279)</a></li>
+            		</ul>
+            <p></p>
 			
-			<blockquote><p>EGRIN 2.0 statistics</p></blockquote>
+			<!-- <blockquote><p>EGRIN 2.0 statistics</p></blockquote>
 				
 			<table>
 				<tr>
@@ -99,7 +131,7 @@
 					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
 					<td>RegulonDB annotated TFs mapped to GREs (E. coli only)</td>
 				</tr>
-			</table>
+			</table> -->
 								
 			<br />		
 		<!-- main ends -->	

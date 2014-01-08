@@ -73,6 +73,7 @@ GGBrowser scripts to be imported
           "bServerSide": true,
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
+
 		$("#prom_arch").qtip({
 			content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
           	position: { target: 'mouse' },
@@ -81,7 +82,7 @@ GGBrowser scripts to be imported
 		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
-			content: 'Putative regulatory mechanisms for this gene or gene regulatory elements (GREs). Enriched GREs computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
+			content: 'Putative gene regulatory elements (GREs) discovered in the promoter region. GREs discovered frequently have lower qvals (hypergeometric test).',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },            
@@ -95,7 +96,7 @@ GGBrowser scripts to be imported
         style: 'dark' 
         });
 		$("#condition_tip").qtip({
-			content: 'Conditions in which this gene is co-regulated with other genes (i.e. discovered in biclusters). Enriched conditions computed through biclusters by hypergeometric test with Benjamini-Hochberg corrected qvalue <= 0.05.',
+			content: 'Conditions in which this gene is co-regulated with other genes in biclusters. Conditions discovered frequently have lower qvals (hypergeometric test).',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },            
@@ -113,7 +114,7 @@ GGBrowser scripts to be imported
 			});
       });
     </script>
-		<table>
+		<table id="geneinfo">
       <thead>
         <tr>
           <th class="first">Organism</th>
@@ -208,8 +209,8 @@ ggbrowserweb_tip - alter text
 -->
 
 
-    <blockquote><p>Promoter Architecture <a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a> <a id="prom_arch" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></p></blockquote>
-    <img src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" />
+    <!-- <blockquote><p>Promoter Architecture <a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a> <a id="prom_arch" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></p></blockquote>
+    <img src="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png" background-color="black" width=100% height=100% class="float-center" /> -->
 
     <blockquote><p>Putative Regulatory Mechanisms (GREs) <a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="gres" class="table">
