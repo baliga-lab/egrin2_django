@@ -264,12 +264,12 @@ def cres_in_range(network_id, chromosome_id, start, stop, top=None, corem_id=Non
     orgcode = cur.fetchone()[0]
 
     if corem_id:
-        query = "select gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id where cre.id in (select distinct cre_id from main_corem_cres where corem_id = %s) and start >= %s and stop <= %s and chromosome_id = %s"
+        query = "select gre.gre_id, start, stop from main_gre gre join main_cre cre on gre.id = cre.gre_id join main_crepos pos on cre.id = pos.cre_id join main_corem_cres cc on cc.cre_id = cre.id where corem_id = %s and start >= %s and stop <= %s and chromosome_id = %s"
         if omit0:
             query += " and gre.gre_id != '" + orgcode + "_0'"
         cur.execute(query, [corem_id, start, stop, chromosome_id])
         gre_counts = make_gre_counts(cur)
-        all_query = "select cre_id, start, stop from main_crepos where cre_id in (select cre_id from main_corem_cres where corem_id = %s) and start >= %s and stop <= %s and chromosome_id = %s"
+        all_query = "select cp.cre_id, start, stop from main_crepos cp join main_corem_cres cc on cp.cre_id = cc.cre_id where corem_id = %s and start >= %s and stop <= %s and chromosome_id = %s"
         cur.execute(all_query, [corem_id, start, stop, chromosome_id])
         total_counts = make_total_counts(cur)
     else:
