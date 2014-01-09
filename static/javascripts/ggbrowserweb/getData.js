@@ -36,7 +36,8 @@ var max_local = new Array();
             this.LETTER = LETTER;
         };
 
-        function createPosArray(inputArray, s, e){
+        function createPosArray(inputArray, s, e, nameInCaseInputArrayIsEmpty){
+          
           //var s = 27151;
           //var e = 33299;
           //var t = new Array()
@@ -46,13 +47,20 @@ var max_local = new Array();
           //window["array_zero"] = new Array();
           //debugger;
           var arr = new Array();
-
-          for (var i = s; i < e; i++) {
-            arr.push(new Populate(inputArray[0].MOTIF_NAME, i, 0, "") );  
-          };
-          inputArray.forEach(function(d){
-            if (d.START >= s) arr[d.START - s] = d;
-          });
+          if(inputArray == ""){
+            console.log("creating empty array for GREs that has no data")
+            for (var i = s; i < e; i++) {
+                  arr.push(new Populate(nameInCaseInputArrayIsEmpty, i, 0, "") );  
+                };
+          }
+          else{
+                for (var i = s; i < e; i++) {
+                  arr.push(new Populate(inputArray[0].MOTIF_NAME, i, 0, "") );  
+                };
+                inputArray.forEach(function(d){
+                  if (d.START >= s) arr[d.START - s] = d;
+                });
+          }
           return arr; //window["array_zero"] =
         }
 
@@ -116,7 +124,7 @@ var max_local = new Array();
                 //if(d != "All" && d != "eco_0"){  
                     //debugger;
                     window["array_zero"] = 0;
-                    var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop)
+                    var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop, "")
                     array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
                     eval("pp_"+d)[0].values = array_zero
                     eval("pp_original_"+d).push(array_zero);
@@ -155,7 +163,7 @@ var max_local = new Array();
                 $('#freeze').unblock()
               //drawLineChart();
 
-              if(view.left < view.right){
+              if(left < right){
                 console.log("less")
                 getCre_per_corem("/cres_in_range_list/" + specie + "/",  left, right, 4, specie,gene_name, this.refseq);
               }
@@ -281,12 +289,13 @@ var max_local = new Array();
                 //window["corem_" + d] = new Array();
               })
                 corem_name.push("Default")
-                drawButton(corem_name, "corem_box");
-                d3.selectAll("input[value=Default]").attr("class", "pressed")
-                //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
-                yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
-
-                ani()
+                if(corem_name.length > 1){ // if I don't have corem, I don't animate
+                  drawButton(corem_name, "corem_box");
+                  d3.selectAll("input[value=Default]").attr("class", "pressed")
+                  //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
+                  yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+                  ani()
+                }
 
                 //drawLineChart();
                 //legend_chart();
@@ -303,6 +312,101 @@ var max_local = new Array();
 
 
             } 
+
+
+        function getCre_added_corem(url, start, stop, top, specie, coremName, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
+               $('#freeze').block({   
+              message: '<img id="loading" src="/static/images/ajax-loader.gif" /> <h1>Loading</h1>', 
+              css: { 
+            border: 'none', 
+            padding: '25px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: .5, 
+            color: '#fff' }
+        });
+        $.ajax( {
+              type:'Get',
+               // 
+              url: url + (start) + "/" + (stop) + "/" + top +  "/" + coremName + "/" + this.refseq + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+             ,
+             success:function(json) {
+              // getting basepairs information
+              getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
+              
+
+              window["cre_corem"] = JSON.parse(json);
+              
+              //cre_corem["cre_data"][0][0].All = cre_corem["cre_data"][1][1];
+              //debugger;
+              window["corem_name_add"] = cre_corem["corem_name"];
+              window["max_corem"] = new Array();
+              
+
+
+              corem_name_add.forEach(function(d,i){
+                //debugger;
+                cre_corem["cre_data"][i].All = cre_corem["cre_data"][1];
+                //debugger;
+                window["temp_corem_"+d] = new Array();
+                window["temp_pp_corem_"+d] = {};
+                window["pp_corem_"+d] = new Array();
+                //window["pp_corem_original"+d] = new Array();
+                window["max_temp_corem_"+d] = new Array();
+                window["corem_to_animate"] = new Array();
+                mot_names.forEach(function(w) {
+                  
+                  if(!(cre_corem["cre_data"][i][w] == undefined)){
+                      cre_corem["cre_data"][i][w].forEach(function(q){
+                        eval("temp_corem_"+d).push(new Populate(w, q[0], q[1], basepair[0].basepairs.substring(  (q[0] - start)-1, (q[0] - start)  ) ));  
+                        eval("max_temp_corem_"+d).push(q[1]);
+                      })
+                      eval(corem_to_animate).push(w);
+                  }
+                });
+                eval("max_corem").push(d3.max(eval("max_temp_corem_"+d)));
+                eval("temp_pp_corem_"+d).values = eval("temp_corem_"+d);
+                eval("pp_corem_"+d).push(eval("temp_pp_corem_"+d));
+                //debugger;
+
+                //window["corem_" + d] = new Array();
+              })
+                if(corem_name.indexOf("Default") == -1){
+                  corem_name.push("Default")  
+                }
+                else{
+                  corem_name.push(cre_corem["corem_name"][0])
+                }
+                if(eval("pp_corem_"+ cre_corem["corem_name"][0])[0].values == ""){
+                  alert("There is no data for Corem [" +cre_corem["corem_name"][0] + "] on this range." )
+                  $('#freeze').unblock()
+                }
+                else{
+                  drawButton(corem_name, "corem_box");
+                  d3.selectAll("input[value=Default]").attr("class", "pressed")
+                //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
+                  yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+                  ani()
+                  $('#freeze').unblock()
+                }
+                //ani()
+
+                //drawLineChart();
+                //legend_chart();
+                //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
+              
+              },
+              error: function(e, xhr){
+                  console.log(url);
+                  console.log("error: " + e); debugger
+                },
+               async:true,
+                    dataType:"text",
+              });
+
+
+            }
 
 function getBasepair_range(url, start, stop, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
         

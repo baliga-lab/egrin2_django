@@ -120,6 +120,10 @@ urlpatterns = patterns('main.views',
 # returnin CREs for ggbrowserweb given a list of biclusters
     url(r'^cres_in_range_list/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/(?P<refseq>[^/]*)/?$', 'cres_in_range_json_list', name='cres_in_range_json_list'),
 
+
+    url(r'^cres_in_range_given_corem/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<coremName>[^/]*)/(?P<refseq>[^/]*)/?$', 'cres_in_range_given_corem', name='cres_in_range_given_corem'),
+    #cres_in_range_given_corem
+
     # list of corem-specific genes
     url(r'^corem_genes_json/$', 'corem_genes_json',name='corem_genes_json'),
     url(r'^corem_genes_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
