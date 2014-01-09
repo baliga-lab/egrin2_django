@@ -373,11 +373,14 @@ def genes_json_annotation_range(request, species, start, stop, refseq):
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
-def basepair_jsons_range(request, species, start, stop):
+def basepair_jsons_range(request, species, start, stop, refseq_):
     fields = ['sequence']
     dtparams = get_dtparams(request, fields, fields[0])
     
-    query = Chromosome.objects.filter(species__ncbi_taxonomy_id=species)
+    query = Chromosome.objects.filter(refseq=refseq_)
+    print "param: ", refseq_
+    for c in query:
+        print "chromosome: ", c.refseq
     #this query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__gte=start, stop__lte=stop)
     #query = Gene.objects.filter(species__ncbi_taxonomy_id=species, start__range=[start, start + str(5000)])
     num_total = query.count()
@@ -578,16 +581,17 @@ def gres_json_generic(query, species, dtparams):
         }
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
-def cres_in_range_json(request, species, start, stop, top, gene_name): #dsalvanha
+def cres_in_range_json(request, species, start, stop, top, gene_name, refseq): #dsalvanha
     network = Network.objects.get(species__ncbi_taxonomy_id = species);
 
+    chr_id = Chromosome.objects.filter(refseq=refseq)
     corem = Corem.objects.filter(genes__sys_name=str(gene_name))
     corem_ = [cor.id for cor in corem]
     top_ = int(top)
     
     if corem.count() > 0:
-        everything = cres_in_range(network.id, int(start), int(stop), None)
-        gres = [cres_in_range(network.id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
+        everything = cres_in_range(network.id, chr_id, int(start), int(stop), None)
+        gres = [cres_in_range(network.id, chr_id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
         gre_keys = set()
         for elem in gres:
             for key in elem[0].keys():
@@ -598,14 +602,16 @@ def cres_in_range_json(request, species, start, stop, top, gene_name): #dsalvanh
         for key in delkeys:
             del gre_counts[key]
     else:
-        everything = cres_in_range(network.id, int(start), int(stop), top_)
+        everything = cres_in_range(network.id, chr_id, int(start), int(stop), top_)
 
     result = everything
     return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
 
-def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsalvanha Nov/27
+def cres_in_range_json_list(request, species, start, stop, top, gene_name, refseq): #dsalvanha Nov/27
     network = Network.objects.get(species__ncbi_taxonomy_id=species)
+
+    chr_id = Chromosome.objects.filter(refseq=refseq)
     #gene = Gene.objects.filter(species__ncbi_taxonomy_id=species, name=gene_name);
     corem = Corem.objects.filter(genes__sys_name=str(gene_name))
     #cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
@@ -619,7 +625,7 @@ def cres_in_range_json_list(request, species, start, stop, top, gene_name): #dsa
     for corem_id in corem_:
         print "start: %s stop: %s top: %s corem_id: %s"  % (str(start), str(stop), str(top_), str(corem_id))
 
-    cres = [cres_in_range(network.id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
+    cres = [cres_in_range(network.id, chr_id, start, stop, top=top_, corem_id=corem_id) for corem_id in corem_]
     corem_name = [cor.corem_id for cor in corem.all()]
     cor_id = [cor.id for cor in corem.all()]
     print "ids corem: --> " , cor_id

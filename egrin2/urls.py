@@ -111,14 +111,14 @@ urlpatterns = patterns('main.views',
 
     #returning basepairs given a range - dsalvanha
 
-    url(r'^basepair_json_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/?$', 'basepair_jsons_range', name='basepair_jsons_range'),
+    url(r'^basepair_json_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<refseq_>[^/]*)/?$', 'basepair_jsons_range', name='basepair_jsons_range'),
 
     # returnin CREs for ggbrowserweb
-    url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/?$', 'cres_in_range_json', name='cres_in_range_json'),
+    url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/(?P<refseq>[^/]*)/?$', 'cres_in_range_json', name='cres_in_range_json'),
 
 
 # returnin CREs for ggbrowserweb given a list of biclusters
-    url(r'^cres_in_range_list/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/?$', 'cres_in_range_json_list', name='cres_in_range_json_list'),
+    url(r'^cres_in_range_list/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/(?P<refseq>[^/]*)/?$', 'cres_in_range_json_list', name='cres_in_range_json_list'),
 
     # list of corem-specific genes
     url(r'^corem_genes_json/$', 'corem_genes_json',name='corem_genes_json'),

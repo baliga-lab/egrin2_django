@@ -675,7 +675,7 @@ getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, 
 
 
 //if(gene_strand == "+"){
-  getCre("/cres_in_range/"+ species_ + "/",  view.left, view.right, 4, species_, gene_);
+  getCre("/cres_in_range/"+ species_ + "/", view.left, view.right, 4, species_, gene_, refseq);
 //}
 //else{
 //  getCre("/cres_in_range/"+ species_ + "/",  view.right,view.left, 4, species_, gene_); 

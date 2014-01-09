@@ -56,7 +56,7 @@ var max_local = new Array();
           return arr; //window["array_zero"] =
         }
 
-        function getCre(url, start, stop, top, specie, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
+        function getCre(url, start, stop, top, specie, gene_name, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
         
         $('#freeze').block({   
               message: '<img id="loading" src="/static/images/ajax-loader.gif" /> <h1>Loading</h1>', 
@@ -73,12 +73,12 @@ var max_local = new Array();
         $.ajax( {
               type:'Get',
 
-              url: url + (start) + "/" + (stop) + "/" + top + "/" + gene_name + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + (start) + "/" + (stop) + "/" + top + "/" + gene_name + "/"+ this.refseq + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
 
               // getting basepairs information
-              getBasepair_range("/basepair_json_range/"+specie, start, stop);
+              getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
               
               window["cre"] = JSON.parse(json);
               cre[0].All = cre[1];
@@ -157,11 +157,11 @@ var max_local = new Array();
 
               if(view.left < view.right){
                 console.log("less")
-                getCre_per_corem("/cres_in_range_list/" + specie + "/",  left, right, 4, specie,gene_name);
+                getCre_per_corem("/cres_in_range_list/" + specie + "/",  left, right, 4, specie,gene_name, this.refseq);
               }
               else{
                 console.log("highier")
-                getCre_per_corem("/cres_in_range_list/" + specie + "/",  right, left,  4, specie,gene_name); 
+                getCre_per_corem("/cres_in_range_list/" + specie + "/",  right, left,  4, specie,gene_name, this.refseq); 
               }
 
 
@@ -178,12 +178,12 @@ var max_local = new Array();
             }            
 
 
-        function getCre_per_corem(url, start, stop, top, specie, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
+        function getCre_per_corem(url, start, stop, top, specie, gene_name, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
         
         $.ajax( {
               type:'Get',
                // 
-              url: url + (start) + "/" + (stop) + "/" + top +  "/" + gene_name + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + (start) + "/" + (stop) + "/" + top +  "/" + gene_name + "/" + this.refseq + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
               
@@ -241,7 +241,7 @@ var max_local = new Array();
               //drawLineChart();*/
 
               // getting basepairs information
-              getBasepair_range("/basepair_json_range/"+specie, start, stop);
+              getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
               
 
               window["cre_corem"] = JSON.parse(json);
@@ -286,6 +286,8 @@ var max_local = new Array();
                 //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
                 yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
 
+                ani()
+
                 //drawLineChart();
                 //legend_chart();
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
@@ -302,12 +304,12 @@ var max_local = new Array();
 
             } 
 
-function getBasepair_range(url, start, stop){ // top --> number of ranked GRE's (CRE) one wants to get
+function getBasepair_range(url, start, stop, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
         
         $.ajax( {
               type:'Get',
 
-              url: url +"/"+ (start) + "/" + (stop) + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url +"/"+ (start) + "/" + (stop) + "/"+ this.refseq +  "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
               window["basepair"] = JSON.parse(json);

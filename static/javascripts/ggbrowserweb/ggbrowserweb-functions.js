@@ -1,7 +1,7 @@
 function legend_chart(){
 var legend = svg.append("g")
     .attr("class", "legend")
-    .attr("x", x(view.right- 300) )
+    .attr("x", x(view.left) )
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
@@ -13,7 +13,7 @@ var legend = svg.append("g")
       .each(function(d, i) {
         var g = d3.select(this);
         g.append("rect")
-          .attr("x",x(view.right- 400) )
+          .attr("x",x(view.left) )
           //.attr("x2",x(view.right- 300) )
           .attr("y", i*10)
           //.attr("y2", i*10)
@@ -25,7 +25,7 @@ var legend = svg.append("g")
           //.style("fill", function(d, i) { return color(i); });
           //.attr("stroke", function(d) { return color(d); } ) 
         g.append("text")
-          .attr("x", x(view.right- 200) )
+          .attr("x", x(view.left + 100 ) )
           .attr("y", i * 10 + 8)
           .attr("height",30)
           .attr("width",100)
@@ -1059,15 +1059,90 @@ function drawLine(){
     d3.selectAll("input[name=bt]").attr("class", "btGGB")
     d3.selectAll("input[value=Default]").attr("class", "pressed")
     mot_names.forEach(function(d){
-
       eval("pp_" + d)[0].values = eval("pp_original_"+d)[0]
       animatedLineChart(eval("pp_" + d)[0].values, d, true)
       transitionExample(eval("pp_" + d)[0].values, d)
-
-
     })
 
   }
+
+function createArrayToAnimate(){
+  var toAnimateCoremNames = []
+      for (i = 1; corem_name.length > i; i++){
+          toAnimateCoremNames.push(corem_name[i])
+      }
+      return toAnimateCoremNames
+}
+
+  function automaticAnimation(interval){
+        setInterval(function() {
+        createArrayToAnimate().forEach(function(d){
+          animateCorem(d)})
+      },interval)
+  }
+
+
+function ttt(){
+setInterval(function(){
+  function myFunx() {
+    var i = 0
+    var t = createArrayToAnimate()
+    var l = t.length
+      if(i > l) {
+        i = 0;
+      }
+      setTimeout(animateCorem(t[i]), 2000);  
+}}, 2000)
+}
+
+
+
+window["dontstop"] = true
+var asyncLoop = function(o){
+    var anim = createArrayToAnimate()
+    anim.push("Default")
+    var i=-1,
+        length = o.length;
+    console.log("length ----------------------->" +length)
+    var loop = function(){
+      //if(eval(dontstop)) {
+        i++;
+        if(i == anim.length){i=0; }
+        o.functionToLoop(loop, i);
+      }
+    //} 
+    loop();//init
+}
+
+
+function ani(){
+var anim = createArrayToAnimate()
+anim.push("Default")
+console.log("anim = " + anim)
+asyncLoop({
+    length : t.length,
+    functionToLoop : function(loop, i){
+       window["timer"] =  setTimeout(function(){
+            //document.write('Iteration ' + i + ' <br>');
+            console.log("******* i = "+i)
+            if(anim[i] != "Default"){
+              animateCorem(anim[i])
+            }
+            else {
+              resetLineChartData()
+            }
+            loop();
+        },2000);
+    },
+    callback : function(){
+        document.write('All done!');
+    }    
+});
+
+}
+
+
+
 
   function animatedLineChart(data, name, reset){
 
@@ -1360,8 +1435,9 @@ function animateCorem(coremName){
     }
     else {alert('Please, select some region to bookmark.')}
   }
+window["timer"] = ""
 function brushed() {
-
+    clearTimeout(timer)
     //console.log("brushed");
 
       //console.log("Right click <false> : " + rightClick())
