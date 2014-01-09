@@ -1116,6 +1116,7 @@ var asyncLoop = function(o){
 
 
 function ani(){
+clearTimeout(timer)
 var anim = createArrayToAnimate()
 anim.push("Default")
 console.log("anim = " + anim)
@@ -1712,8 +1713,11 @@ function uncheckAll(){
         ;
         redrawSeqLogo(d);
       });
-      
+      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      svg.selectAll("#max_local").call(yAxisMaxLocal); 
+      svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
+      clearTimeout(timer)
   }
   else{
     d3.selectAll("input[name=boxes]").property("checked", false);
@@ -1722,8 +1726,11 @@ function uncheckAll(){
         ;
         redrawSeqLogo(d);
       });
-      
+      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      svg.selectAll("#max_local").call(yAxisMaxLocal); 
+      svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
+      clearTimeout(timer)
   }
   drawLine();
 }
