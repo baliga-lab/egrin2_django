@@ -1150,7 +1150,7 @@ asyncLoop({
   //var eco = pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == "eco_12")  } ) 
   //createPosArray(pp_corem_ec512157[0].values.filter(function(d) {  return (d.MOTIF_NAME == name)  } ) )
   
-  var array_zero = createPosArray(data.filter(function(d) {  return (d.MOTIF_NAME == name)  } ), left, right )
+  var array_zero = createPosArray(data.filter(function(d) {  return (d.MOTIF_NAME == name)  } ), left, right, name )
   //debugger;
   /*if(name != "All"){
     
@@ -1288,7 +1288,7 @@ function animateCorem(coremName){
     if(a.indexOf(d.MOTIF_NAME) < 0) {a.push(d.MOTIF_NAME)} 
   })
 
-  a.forEach(function(d){
+  mot_names.forEach(function(d){
     console.log("animating --> Corem: " + coremName + " GRE : "+ d)
     animatedLineChart(eval("pp_corem_" + coremName)[0].values, d, false)
     console.log("transitioning seqLogo : GRE : "+ d)
@@ -2037,4 +2037,16 @@ window["checked_global"]  = false;
   
     redraw();
   }
+function addCorem(){
+  clearTimeout(timer) // just in case, let's stop cycling
+  var cor_n = $('#coremName').val();
+  if(cor_n != ""){
+    console.log("add corem bt was clicked !" + cor_n)
+    getCre_added_corem("/cres_in_range_given_corem/"+ species_ + "/", left, right, 4, species_, cor_n, refseq);
+  }
+  else{
+    alert("Please, enter a Corem name")
+  }
 
+
+}

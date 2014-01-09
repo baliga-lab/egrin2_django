@@ -113,7 +113,10 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
 
   function drawButton(data, div){
-    
+  
+  //just in case I need to redraw buttons, let's remove if it exists
+  d3.selectAll("input[name=bt]").remove()
+
 
   //debugger;
   var box = d3.select("#" + div).selectAll("input")
@@ -671,16 +674,15 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
               .attr("height", height3 + 7);
 */
   
-getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",view.left, view.right, refseq);
+getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",left, right, refseq);
 
 
 //if(gene_strand == "+"){
-  getCre("/cres_in_range/"+ species_ + "/", view.left, view.right, 4, species_, gene_, refseq);
+  getCre("/cres_in_range/"+ species_ + "/", left, right, 4, species_, gene_, refseq);
 //}
 //else{
 //  getCre("/cres_in_range/"+ species_ + "/",  view.right,view.left, 4, species_, gene_); 
 //}
-
 
 init();
 
