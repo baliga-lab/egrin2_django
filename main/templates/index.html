@@ -36,34 +36,6 @@
 		</style>
 		<script>
 			$(document).ready(function() {
-/*				$("#gre_tip").qtip({
-					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regulatory motifs (CRMs) discovered in individual biclusters',
-		          	position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
-				    style: 'dark' 
-				   	});
-				$("#corem_tip").qtip({
-					content: 'Corem: Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
-		          	position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
-				    style: 'dark' 
-				   	});
-				$("#bicluster_tip").qtip({
-					content: 'Bicluster: Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression over subsets of conditions, (2) similar de novo detected sequence motifs in their promoters, and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
-		          	position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },         
-				    style: 'dark' 
-				   	});
-				$("#network_tip").qtip({
-					content: 'Network: A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of transcriptome data, (2) cis-regulatory motif (CRM) clustering, (3) genome-wide CRM scanning, and (4) corem detection.',
-					position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
-				    style: 'dark' 
-				   	});*/
 				$( "#accordion" ).accordion({
 				      	active : false,
 				      	collapsible: true,
@@ -114,47 +86,6 @@
             			<li><a href="http://egrin2.systemsbiology.net/corems/64091/hc21279"><i>H. salinarum</i> dpp permease corem (hc21279)</a></li>
             		</ul>
             <p></p>
-			
-			<!-- <blockquote><p>EGRIN 2.0 statistics</p></blockquote>
-				
-			<table>
-				<tr>
-					<th>value</th>
-					<th>description</th>
-				</tr>
-                <tr class="row-a">
-					<td><a href="{% url 'species' %}">{{ species }}</a></td>
-					<td>Species modeled</td>
-				</tr>
-                <tr class="row-b">
-					<td><a href="{% url 'networks' %}">{{ networks }}</a></td>
-					<td>Networks inferred <a id="network_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
-				</tr>
-                <tr class="row-a">
-					<td><a href="{% url 'corems' %}">{{ corems }}</a></td>
-					<td>Corems discovered <a id="corem_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
-				</tr>
-				<tr class="row-b">
-					<td><a href="{% url 'genes' %}">{{ genes }}</a></td>
-					<td>Genes modeled</td>
-				</tr>
-				<tr class="row-b">
-					<td><a href="{% url 'conditions' %}">{{ conditions }}</a></td>
-					<td>Conditions in the models</td>
-				</tr>
-				<tr class="row-a">
-					<td><a href="{% url 'gres' %}">{{ gres }}</a></td>
-					<td>Gene Regulatory Elements (GREs) discovered <a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
-				</tr>
-                <tr class="row-b">
-					<td><a href="{% url 'biclusters' %}">{{ biclusters }}</a></td>
-					<td>Biclusters in the models <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></td>
-				</tr>
-                <tr class="row-a">
-					<td><a href="{% url 'regulators' '511145' %}">{{ tfs }}</a></td>
-					<td>RegulonDB annotated TFs mapped to GREs (E. coli only)</td>
-				</tr>
-			</table> -->
 								
 			<br />		
 		<!-- main ends -->	
