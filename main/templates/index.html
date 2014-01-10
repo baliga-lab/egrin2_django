@@ -20,9 +20,13 @@
 	<div id="content-wrap">
 	
 		<div id="main">
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-  		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<style>
+		    .ui-widget-content {
+		    border: none;
+		    background: none;
+		    color: #222222;
+		    }
+		</style>
 		<script>
 			$(document).ready(function() {
 /*				$("#gre_tip").qtip({
@@ -68,10 +72,10 @@
             <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) in a microbial genome generate a wide array of nuanced responses to varied environmental challenges. <strong>EGRIN 2.0</strong> is a new model for the complete gene regulatory network (GRN) of a prokaryote. This model is reverse engineered directly from gene expression data and genomic sequence, and hence the methodology to generate EGRIN 2.0 is applicable to any prokaryotic organism.</p>
 
             <div id = "accordion">
-            	<h3>More</h3>
+            	<h3 style="border:none">More</h3>
             	<div>
             		<p>
-            			The EGRIN 2.0 model demonstrates how environmental response programs are encoded in the distribution and complex organizations of cis-acting gene regulatory elements (GREs) across an entire prokaryotic genome. EGRIN 2.0 is <strong>remarkably accurate</strong>. It rediscovered the <i>E. coli</i> GRN governed by nearly two-thirds of its characterized TFs that have been carefully curated in RegulonDB from decades of work by numerous laboratories.
+            			The EGRIN 2.0 model demonstrates how environmental response programs are encoded in the distribution and complex organizations of <i>cis</i>-acting gene regulatory elements (GREs) across an entire prokaryotic genome. EGRIN 2.0 is <strong>remarkably accurate</strong>. It rediscovered the <i>E. coli</i> GRN governed by nearly two-thirds of its characterized TFs that have been carefully curated in RegulonDB from decades of work by numerous laboratories.
             		</p>
             		<p>
             			Strikingly, in addition to accurately recapitulating the architecture of well-characterized promoters in canonical locations, the model also revealed that there is widespread regulation at non-canonical locations –within genes and operons! The EGRIN 2.0 model also predicts the context and combinations in which TFs act at GREs in these canonical and non-canonical locations to coordinate transcription across the entire genome, to reorganize functionally-related genes from different operons and regulons into conditionally co-regulated modules or corems. <strong>Remarkably, corems capture fitness-relevant gene-gene associations that are NOT attributable to regulons, operons, or combinatorial control mechanisms!</strong>
