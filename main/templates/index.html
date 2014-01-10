@@ -54,8 +54,11 @@
 				    style: 'dark' 
 				   	});
 				$(function() {
-    				$( "#accordion" ).accordion();
-  					});
+				$( "#accordion" ).accordion({
+			      	active : false,
+			      	collapsible: true
+			    	});
+			  	});
 		      });
 	    </script>
 				
@@ -67,7 +70,7 @@
             <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) in a microbial genome generate a wide array of nuanced responses to varied environmental challenges. <strong>EGRIN 2.0</strong> is a new model for the complete gene regulatory network (GRN) of a prokaryote. This model is reverse engineered directly from gene expression data and genomic sequence, and hence the methodology to generate EGRIN 2.0 is applicable to any prokaryotic organism.</p>
 
             <div id = "accordion">
-            	<h3>More</h3>
+            	<h4>More</h4>
             	<div>
             		<p>EGRIN 2.0 is <strong>remarkably accurate</strong>. It was able to discover nearly two-thirds of the <i>E. coli</i> TFs in RegulonDB <i>de novo</i>.</p>
 					<p>In addition, EGRIN 2.0 describes how gene regulatory mechanisms and the environment integrate to coordinate cellular function, including:
