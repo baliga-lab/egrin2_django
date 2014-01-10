@@ -25,34 +25,34 @@
   		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 		<script>
 			$(document).ready(function() {
-				// $("#gre_tip").qtip({
-				// 	content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regulatory motifs (CRMs) discovered in individual biclusters',
-		  //         	position: { target: 'mouse' },
-		  //         	show: 'click',
-		  //         	hide: { when: { event: 'click' } },          
-				//     style: 'dark' 
-				//    	});
-				// $("#corem_tip").qtip({
-				// 	content: 'Corem: Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
-		  //         	position: { target: 'mouse' },
-		  //         	show: 'click',
-		  //         	hide: { when: { event: 'click' } },          
-				//     style: 'dark' 
-				//    	});
-				// $("#bicluster_tip").qtip({
-				// 	content: 'Bicluster: Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression over subsets of conditions, (2) similar de novo detected sequence motifs in their promoters, and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
-		  //         	position: { target: 'mouse' },
-		  //         	show: 'click',
-		  //         	hide: { when: { event: 'click' } },         
-				//     style: 'dark' 
-				//    	});
-				// $("#network_tip").qtip({
-				// 	content: 'Network: A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of transcriptome data, (2) cis-regulatory motif (CRM) clustering, (3) genome-wide CRM scanning, and (4) corem detection.',
-				// 	position: { target: 'mouse' },
-		  //         	show: 'click',
-		  //         	hide: { when: { event: 'click' } },          
-				//     style: 'dark' 
-				//    	});
+/*				$("#gre_tip").qtip({
+					content: 'GRE: Gene Regulatory Element, a cluster of similar cis-regulatory motifs (CRMs) discovered in individual biclusters',
+		          	position: { target: 'mouse' },
+		          	show: 'click',
+		          	hide: { when: { event: 'click' } },          
+				    style: 'dark' 
+				   	});
+				$("#corem_tip").qtip({
+					content: 'Corem: Co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
+		          	position: { target: 'mouse' },
+		          	show: 'click',
+		          	hide: { when: { event: 'click' } },          
+				    style: 'dark' 
+				   	});
+				$("#bicluster_tip").qtip({
+					content: 'Bicluster: Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression over subsets of conditions, (2) similar de novo detected sequence motifs in their promoters, and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
+		          	position: { target: 'mouse' },
+		          	show: 'click',
+		          	hide: { when: { event: 'click' } },         
+				    style: 'dark' 
+				   	});
+				$("#network_tip").qtip({
+					content: 'Network: A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of transcriptome data, (2) cis-regulatory motif (CRM) clustering, (3) genome-wide CRM scanning, and (4) corem detection.',
+					position: { target: 'mouse' },
+		          	show: 'click',
+		          	hide: { when: { event: 'click' } },          
+				    style: 'dark' 
+				   	});*/
 				$( "#accordion" ).accordion({
 				      	active : false,
 				      	collapsible: true
@@ -68,17 +68,15 @@
             <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) in a microbial genome generate a wide array of nuanced responses to varied environmental challenges. <strong>EGRIN 2.0</strong> is a new model for the complete gene regulatory network (GRN) of a prokaryote. This model is reverse engineered directly from gene expression data and genomic sequence, and hence the methodology to generate EGRIN 2.0 is applicable to any prokaryotic organism.</p>
 
             <div id = "accordion">
-            	<h4>More</h4>
+            	<h3>More</h3>
             	<div>
-            		<p>EGRIN 2.0 is <strong>remarkably accurate</strong>. It was able to discover nearly two-thirds of the <i>E. coli</i> TFs in RegulonDB <i>de novo</i>.</p>
-					<p>In addition, EGRIN 2.0 describes how gene regulatory mechanisms and the environment integrate to coordinate cellular function, including:
-						<ul>
-							<li>The existence of gene regulatory elements (GREs) in both cannonical promoters and non-canonical locations, such as genes and operons</li>
-							<li>How environment-specific TF influences at GREs reorganize functionally-related genes from different operons and regulons into conditionally co-regulated modules or <strong>corems</strong></li>
-							<li>The highly similar fitness consequences of genes organized in corems</li>
-						</ul>
-					</p>
-					<p>
+            		<p>
+            			The EGRIN 2.0 model demonstrates how environmental response programs are encoded in the distribution and complex organizations of cis-acting gene regulatory elements (GREs) across an entire prokaryotic genome. EGRIN 2.0 is <strong>remarkably accurate</strong>. It rediscovered the <i>E. coli</i> GRN governed by nearly two-thirds of its characterized TFs that have been carefully curated in RegulonDB from decades of work by numerous laboratories.
+            		</p>
+            		<p>
+            			Strikingly, in addition to accurately recapitulating the architecture of well-characterized promoters in canonical locations, the model also revealed that there is widespread regulation at non-canonical locations –within genes and operons! The EGRIN 2.0 model also predicts the context and combinations in which TFs act at GREs in these canonical and non-canonical locations to coordinate transcription across the entire genome, to reorganize functionally-related genes from different operons and regulons into conditionally co-regulated modules or corems. <strong>Remarkably, corems capture fitness-relevant gene-gene associations that are NOT attributable to regulons, operons, or combinatorial control mechanisms!</strong>
+            		</p>
+            		<p>
 					We have inferred comprehesive models for two prokaryotic organisms: a bacterium (<i><a href="http://egrin2.systemsbiology.net/networks/511145">Escherichia coli K-12</a></i>) and an archaeon (<i><a href="http://egrin2.systemsbiology.net/networks/64091">Halobacterium salinarum NRC-1</a></i>).
 					</p>
             	</div>  
