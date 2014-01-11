@@ -28,7 +28,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   var margin = {top: 10, right: 30, bottom: 10, left: 40},
       margin2 = {top: 340, right: 30, bottom: 20, left: 40},
       margin3 = {top: 470, right: 30, bottom: 20, left: 40},
-      width = 620 - margin.left - margin.right,
+      width = 720 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom,
       height2 = 600 - margin2.top - margin2.bottom;
 
@@ -146,20 +146,32 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
 
     //debugger;
-  var box = d3.select("#" + div).selectAll("label")
-  .data(data);
-  box.enter().append('label');
-  //box.exit().remove();
-  box
+  var box = d3.select("#" + div).selectAll("label").data(data);
+
+  box.enter().append('label')
+   //.style("display", "inline-block")
+      //.style("float", "left")
+      //.style("padding-right", "10px")
+      //.style("white-space", "nowrap")
+      //.style("vertical-align", "middle")
+      //.style("margin-right","100px")
+      //.attr("class", "checkboxes")
       .attr('for',function(d,i){ return d ; })
       //.attr('color', "#ffff00")
       .text(function(d) { return d; })
-      .style("color", function(d) { return color(d); } ) //
-      .style( "text-anchor", "left" )
-      .style( "font", "corrier")
-      .style( "font-size", "16px")
-      .style("display", "inline-block")
-      .style("width", "5em")
+      .style("color", function(d) { return color(d); } );
+  //box.exit().remove();
+  box
+    //display: block;
+    //float: left;
+    //padding-right: 10px;
+    //white-space: nowrap;
+     
+      //.style( "text-anchor", "left" )
+      //.style( "font", "corrier")
+      //.style( "font-size", "12px")
+      
+      //.style("width", "5em")
       /*
    label {
      display: inline-block;
@@ -167,6 +179,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
    }
       */
   .append("input")
+      .attr("class", "checkboxes")
       .attr("id", "box_selected")
       .attr("name", "boxes")
       //.attr("class", "squaredThree")
@@ -189,6 +202,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       .attr("type", "checkbox")
       .attr('color', "#ffff00")
       .style("fill", "#ffff00" )
+      //.stye("height", "100%")
       .attr("id", function(d,i) { return d; });
   // .append("br");
   //    .attr("onClick", changeMot);
@@ -683,6 +697,10 @@ getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",left, right
 //else{
 //  getCre("/cres_in_range/"+ species_ + "/",  view.right,view.left, 4, species_, gene_); 
 //}
+
+
+// for the special case of E. Coli
+
 
 init();
 

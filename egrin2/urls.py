@@ -160,6 +160,7 @@ urlpatterns = patterns('main.views',
 
 
 
+    url(r'^corem_json_list/(?P<species>[^/]*)', 'coremToJSON',name='coremToJSON'), # dsalvanha Jan/10/14
     # list of corem-specific go_ids
     url(r'^corem_go_json/$', 'corem_go_json',name='corem_go_json'),
     url(r'^corem_go_json/(?P<species>[^/]*)/(?P<corem>[^/]*)/?$',
@@ -170,6 +171,7 @@ urlpatterns = patterns('main.views',
 
   
     url(r'^regulators/(?P<species>[^/]*)/?$', 'regulators',name='regulators'),
+    url(r'^regulators_json/(?P<species>[^/]*)/?$', 'regulatorsToJSON',name='regulatorsToJSON'),
     url(r'^regulators/(?P<species>[^/]*)/(?P<regulator>[^/]*)/?$', 'regulator_detail',name='regulator_detail'),
 
     url(r'^contact/$', 'contact',name='contact'),
