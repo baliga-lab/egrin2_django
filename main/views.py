@@ -459,6 +459,47 @@ def networks(request, species=None):
                              "conditions":cond,"corems":corems,"gres":gres}
     return render_to_response('networks.html', locals())
 
+
+def coremToJSON(request,species=None):
+    # get info about all regulators
+    #s = Corem.objects.filter(network=network_id)
+    corem = Corem.objects.filter(network__species__ncbi_taxonomy_id=species)
+    #out = [regulators(species, tf) for tf in tfs]
+    #print "------------> ",gre_[0]
+    some_data_to_dump = [{
+    'corem_name': g.corem_id
+    } for g in corem]
+    #print "########### ",some_data_to_dump
+
+    return HttpResponse(simplejson.dumps(some_data_to_dump), mimetype='application/json')  
+
+def regulatorsToJSON(request,species=None):
+    # get info about all regulators
+    class regulators:
+        def __init__(self,species,tf):
+            self.CUTOFF = 0
+            self.s = Species.objects.get(ncbi_taxonomy_id=species)
+            self.tf = tf
+            self.gres = list(set([o.gre_id for o in greTF.objects.filter(tf=tf,score__gte=self.CUTOFF)]))
+            self.corems = list(set(Corem.objects.filter(gres__in=self.gres)))
+            self.genes = list(set(Gene.objects.filter(gre__in=self.gres)))
+            self.conds = list(set(Condition.objects.filter(gre__in=self.gres)))
+    tfs = list(set([o.tf for o in greTF.objects.all()]))
+    gre_ = list(set([o for o in greTF.objects.all()]))
+    s = Species.objects.get(ncbi_taxonomy_id=species)
+    out = [regulators(species, tf) for tf in tfs]
+    #print "------------> ",gre_[0]
+    
+    some_data_to_dump = [{
+    'gre_name': g.gre.gre_id,
+    'tf': g.tf
+    } for g in gre_]
+    #print "########### ",some_data_to_dump
+
+    return HttpResponse(simplejson.dumps(some_data_to_dump), mimetype='application/json')    
+    #return render_to_response('regulators.html', locals())
+    #return HttpResponse(simplejson.dumps(data), mimetype='application/json')    
+
 def regulators(request,species=None):
     # get info about all regulators
     class regulators:
@@ -651,32 +692,38 @@ def cres_in_range_given_corem(request, species, start, stop, top, coremName, ref
     #gene = Gene.objects.filter(species__ncbi_taxonomy_id=species, name=gene_name);
     #corem = Corem.objects.filter(genes__sys_name=str(gene_name))
     corem = Corem.objects.filter(corem_id=str(coremName))
+
+    if len(corem) != 0:
+
     #cre_ids = [b.bc_id for b in corem.bicluster_set.all()];
     #cre_ids = gene.bicluster_set.all();
     # Wei-Ju g = Gene.objects.get(sys_name='b0035')
     #cre_ids = [cre.pr for cre in [b.cres for c in g.corem_set.all() for b in c.bicluster_set.all()]]
 
     # Wei-Ju cre_ids = [cre.id for c in g.corem_set.all() for b in c.bicluster_set.all() for cre in b.cres.all()]
-    corem_ = [cor.id for cor in corem.all()]
-    top_ = int(top)
-    for corem_id in corem_:
-        print "start: %s stop: %s top: %s corem_id: %s"  % (str(start), str(stop), str(top_), str(corem_id))
+        corem_ = [cor.id for cor in corem.all()]
+        top_ = int(top)
+        for corem_id in corem_:
+            print "start: %s stop: %s top: %s corem_id: %s"  % (str(start), str(stop), str(top_), str(corem_id))
 
-    cres = cres_in_range(network.id, chr_id[0].id, start, stop, top=top_, corem_id=corem_id)
-    corem_name = [cor.corem_id for cor in corem.all()]
+        cres = cres_in_range(network.id, chr_id[0].id, start, stop, top=top_, corem_id=corem_id)
+        corem_name = [cor.corem_id for cor in corem.all()]
     #cor_id = [cor.id for cor in corem.all()]
-    print cres
-    print "call for individual Corem"
-    print "start ", start, "stop ", stop
+        print cres
+        print "call for individual Corem"
+        print "start ", start, "stop ", stop
     #print "ids corem: --> " , cor_id
-    print corem_name
+        print corem_name
 
-    data = {
-        'corem_name': corem_name,
-        'cre_data':cres
-
-    }
-
+        data = {
+            'corem_name': corem_name,
+            'cre_data':cres
+        }
+    else:
+        data = {
+            'corem_name': [],
+            'cre_data':[]
+        }
     #cre_ids = [b.bc_id for b in c.bicluster_set.all() for c in g.corem_set.all()]
     #cre_ids = [c.bicluster_set.all() for c.bc_id in g.corem_set.all()]
 

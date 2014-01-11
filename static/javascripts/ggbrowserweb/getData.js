@@ -64,6 +64,61 @@ var max_local = new Array();
           return arr; //window["array_zero"] =
         }
 
+
+        function getCoremName(url, specie){ // top --> number of ranked GRE's (CRE) one wants to get
+        
+        $.ajax( {
+              type:'Get',
+               // 
+              url: url + specie + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+             ,
+             success:function(json) {
+              window["all_corem_names"] = JSON.parse(json);
+              //debugger
+              var options = $("#dropdown_corem");
+                all_corem_names.forEach(function(d){
+                    options.append($("<option />").text(d.corem_name));
+                })
+
+              },
+              error: function(e, xhr){
+                  console.log(url);
+                  console.log("error: " + e); debugger
+                },
+               async:false,
+                    dataType:"text",
+              });
+
+
+            } 
+        
+        
+
+
+
+//http://theflash2:8000/regulators_json/511145?sEcho=10&iDisplayStart=0&iDisplayLength=1000000000
+        function getRegulator(url, specie){ // top --> number of ranked GRE's (CRE) one wants to get
+        
+        $.ajax( {
+              type:'Get',
+               // 
+              url: url + specie + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+             ,
+             success:function(json) {
+              window["regulator"] = JSON.parse(json);
+              //debugger
+
+              },
+              error: function(e, xhr){
+                  console.log(url);
+                  console.log("error: " + e); debugger
+                },
+               async:false,
+                    dataType:"text",
+              });
+
+
+            } 
         function getCre(url, start, stop, top, specie, gene_name, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
         
         $('#freeze').block({   
@@ -160,7 +215,7 @@ var max_local = new Array();
                 //drawLine()
                 brushed()
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
-                $('#freeze').unblock()
+                //$('#freeze').unblock()
               //drawLineChart();
 
               if(left < right){
@@ -295,6 +350,7 @@ var max_local = new Array();
                   //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
                   yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
                   ani()
+                  $('#freeze').unblock()
                 }
 
                 //drawLineChart();
@@ -337,7 +393,11 @@ var max_local = new Array();
               
 
               window["cre_corem"] = JSON.parse(json);
-              
+              if(cre_corem["corem_name"] == ""){
+                alert("The entered name is invalid" )
+                $('#freeze').unblock()
+              }
+              else {
               //cre_corem["cre_data"][0][0].All = cre_corem["cre_data"][1][1];
               //debugger;
               window["corem_name_add"] = cre_corem["corem_name"];
@@ -378,9 +438,13 @@ var max_local = new Array();
                 else{
                   corem_name.push(cre_corem["corem_name"][0])
                 }
+
                 if(eval("pp_corem_"+ cre_corem["corem_name"][0])[0].values == ""){
+                  corem_name_add = []
+                  corem_name.splice(-1,1)
                   alert("There is no data for Corem [" +cre_corem["corem_name"][0] + "] on this range." )
                   $('#freeze').unblock()
+                  ani()
                 }
                 else{
                   drawButton(corem_name, "corem_box");
@@ -395,7 +459,7 @@ var max_local = new Array();
                 //drawLineChart();
                 //legend_chart();
                 //jQuery('#displayStatus').html('Loaded').delay(2000).fadeOut();
-              
+              }
               },
               error: function(e, xhr){
                   console.log(url);

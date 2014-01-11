@@ -1,41 +1,153 @@
 function legend_chart(){
+var haveRegulator = false
+window["regulator"] = ""
+if(species_ == "511145"){
+  //regulator.forEach(function(d){if(d.tf == "PurR"){console.log(d)}})
+  getRegulator("/regulators_json/", species_)
+  getCoremName("/corem_json_list/",species_)
+  haveRegulator = true
+}
+
+
 var legend = svg.append("g")
     .attr("class", "legend")
-    .attr("x", x(view.left) )
+    .attr("x", x(left) )
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
-    .attr("transform", "translate(30, 10)")
+    .attr("transform", "translate(30, 20)");
+
+var ii = [ 50,100,135, 180]
+var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).enter().append("text")
+  .each(function(d, i) {
+    //debugger
+    var g = d3.select(this);
+      g.attr("id", "header_")
+      .attr("x", x(left) + ii[i] )
+      .attr("y", 10)
+      .attr("height",30)
+      .attr("width",100)
+      .text(function(e){
+        return e;
+      })
+    })
+      .style("font-weight", "bold")
+    /*.style("text-decoration",function(d){
+      if(d == "View"){
+        return "underline"
+      }
+    })*/
+    /*.on("click",function(d){
+      if(d == "View"){
+        d3.selectAll("input[name=boxes]").property("checked", true);
+        uncheckAll()
+        console.log("called uncheck")
+      }
+    })*/
+    .attr("transform", "translate(-80, 0)");
+      ;
+  
 
   legend.selectAll('g').data(mot_names)
       .enter()
       .append('g')
       .each(function(d, i) {
         var g = d3.select(this);
-        g.append("rect")
-          .attr("x",x(view.left) )
+        g.append("circle")
+          .attr("id", "box_"+d)
+          .attr("cx",x(left) )
           //.attr("x2",x(view.right- 300) )
-          .attr("y", i*10)
+          .attr("cy", i*13)
+          .attr("r", 6)
           //.attr("y2", i*10)
           .attr("width", 8)
           .attr("height", 8)
           //.attr("align", "bottom")
           //.attr("dy", ".35em")
-          .style("fill", function(d) {return color(d);})
+          .style("fill", function(d) {
+            if(d == "All"){return "white"}
+              else{
+                return color(d);
+              }
+            })
+          .style("stroke", function(d) { return color(d); } )
+          .on('click', function(c){
+             if (d3.selectAll("input[id="+c+"]")[0][0].checked){
+                d3.selectAll("input[id="+c+"]").property("checked", false)
+                d3.selectAll("#box_"+c).style("fill", "white")
+                changed2ForLegend(c)  
+                //debugger
+              }
+              else{
+                d3.selectAll("input[id="+c+"]").property("checked", true);
+                d3.selectAll("#box_"+c).style("fill",function(d) { return color(d); } )
+                changed2ForLegend(c)
+             
+              }
+              //}
+            })
+          //.style("stroke-width", "10px")
           //.style("fill", function(d, i) { return color(i); });
           //.attr("stroke", function(d) { return color(d); } ) 
+        g.append("rect")
+          .attr("x", x(left + 100 ) )
+          .attr("y", i * 13 - 8 )
+          .attr("height",13)
+          .attr("width",50)
+          .style("fill", "#ACD1E9" )
+          .style("opacity", "0.2")
+          .attr("transform", "translate(-5, 0)")
+
+        // let's write regulator if it exists
         g.append("text")
-          .attr("x", x(view.left + 100 ) )
-          .attr("y", i * 10 + 8)
+          .attr("x", 60 )
+          .attr("y", i * 13 + 1 )
+          .attr("height",30)
+          .attr("width",100)
+          .text(function(d){
+            var tmp__ = ""
+            regulator.forEach(function(e){
+              if(e.gre_name == d){
+                tmp__ = "("+e.tf+")";
+              }})
+            return tmp__;
+          })
+          .on('click', function(c){
+            window.open('/gres/' + species_ + "/" + c, '_blank')
+          })
+          .style('cursor', function(d){
+            if(d != "All"){
+              return 'hand'
+            }
+          })
+
+        g.append("text")
+          .attr("x", x(left + 100 ) )
+          .attr("y", i * 13 + 1 )
           .attr("height",30)
           .attr("width",100)
           //.attr("fill", function(d) {color(d);})
           .text(function(d){return d;})
           .style("fill", function(d) { return color(d); } )
+          //.style("stroke", bordercolor)
+          .style("text-decoration","underline")
           .on('click', function(c){
+            //debugger;
               if(c != "All"){
                 window.open('/gres/' + species_ + "/" + c, '_blank')
+             /* if (d3.selectAll("input[id="+c+"]")[0][0].checked){
+                d3.selectAll("input[id="+c+"]").property("checked", false)
+                d3.selectAll("#box_"+c).style("fill", "white")
+                changed2ForLegend(c)  
+                //debugger
               }
+              else{
+                d3.selectAll("input[id="+c+"]").property("checked", true);
+                d3.selectAll("#box_"+c).style("fill",function(d) { return color(d); } )
+                changed2ForLegend(c)
+                */
+              }
+              //}
             })///gres/511145/eco_87
           .style('cursor', function(d){
             if(d != "All"){
@@ -1116,6 +1228,11 @@ var asyncLoop = function(o){
 
 
 function ani(){
+
+  if($('#cycling').attr("onclick") !="ani()"){
+    $('#cycling').attr("onclick") = "clearTimeout(timer)"
+  }
+
 clearTimeout(timer)
 var anim = createArrayToAnimate()
 anim.push("Default")
@@ -1305,6 +1422,11 @@ function animateCorem(coremName){
     //debugger;
     //##### Don't display All track at first 
     d3.selectAll("input[id=All]").property("checked", false);
+    //d3.selectAll("input[id=All]").property("checked", false)
+    d3.selectAll("#box_All").style("fill", "white")
+    //changed2ForLegend(c)  
+                //debugger
+
     
 
 
@@ -1437,6 +1559,27 @@ function animateCorem(coremName){
     else {alert('Please, select some region to bookmark.')}
   }
 window["timer"] = ""
+
+
+function brushStartEgrin(){
+  clearTimeout(timer)
+  drawLine();
+
+
+}
+function brushEndEgrin(){
+  //clearTimeout(timer)
+  drawLine();
+  if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
+    ani()
+  }
+  else{
+    clearTimeout(timer)
+  }
+
+}
+
+
 function brushed() {
     clearTimeout(timer)
     //console.log("brushed");
@@ -1677,6 +1820,72 @@ function brushed() {
       })
   }
   }
+
+    function changed2ForLegend(nameClicked){
+    //degugger;
+
+      if(d3.selectAll("input[id="+nameClicked+"]")[0][0].checked){
+     // console.log("value : " + this.value);
+     // console.log("id : " + this.id);
+     // console.log("checked : " + this.checked);
+     // console.log(this);
+    
+      window[nameClicked + "checked"] = true;
+    
+    
+      svg.selectAll("#" + nameClicked )
+      .style("display", null);
+    
+      svg.select(".motifs_"+nameClicked)//.selectAll(".line")
+      .style("display", null);
+    
+      
+      
+      
+  //max_local = getMaxLocal(getNameWithoutUnchecked());
+  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  svg.selectAll("#max_local").call(yAxisMaxLocal); 
+  svg.select("#max_local").transition().call(yAxisMaxLocal);
+  //svg.selectAll("#max_local").call(yAxisMaxLocal); 
+  console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+  //console.log("changed2 called : max_local:"+max_local);
+  redrawSeqLogo(nameClicked)// necessary for when I set checkbox to checked, then it shows again seqlogo
+  //drawLine();
+  drawLineEspecialForAxisTransition()
+
+  mot_names.forEach(function(d){
+    transitionExample(eval("pp_" + d)[0].values, d)  
+  })
+  
+  }
+  else {
+
+      //console.log(this)
+      window[nameClicked + "checked"] = false;
+     // debugger;
+      svg.selectAll("#" + nameClicked )
+      .style("display", "none");
+    
+      svg.select(".motifs_"+nameClicked)//.selectAll(".line")
+      .style("display", "none");
+
+
+      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    svg.select("#max_local").transition().call(yAxisMaxLocal);
+    //svg.selectAll("#max_local").call(yAxisMaxLocal); 
+    console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+    
+
+      //drawLine();
+      drawLineEspecialForAxisTransition()
+      mot_names.forEach(function(d){
+        transitionExample(eval("pp_" + d)[0].values, d)  
+      })
+  }
+  }
+
+
+
 
 function getNameWithoutUnchecked(){
   var tt = this.id;
@@ -1927,10 +2136,10 @@ function uncheckAll(){
     // let's set brush
     //brush.extent([view.left, view.left + 500]);
     if(gene_strand =="+"){
-      brush.extent([parseInt(gene_start)-200, parseInt(gene_start)+100]);  
+      brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);  
     }
     else{
-      brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+200]);
+      brush.extent([parseInt(gene_start)-50, parseInt(gene_start)+400]);
     }
     
     svg.select(".x.brush").call(brush);
@@ -2039,7 +2248,7 @@ window["checked_global"]  = false;
   }
 function addCorem(){
   clearTimeout(timer) // just in case, let's stop cycling
-  var cor_n = $('#coremName').val();
+  var cor_n = $('#dropdown_corem').val();
   if(cor_n != ""){
     console.log("add corem bt was clicked !" + cor_n)
     getCre_added_corem("/cres_in_range_given_corem/"+ species_ + "/", left, right, 4, species_, cor_n, refseq);
