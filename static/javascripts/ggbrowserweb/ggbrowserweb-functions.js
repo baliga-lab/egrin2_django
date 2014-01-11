@@ -11,7 +11,7 @@ if(species_ == "511145"){
 
 var legend = svg.append("g")
     .attr("class", "legend")
-    .attr("x", x(view.left) )
+    .attr("x", x(left) )
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
@@ -23,7 +23,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
     //debugger
     var g = d3.select(this);
       g.attr("id", "header_")
-      .attr("x", x(view.left) + ii[i] )
+      .attr("x", x(left) + ii[i] )
       .attr("y", 10)
       .attr("height",30)
       .attr("width",100)
@@ -55,7 +55,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
         var g = d3.select(this);
         g.append("circle")
           .attr("id", "box_"+d)
-          .attr("cx",x(view.left) )
+          .attr("cx",x(left) )
           //.attr("x2",x(view.right- 300) )
           .attr("cy", i*13)
           .attr("r", 6)
@@ -90,7 +90,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           //.style("fill", function(d, i) { return color(i); });
           //.attr("stroke", function(d) { return color(d); } ) 
         g.append("rect")
-          .attr("x", x(view.left + 100 ) )
+          .attr("x", x(left + 100 ) )
           .attr("y", i * 13 - 8 )
           .attr("height",13)
           .attr("width",50)
@@ -100,7 +100,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
 
         // let's write regulator if it exists
         g.append("text")
-          .attr("x", x(view.left + 325 ) )
+          .attr("x", 60 )
           .attr("y", i * 13 + 1 )
           .attr("height",30)
           .attr("width",100)
@@ -122,7 +122,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           })
 
         g.append("text")
-          .attr("x", x(view.left + 100 ) )
+          .attr("x", x(left + 100 ) )
           .attr("y", i * 13 + 1 )
           .attr("height",30)
           .attr("width",100)
@@ -1559,6 +1559,27 @@ function animateCorem(coremName){
     else {alert('Please, select some region to bookmark.')}
   }
 window["timer"] = ""
+
+
+function brushStartEgrin(){
+  clearTimeout(timer)
+  drawLine();
+
+
+}
+function brushEndEgrin(){
+  //clearTimeout(timer)
+  drawLine();
+  if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
+    ani()
+  }
+  else{
+    clearTimeout(timer)
+  }
+
+}
+
+
 function brushed() {
     clearTimeout(timer)
     //console.log("brushed");

@@ -478,7 +478,8 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
   var brush = d3.svg.brush()
       .x(x2)
-      //.on("brushstart", brushStart)
+      .on("brushstart", brushStartEgrin)
+      .on("brushend", brushEndEgrin)
       .on("brush", brushed)
 ;
       //***********************.on("brushend", brushEnd);
