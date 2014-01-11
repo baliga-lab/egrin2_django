@@ -1,4 +1,30 @@
 {% extends 'base_headerless.html' %}
+<style>
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node {
+  cursor: move;
+  fill: #ccc;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  pointer-events: none;
+  font: 15px sans-serif;
+}
+
+.node fixed {
+  fill: #f00;
+}
+
+</style>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{% static "javascripts/jquery.tipsy.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/tipsy.css" %}" type="text/css" />
 {% load url from future %}
 {% block title %}About us{% endblock %}
 {% block nav %}
@@ -29,3 +55,106 @@
 		  <!-- main ends -->
 		</div>
 {% endblock %}
+
+<script>
+
+var width = 790,
+    height = 500;
+
+var force = d3.layout.force()
+    .size([width, height])
+    .charge(-700)
+    .linkDistance(150)
+    .on("tick", tick);
+
+var drag = force.drag()
+    .on("dragstart", dragstart);
+
+var svg = d3.select("body").select("wrap").select("content-wrap").select("main").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("{% static "graph.json" %}", function(error, graph) {
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  link = svg.selectAll(".link")
+      .data(graph.links)
+    .enter().append("line")
+      .attr("class", "link");
+
+  node = svg.selectAll(".node")
+      .data(graph.nodes)
+    .enter().append("g")
+      .attr("class", "node")
+      .style("fill",function(d) { 
+        if (d.fixed == true) {
+          return "red";
+        } else {
+          return colors[d.group] ;
+        }
+      })
+      .on("dblclick", dblclick)
+      .call(force.drag);
+
+  node.append("circle")
+    .attr("r", 25);
+
+  node.append("text")
+    .attr("dx", "-2.5%")
+    .attr("dy", "7.5%")
+    .text(function(d) { return d.name });
+
+  $('svg circle').tipsy({ 
+        gravity: 'w', 
+        html: true, 
+        title: function() {
+          var d = this.__data__, c = d.info;
+          return c; 
+        },
+        opacity: 1.0,
+        hoverlock: true
+      });
+});
+
+function tick() {
+  link.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  tipsy = d3.select("body");
+}
+
+function dblclick(d) {
+  d3.select(this)
+    .classed("fixed", d.fixed = false)
+    .style("fill",colors[d.group]);
+}
+
+function dragstart(d) {
+  d3.select(this).classed("fixed", d.fixed = true)
+    .style("fill","red");
+
+  
+  
+}
+
+var colors = [
+  "#75B802",
+  "#CEF0C4",
+  "#59EE86",
+  "#91A544",
+  "#0FD32E",
+  "#9EFEBC",
+  "#90AF89",
+  "#BEEA55",
+  "#40C06D",
+  "#7ECE98"
+]
+
+</script>
