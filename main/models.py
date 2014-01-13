@@ -235,10 +235,12 @@ class CrePos(models.Model):
         return '%s' % self.start
 
 def cres_in_gene_all(gene_name):
+    
     g = Gene.objects.get(sys_name=gene_name)
+    print "gene --> ", g
     cur = connection.cursor()
     cur.execute('select json0 from cres_in_gene where gene_id = %s', [g.id])
-    res = g.fetchone()
+    res = cur.fetchone()
     cur.close()
     if res:
         return res[0]
@@ -248,8 +250,8 @@ def cres_in_gene_all(gene_name):
 def cres_in_gene_corems(gene_name):
     g = Gene.objects.get(sys_name=gene_name)
     cur = connection.cursor()
-    cur.execute('select json0 from cres_in_gene where gene_id = %s', [g.id])
-    res = g.fetchone()
+    cur.execute('select json1 from cres_in_gene where gene_id = %s', [g.id])
+    res = cur.fetchone()
     cur.close()
     if res:
         return res[0]

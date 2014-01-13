@@ -648,6 +648,22 @@ def cres_in_range_json(request, species, start, stop, top, gene_name, refseq): #
     result = everything
     return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
+#cres_in_gene_all
+def cres_in_range_json_gene_all(request,gene_name): #dsalvanha 13/Jan/14
+    #print "gene_name =-___-----------> ", genebla
+    data = cres_in_gene_all(gene_name=gene_name)
+    return HttpResponse(data, mimetype='application/json')
+
+def cres_in_range_json_gene_corem(request, gene_name): #dsalvanha 13/Jan/14
+    data = cres_in_gene_corems(gene_name=gene_name)
+    return HttpResponse(data, mimetype='application/json')            
+
+
+
+
+
+
+
 
 def cres_in_range_json_list(request, species, start, stop, top, gene_name, refseq): #dsalvanha Nov/27
     network = Network.objects.get(species__ncbi_taxonomy_id=species)

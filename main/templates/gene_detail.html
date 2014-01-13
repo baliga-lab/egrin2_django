@@ -74,43 +74,36 @@ GGBrowser scripts to be imported
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
 
-    /*$("#prom_arch").qtip({
-      content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
-            position: { target: 'mouse' },
-            show: 'click',
-            hide: { when: { event: 'click' } },           
+    $("#ggbrowserweb_tip").qtip({
+        content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+        position: { target: 'mouse' },
+        show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },   
         style: 'dark' 
-        });*/
+        });
     $("#gre_tip").qtip({
       content: 'Putative gene regulatory elements (GREs) discovered in the promoter region. GREs discovered frequently have lower qvals (hypergeometric test).',
             position: { target: 'mouse' },
-            show: 'click',
-            hide: { when: { event: 'click' } },            
-        style: 'dark' 
-        });
-    $("#ggbrowserweb_tip").qtip({
-      content: 'Dynamic visualization of GREs in a corem context.',
-            position: { target: 'mouse' },
-            show: 'click',
-            hide: { when: { event: 'click' } },            
+            show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },             
         style: 'dark' 
         });
     $("#condition_tip").qtip({
       content: 'Conditions in which this gene is co-regulated with other genes in biclusters. Conditions discovered frequently have lower qvals (hypergeometric test).',
             position: { target: 'mouse' },
-            show: 'click',
-            hide: { when: { event: 'click' } },            
+            show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },              
         style: 'dark' 
         });
     $("#bicluster_tip").qtip({
       content: 'Biclusters containing this gene.',
             position: { target: 'mouse' },
-            show: 'click',
-            hide: { when: { event: 'click' } },          
+            show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },       
         style: 'dark' 
         });
     $("#zoom_prom_arch").colorbox({  
-      title:"{{ g.sys_name }} Promoter Architecture",
+      title:"<div>{{ g.sys_name }} Promoter Architecture </div><div><a href='/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png'><i>download</i></a></div>",
       });
       });
     </script>
@@ -143,11 +136,8 @@ GGBrowser scripts to be imported
       </tbody>
     </table>
 
-<!-- GGBrowserweb starts
-<p>Genome Browser <a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p>
 
--->
-<blockquote><p>Genome Browser<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();">Download Visualization</a></p></blockquote>
+<blockquote><p>{{ g.sys_name }} Promoter Architecture<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();" <img style="background:rgba(250, 250, 250, 0) height="24px" src="/static/download.png"></a></p></blockquote>
 <div id="freeze" style="width: 750px;">
 <table id="table-ggbrowserweb" style="margin: 0; white-space:nowrap;">
       <tr>
