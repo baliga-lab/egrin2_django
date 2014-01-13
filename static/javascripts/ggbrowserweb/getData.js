@@ -442,7 +442,7 @@ var max_local = new Array();
                 if(eval("pp_corem_"+ cre_corem["corem_name"][0])[0].values == ""){
                   corem_name_add = []
                   corem_name.splice(-1,1)
-                  alert("There is no data for Corem [" +cre_corem["corem_name"][0] + "] on this range." )
+                  alert("There is no data for Corem " +cre_corem["corem_name"][0] + " on this range." )
                   $('#freeze').unblock()
                   ani()
                 }
