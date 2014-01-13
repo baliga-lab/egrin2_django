@@ -106,10 +106,12 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           .attr("width",100)
           .text(function(d){
             var tmp__ = ""
+            if(regulator != "") {
             regulator.forEach(function(e){
               if(e.gre_name == d){
                 tmp__ = "("+e.tf+")";
               }})
+            }
             return tmp__;
           })
           .on('click', function(c){
