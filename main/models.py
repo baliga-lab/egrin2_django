@@ -234,6 +234,29 @@ class CrePos(models.Model):
     def __unicode__(self):
         return '%s' % self.start
 
+def cres_in_gene_all(gene_name):
+    g = Gene.objects.get(sys_name=gene_name)
+    cur = connection.cursor()
+    cur.execute('select json0 from cres_in_gene where gene_id = %s', [g.id])
+    res = g.fetchone()
+    cur.close()
+    if res:
+        return res[0]
+    else:
+        return ""
+
+def cres_in_gene_corems(gene_name):
+    g = Gene.objects.get(sys_name=gene_name)
+    cur = connection.cursor()
+    cur.execute('select json0 from cres_in_gene where gene_id = %s', [g.id])
+    res = g.fetchone()
+    cur.close()
+    if res:
+        return res[0]
+    else:
+        return ""
+    
+
 def cres_in_range(network_id, chromosome_id, start, stop, top=None, corem_id=None, omit0=True):
     """
     1. -> { 'GRE1': [(1, 1231) (2, 232)], ... }
