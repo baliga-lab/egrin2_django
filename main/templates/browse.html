@@ -32,22 +32,22 @@
 				$("#corem_tip").qtip({
 					content: 'Corem: conditionally co-regulated module, a set of conditionally co-regulated genes discovered by applying link community algorithm (Ahn et al., 2010) to backbone extracted (Serrano et al., 2009) gene-gene association network (inferred by cMonkey/Inferelator)',
 		          	position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
+		          	show: { when: { event: 'mouseover' } },
+		          	hide: { when: { event: 'mouseout' } },             
 				    style: 'dark' 
 				   	});
 				$("#bicluster_tip").qtip({
 					content: 'Bicluster: Output of integrated biclustering algorithm, cMonkey (Reiss et al., 2006), that identifies groups of genes with (1) similar patterns of differential expression over subsets of conditions, (2) similar de novo detected <i>cis</i>-regulatory motifs in their promoters, and (3) related functions, inferred from functional association networks (e.g., EMBL STRING (Szklarczyk et al., 2011)).',
 		          	position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },         
+		          	show: { when: { event: 'mouseover' } },
+		          	hide: { when: { event: 'mouseout' } },            
 				    style: 'dark' 
 				   	});
 				$("#network_tip").qtip({
 					content: 'Network: A full ensemble model consisting of (1) many (~100s) of individual cMonkey/Inferelator runs on blocked subsets of transcriptome data, (2) GRE detection by <i>cis</i>-regulatory motif clustering, (3) genome-wide GRE scanning, and (4) corem detection.',
 					position: { target: 'mouse' },
-		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
+		          	show: { when: { event: 'mouseover' } },
+		          	hide: { when: { event: 'mouseout' } },              
 				    style: 'dark' 
 				   	});
 		      });
