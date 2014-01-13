@@ -74,13 +74,13 @@ GGBrowser scripts to be imported
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
 
-    $("#prom_arch").qtip({
+    /*$("#prom_arch").qtip({
       content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
             position: { target: 'mouse' },
             show: 'click',
             hide: { when: { event: 'click' } },           
         style: 'dark' 
-        });
+        });*/
     $("#gre_tip").qtip({
       content: 'Putative gene regulatory elements (GREs) discovered in the promoter region. GREs discovered frequently have lower qvals (hypergeometric test).',
             position: { target: 'mouse' },
