@@ -42,6 +42,14 @@
 				      	heightStyle: "content"
 				    });
 		      	});
+			$(document).ready(function() {
+				$("#corem_tip").qtip({
+					content: 'GRE: Gene Regulatory Element, a cluster of similar <i>cis</i>-regulatory motifs',
+		          	position: { target: 'mouse' },
+		          	show: 'click',
+		          	hide: { when: { event: 'inactive' }, delay: 2000 },          
+				    style: 'dark' 
+				   	});
 	    </script>
 				
 			<h3><strong>EGRIN 2.0 is a systems-level model that delineates the complex relationship between environment, gene regulation, and phenotype in prokaryotes</strong></h3>

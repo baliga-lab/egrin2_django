@@ -26,7 +26,7 @@
 					content: 'GRE: Gene Regulatory Element, a cluster of similar <i>cis</i>-regulatory motifs',
 		          	position: { target: 'mouse' },
 		          	show: 'click',
-		          	hide: { when: { event: 'click' } },          
+		          	hide: { when: { event: 'inactive' }, delay: 2000 },          
 				    style: 'dark' 
 				   	});
 				$("#corem_tip").qtip({
