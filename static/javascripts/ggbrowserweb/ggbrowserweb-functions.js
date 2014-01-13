@@ -1,10 +1,11 @@
 function legend_chart(){
+getCoremName("/corem_json_list/",species_)
 var haveRegulator = false
 window["regulator"] = []
 if(species_ == "511145"){
   //regulator.forEach(function(d){if(d.tf == "PurR"){console.log(d)}})
   getRegulator("/regulators_json/", species_)
-  getCoremName("/corem_json_list/",species_)
+  
   haveRegulator = true
 }
 
@@ -2253,7 +2254,7 @@ function addCorem(){
   var cor_n = $('#dropdown_corem').val();
   if(cor_n != ""){
     console.log("add corem bt was clicked !" + cor_n)
-    getCre_added_corem("/cres_in_range_given_corem/"+ species_ + "/", left, right, 4, species_, cor_n, refseq);
+    getCre_added_corem("/cres_in_range_given_corem/"+ species_ + "/", left, right, 6, species_, cor_n, refseq);
   }
   else{
     alert("Please, enter a Corem name")
