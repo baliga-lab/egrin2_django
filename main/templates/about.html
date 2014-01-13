@@ -15,34 +15,36 @@
 	<!-- navigation ends-->
 	</div>
 {% endblock %}
-{% block content %}
-  <style>
-  .link {
-    stroke: #000;
-    stroke-width: 1.5px;
-  }
-
-  .node {
-    cursor: move;
-    fill: #ccc;
-    stroke: #000;
-    stroke-width: 1.5px;
-  }
-
-  .node text {
-    pointer-events: none;
-    font: 15px sans-serif;
-  }
-
-  .node fixed {
-    fill: #f00;
-  }
-
-  </style>
-  <link rel="stylesheet" href="{% static "css/tipsy.css" %}" type="text/css" />
-  <script type="text/javascript" src="{% static "javascripts/jquery.qtip-1.0.0-rc3.min.js" %}"></script>
+{% block javascript %}
+  <link rel="stylesheet" href="/static/css/tipsy.css" type="text/css" />
+  <script type="text/javascript" src="/static/javascripts/jquery.qtip-1.0.0-rc3.min.js"></script>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <script type="text/javascript" src="{% static "javascripts/jquery.tipsy.js" %}"></script>
+  <script type="text/javascript" src="/static/javascripts/jquery.tipsy.js"></script>
+  <style>
+    .link {
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+
+    .node {
+      cursor: move;
+      fill: #ccc;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+
+    .node text {
+      pointer-events: none;
+      font: 15px sans-serif;
+    }
+
+    .node fixed {
+      fill: #f00;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  
 	<!-- content-wrap starts -->
 	<div id="content-wrap">
 		<div id="main">
