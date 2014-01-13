@@ -71,7 +71,7 @@ var svg = d3.select("body").select("wrap").select("content-wrap").select("main")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("{% static "graph.json" %}", function(error, graph) {
+d3.json("/static/graph.json", function(error, graph) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
