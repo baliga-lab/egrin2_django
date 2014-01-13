@@ -120,7 +120,7 @@ var max_local = new Array();
 
             } 
         function getCre(url, start, stop, top, specie, gene_name, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
-        
+        //function getCre(url, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
         $('#freeze').block({   
               message: '<img id="loading" src="/static/images/ajax-loader.gif" /> <h1>Loading</h1>', 
               css: { 
@@ -136,7 +136,7 @@ var max_local = new Array();
         $.ajax( {
               type:'Get',
 
-              url: url + (start) + "/" + (stop) + "/" + top + "/" + gene_name + "/"+ this.refseq + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + gene_name + "/"
              ,
              success:function(json) {
 
@@ -220,11 +220,13 @@ var max_local = new Array();
 
               if(left < right){
                 console.log("less")
-                getCre_per_corem("/cres_in_range_list/" + specie + "/",  left, right, 4, specie,gene_name, this.refseq);
+                getCre_per_corem("/cres_in_range_json_gene_corem/",  left, right, 4, specie,gene_name, this.refseq);
+                //getCre_per_corem("/cres_in_range_json_gene_corem/" + specie + "/",  gene_name);
               }
               else{
                 console.log("highier")
-                getCre_per_corem("/cres_in_range_list/" + specie + "/",  right, left,  4, specie,gene_name, this.refseq); 
+                getCre_per_corem("/cres_in_range_json_gene_corem/",  right, left,  4, specie,gene_name, this.refseq); 
+                //getCre_per_corem("/cres_in_range_json_gene_corem/" + specie + "/", gene_name);
               }
 
 
@@ -242,11 +244,12 @@ var max_local = new Array();
 
 
         function getCre_per_corem(url, start, stop, top, specie, gene_name, refseq){ // top --> number of ranked GRE's (CRE) one wants to get
+        //function getCre_per_corem(url, gene_name){ // top --> number of ranked GRE's (CRE) one wants to get
         
         $.ajax( {
               type:'Get',
                // 
-              url: url + (start) + "/" + (stop) + "/" + top +  "/" + gene_name + "/" + this.refseq + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
+              url: url + gene_name + "/"
              ,
              success:function(json) {
               
@@ -345,13 +348,16 @@ var max_local = new Array();
               })
                 corem_name.push("Default")
                 if(corem_name.length > 1){ // if I don't have corem, I don't animate
-                  drawButton(corem_name, "corem_box");
-                  d3.selectAll("input[value=Default]").attr("class", "pressed")
-                  //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
-                  yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
-                  ani()
-                  $('#freeze').unblock()
+                      drawButton(corem_name, "corem_box");
+                      d3.selectAll("input[value=Default]").attr("class", "pressed")
+                      //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
+                      yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+                      ani()
+                      $('#freeze').unblock()
                 }
+                else{
+                      $('#freeze').unblock()
+                    }
 
                 //drawLineChart();
                 //legend_chart();
