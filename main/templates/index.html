@@ -28,6 +28,8 @@
 	    	background: none;
 	    }
 	</style>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+
 {% endblock %}
 {% block content %}			
 	<!-- content-wrap starts -->
@@ -106,7 +108,7 @@
 		<!-- sidebar ends -->		
 		</div>	
 <script>
-		$(document).ready(function() {
+	
 			$("#corem_tip").qtip({
 				content: 'A <strong>corem</strong> or <i>conditionally co-regulated module</i> is a set of genes that are <strong>co-regulated</strong> in <strong>specific environments</strong>. Often (but not always) genes in a corem share common regulatory mechanisms (<i>GREs</i>). A gene can belong to multiple corems. Corems were discovered by applying <strong>EGRIN 2.0</strong> to large gene expression data sets.',
 	          	position: { target: 'mouse' },
@@ -114,9 +116,8 @@
 	          	hide: { when: { event: 'mouseout' } },          
 			    style: 'dark'          
 			   	});	
-			});
+		
 </script>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
 <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script>
