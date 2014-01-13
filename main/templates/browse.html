@@ -25,7 +25,7 @@
 				$("#gre_tip").qtip({
 					content: 'GRE: Gene Regulatory Element, a cluster of similar <i>cis</i>-regulatory motifs',
 		          	position: { target: 'mouse' },
-		          	show: 'hover',
+		          	show: { when: { event: 'mouseover' } },
 		          	hide: { when: { event: 'inactive' }, delay: 2000 },          
 				    style: 'dark' 
 				   	});
