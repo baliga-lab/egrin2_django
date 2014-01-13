@@ -2142,7 +2142,7 @@ function uncheckAll(){
       brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);  
     }
     else{
-      brush.extent([parseInt(gene_start)-50, parseInt(gene_start)+400]);
+      brush.extent([parseInt(gene_stop)-400, parseInt(gene_stop)+50]);
     }
     
     svg.select(".x.brush").call(brush);

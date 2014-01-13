@@ -113,6 +113,11 @@ urlpatterns = patterns('main.views',
 
     url(r'^basepair_json_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<refseq_>[^/]*)/?$', 'basepair_jsons_range', name='basepair_jsons_range'),
 
+
+    #cres_in_range_json_gene_all
+    url(r'^cres_in_range_json_gene_all/(?P<gene_name>[^/]+)/?$', 'cres_in_range_json_gene_all'),
+    url(r'^cres_in_range_json_gene_corem/(?P<gene_name>[^/]*)', 'cres_in_range_json_gene_corem'),
+
     # returnin CREs for ggbrowserweb
     url(r'^cres_in_range/(?P<species>[^/]*)/(?P<start>\d+)/(?P<stop>\d+)/(?P<top>\d+)/(?P<gene_name>[^/]*)/(?P<refseq>[^/]*)/?$', 'cres_in_range_json', name='cres_in_range_json'),
 
