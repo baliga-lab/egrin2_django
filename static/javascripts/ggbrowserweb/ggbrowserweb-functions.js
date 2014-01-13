@@ -1,6 +1,6 @@
 function legend_chart(){
 var haveRegulator = false
-window["regulator"] = ""
+window["regulator"] = []
 if(species_ == "511145"){
   //regulator.forEach(function(d){if(d.tf == "PurR"){console.log(d)}})
   getRegulator("/regulators_json/", species_)
