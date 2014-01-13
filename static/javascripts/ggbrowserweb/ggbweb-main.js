@@ -85,19 +85,32 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
   //view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
   //view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
 
-// read already populated info and use it to instanciate start/end fields
-if((parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500) <0) {
-  view.left = 1;
-  view.right = 5000;
-  var left = 1;
-  var right = 5000;
-} 
-else {
-  view.left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
-  view.right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
-  var left = parseInt(d3.selectAll("#gene_start")[0][0].innerHTML) - 1500;
-  var right = parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) + 1500;
-}
+var start__ = (parseInt(d3.selectAll("#gene_start")[0][0].innerHTML)) 
+var end__ =  (parseInt(d3.selectAll("#gene_end")[0][0].innerHTML) ) 
+
+
+              // read already populated info and use it to instanciate start/end fields
+              if((start__ - 1500) < 0) {
+                view.left = 1;
+                view.right = end__;
+                var left = 1;
+                var right = end__;
+              }
+              else{
+                    if( start__ < end__){
+                        view.left = start__ - 1500;
+                        view.right = end__ + 1500;
+                        var left = start__ - 1500;
+                        var right = end__ + 1500;
+                      }
+                      else { // means it's - strand
+                            view.left = end__ - 1500;
+                            view.right = start__ + 1500;
+                            var left = end__ - 1500;
+                            var right = start__ + 1500;
+                      }
+              } 
+
 
   var color = d3.scale.category20().domain(mot_names); //category10() //.range(["black","red","#00cd00","blue","cyan","magenta","yellow","gray" ])
 
