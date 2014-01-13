@@ -492,7 +492,8 @@ def regulatorsToJSON(request,species=None):
     
     some_data_to_dump = [{
     'gre_name': g.gre.gre_id,
-    'tf': g.tf
+    'tf': g.tf,
+    'regulondb_id':g.regulondb_id
     } for g in gre_]
     #print "########### ",some_data_to_dump
 
