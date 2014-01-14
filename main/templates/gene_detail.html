@@ -75,21 +75,21 @@ GGBrowser scripts to be imported
         });
 
     $("#showSequenceLogo_hint").qtip({
-        content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+        content: 'Show the genomic sequence within putative GREs. Sequence displayed only when window size is < 400bp.',
         position: { target: 'mouse' },
         show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },   
         style: 'dark' 
         });
     $("#ggbrowserweb_tip").qtip({
-        content: 'Condition-dependent promoter architecture of {{ g.sys_name }}. These plots visulize how the relative influence of regulatory sites in a promoter region vary across contexts. For each gene They were calculated by scanning GREs across the entire genome. Only locations with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+        content: "Condition-dependent promoter architecture of {{ g.sys_name }}. These plots visulize how the relative influence of regulatory sites in a promoter region vary across contexts. For each gene, we report the relative influence of GREs in the environmental context of each corem to which it belongs. The <strong>'Default'</strong> track reports all predicted GREs discovered near {{ g.sys_name }}, regardless of environmental context. Please consult <a href='/static/Downloads/Supplement/supplement_materials.pdf'>Supplementary Methods</a> for a full description of how these visualizations were computed.",
         position: { target: 'mouse' },
         show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },   
         style: 'dark' 
         });
     $("#gre_tip").qtip({
-      content: 'Putative gene regulatory elements (GREs) discovered in the promoter region. GREs discovered frequently have lower qvals (hypergeometric test).',
+      content: 'Putative gene regulatory elements (GREs) discovered in the promoter region of {{ g.sys_name }}. GREs discovered frequently have lower qvals (hypergeometric test).',
             position: { target: 'mouse' },
             show: { when: { event: 'mouseover' } },
             hide: { when: { event: 'mouseout' } },             
@@ -103,7 +103,7 @@ GGBrowser scripts to be imported
         style: 'dark' 
         });
     $("#corem_context_tip").qtip({
-      content: "Add a corem to observe the state of the {{ g.sys_name }} promoter in the co-regulatory context of other corems (to which it does not belong).",
+      content: "Add a corem to observe the state of the {{ g.sys_name }} promoter in the environmental and regulatory context of other corems (to which it does not belong).",
             position: { target: 'mouse' },
             show: { when: { event: 'mouseover' } },
             hide: { when: { event: 'mouseout' } },              
@@ -144,11 +144,11 @@ GGBrowser scripts to be imported
     </table>
 
 
-<blockquote><p>{{ g.sys_name }} Promoter Architecture<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();"><img style="background:rgba(250, 250, 250, 0)" src="/static/download.png"></a></p></blockquote>
+<blockquote><p>{{ g.sys_name }} Promoter Architecture<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png" title="Zoom"></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();"><img style="background:rgba(250, 250, 250, 0)" src="/static/download.png" title="Download"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 <div id="freeze" style="width: 750px;">
 <table id="table-ggbrowserweb" style="margin: 0; white-space:nowrap;">
       <tr>
-          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence Logo</input>
+          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence</input>
           <a id="showSequenceLogo_hint" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a>
       </tr>
       <td>
