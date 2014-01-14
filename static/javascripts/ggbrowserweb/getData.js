@@ -48,7 +48,7 @@ var max_local = new Array();
           //debugger;
           var arr = new Array();
           if(inputArray == ""){
-            console.log("creating empty array for GREs that has no data")
+            //console.log("creating empty array for GREs that has no data")
             for (var i = s; i < e; i++) {
                   arr.push(new Populate(nameInCaseInputArrayIsEmpty, i, 0, "") );  
                 };
@@ -73,12 +73,14 @@ var max_local = new Array();
               url: url + specie + "?sEcho=0&iDisplayStart=0&iDisplayLength=1000000000"
              ,
              success:function(json) {
+              //var cor_available = []
               window["all_corem_names"] = JSON.parse(json);
               //debugger
               var options = $("#dropdown_corem");
                 all_corem_names.forEach(function(d){
                     options.append($("<option />").text(d.corem_name));
                 })
+                
 
               },
               error: function(e, xhr){
@@ -150,6 +152,7 @@ var max_local = new Array();
               window["mot_names"] = d3.keys(cre[0])//.concat("All");
               mot_names.reverse();
 
+
               window["max_"] = new Array();
               
               mot_names.forEach(function(d, i){
@@ -219,12 +222,12 @@ var max_local = new Array();
               //drawLineChart();
 
               if(left < right){
-                console.log("less")
+                //console.log("less")
                 getCre_per_corem("/cres_in_range_json_gene_corem/",  left, right, 4, specie,gene_name, this.refseq);
                 //getCre_per_corem("/cres_in_range_json_gene_corem/" + specie + "/",  gene_name);
               }
               else{
-                console.log("highier")
+                //console.log("highier")
                 getCre_per_corem("/cres_in_range_json_gene_corem/",  right, left,  4, specie,gene_name, this.refseq); 
                 //getCre_per_corem("/cres_in_range_json_gene_corem/" + specie + "/", gene_name);
               }
@@ -309,13 +312,17 @@ var max_local = new Array();
               // getting basepairs information
               getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
               
-
+     
               window["cre_corem"] = JSON.parse(json);
+
               
               //cre_corem["cre_data"][0][0].All = cre_corem["cre_data"][1][1];
               //debugger;
               window["corem_name"] = cre_corem["corem_name"];
+              //window["corem_name_copy"] = cre_corem["corem_name"];
               window["max_corem"] = new Array();
+              window["total_corem_"] = corem_name.length
+              window["original_corem"] =  cre_corem["corem_name"];
               
 
 
@@ -347,6 +354,7 @@ var max_local = new Array();
                 //window["corem_" + d] = new Array();
               })
                 corem_name.push("Default")
+
                 if(corem_name.length > 1){ // if I don't have corem, I don't animate
                       cycling()
                       drawButton(corem_name, "corem_box");
@@ -359,6 +367,9 @@ var max_local = new Array();
                 else{
                       $('#freeze').unblock()
                     }
+
+
+                  //eval("corem_name_original").push("Default");
 
                 //drawLineChart();
                 //legend_chart();
@@ -399,22 +410,22 @@ var max_local = new Array();
               getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
               
 
-              window["cre_corem"] = JSON.parse(json);
-              if(cre_corem["corem_name"] == ""){
+              window["cre_corem_add"] = JSON.parse(json);
+              if(cre_corem_add["corem_name"] == ""){
                 alert("The entered name is invalid" )
                 $('#freeze').unblock()
               }
               else {
               //cre_corem["cre_data"][0][0].All = cre_corem["cre_data"][1][1];
               //debugger;
-              window["corem_name_add"] = cre_corem["corem_name"];
+              window["corem_name_add"] = cre_corem_add["corem_name"];
               window["max_corem"] = new Array();
               
 
 
               corem_name_add.forEach(function(d,i){
                 //debugger;
-                cre_corem["cre_data"][i].All = cre_corem["cre_data"][1];
+                cre_corem_add["cre_data"][i].All = cre_corem_add["cre_data"][1];
                 //debugger;
                 window["temp_corem_"+d] = new Array();
                 window["temp_pp_corem_"+d] = {};
@@ -424,8 +435,8 @@ var max_local = new Array();
                 window["corem_to_animate"] = new Array();
                 mot_names.forEach(function(w) {
                   
-                  if(!(cre_corem["cre_data"][i][w] == undefined)){
-                      cre_corem["cre_data"][i][w].forEach(function(q){
+                  if(!(cre_corem_add["cre_data"][i][w] == undefined)){
+                      cre_corem_add["cre_data"][i][w].forEach(function(q){
                         eval("temp_corem_"+d).push(new Populate(w, q[0], q[1], basepair[0].basepairs.substring(  (q[0] - start)-1, (q[0] - start)  ) ));  
                         eval("max_temp_corem_"+d).push(q[1]);
                       })
@@ -443,22 +454,22 @@ var max_local = new Array();
                   corem_name.push("Default")  
                 }
                 else{
-                  corem_name.push(cre_corem["corem_name"][0])
+                  corem_name.push(cre_corem_add["corem_name"][0])
                 }
 
-                if(eval("pp_corem_"+ cre_corem["corem_name"][0])[0].values == ""){
+                if(eval("pp_corem_"+ cre_corem_add["corem_name"][0])[0].values == ""){
                   corem_name_add = []
                   corem_name.splice(-1,1)
-                  alert("There is no data for Corem " +cre_corem["corem_name"][0] + " on this range." )
+                  alert("There is no data for Corem " +cre_corem_add["corem_name"][0] + " on this range." )
                   $('#freeze').unblock()
-                  //ani()
+                  if(cycling_global == true){ani()}
                 }
                 else{
                   drawButton(corem_name, "corem_box");
                   d3.selectAll("input[value=Default]").attr("class", "pressed")
                 //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
                   yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
-                  //ani()
+                  if(cycling_global == true){ani()}
                   $('#freeze').unblock()
                 }
                 //ani()

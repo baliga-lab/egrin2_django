@@ -279,7 +279,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
   
 function redrawSeqLogo(names){
     
-    if (  (view.right - view.left) <= 410 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
+    if (  (view.right - view.left) <= 400 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
       
       yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
       
@@ -1353,7 +1353,8 @@ function ani(){
 clearTimeout(timer)
 var anim = createArrayToAnimate()
 anim.push("Default")
-console.log("anim = " + anim)
+//anim.sort()
+//console.log("anim = " + anim)
 asyncLoop({
     length : t.length,
     functionToLoop : function(loop, i){
@@ -2399,6 +2400,32 @@ window["checked_global"]  = false;
   
     redraw();
   }
+
+function removeAddedCorem(){
+  var cor_n = $('#dropdown_corem').val();
+  $('<div></div>').appendTo('body')
+                    .html('<div><h6>Are you sure you want to remove '+ cor_n + ' ?</h6></div>')
+                    .dialog({
+                        modal: true, title: 'Remove corem', zIndex: 10000, autoOpen: true,
+                        width: 'auto', resizable: false,
+                        buttons: {
+                            Yes: function () {
+                                // $(obj).removeAttr('onclick');                                
+                                // $(obj).parents('.Parent').remove();
+                                console.log("yes")
+                                $(this).dialog("close");
+                            },
+                            No: function () {
+                              console.log("no")
+                                $(this).dialog("close");
+                            }
+                        },
+                        close: function (event, ui) {
+                            $(this).remove();
+                        }
+                    });
+
+}
 function addCorem(){
   //clearTimeout(timer) // just in case, let's stop cycling
   stopAnimation()
