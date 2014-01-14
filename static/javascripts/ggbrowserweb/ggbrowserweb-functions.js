@@ -1584,6 +1584,8 @@ function brushEndEgrin(){
 
 
 function brushed() {
+
+
     clearTimeout(timer)
     //console.log("brushed");
 
@@ -1611,6 +1613,16 @@ function brushed() {
     //redrawExpressionData();
     //redrawExpressionAsPath();
     drawLine();
+    if( (view.right - view.left) <= 410){
+      d3.selectAll("input[name=showSequenceLogo]")[0][0].disabled = false
+    }
+    else{
+      var temp____ = d3.selectAll("input[name=showSequenceLogo]")[0][0]
+      temp____.disabled = true
+      temp____.checked = false 
+      checked_global = false
+      //changeShowSequenceLogo()
+    }
     }
     else{ //correctiong when brush.empty() restables x.domain to general value
       resetView();
