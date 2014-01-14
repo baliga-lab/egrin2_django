@@ -2278,20 +2278,21 @@ function uncheckAll(){
 
 
     if(gene_strand =="+"){
-      if( Math.abs(gene_end - gene_start) <  550 ){
-        brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+20]);    
-      }
-      else{
+      //if( Math.abs(gene_end - gene_start) <  550 ){
+      //  brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+20]);    
+      //}
+      //else{
         brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);    
-      }
+      //}
     }
     else{
-      if( Math.abs(gene_end - gene_start) <  550 ){
-          brush.extent([parseInt(gene_stop)-100, parseInt(gene_stop)+20]);
-      }
-      else{
-          brush.extent([parseInt(gene_stop)-400, parseInt(gene_stop)+50]);
-      }
+      //if( Math.abs(gene_end - gene_start) <  550 ){
+      //    brush.extent([parseInt(gene_stop)-20, parseInt(gene_stop)+100]);
+     // }
+     // else{
+        console.log("------------>  minus")
+          brush.extent([parseInt(gene_start)-400,parseInt(gene_start)+200]);
+     // }
     }
     
     svg.select(".x.brush").call(brush);
