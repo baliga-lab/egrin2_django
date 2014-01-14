@@ -36,7 +36,7 @@
           <td class="first"><a href="{% url 'species' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.species.name }}</a></td>
           <td><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ s.species.ncbi_taxonomy_id }}">{{ s.species.ncbi_taxonomy_id }}</a></td>
 					<td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ s.species.ucsc_id }}">{{ s.species.ucsc_id }}</a></td>
-          <td><a>{{ s.network.version_id }}</a></td>
+          <td><a href="{% url 'networks' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.network.version_id }}</a></td>
           <td><a href="{% url 'genes' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.genes }}</a></td>
           <td><a href="{% url 'conditions' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.conditions }}</a></td>
           <td><a href="{% url 'corems' %}{{ s.species.ncbi_taxonomy_id }}">{{ s.corems }}</a></td>
