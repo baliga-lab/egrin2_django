@@ -408,7 +408,7 @@ class greTF(models.Model):
     tf = models.CharField(max_length=255)
     gre = models.ForeignKey(Gre, verbose_name = "GRE members")
     score = models.DecimalField(max_digits=18, decimal_places=16)  # models.CharField(max_length=255)
-    #regulondb_id = models.CharField(max_length=80)
+    regulondb_id = models.CharField(max_length=80)
     
     def __unicode__(self):
         return '%s : %s = %s' % (self.gre_id, self.tf, self.score)
