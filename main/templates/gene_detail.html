@@ -74,6 +74,13 @@ GGBrowser scripts to be imported
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
 
+    $("#showSequenceLogo_hint").qtip({
+        content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+        position: { target: 'mouse' },
+        show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },   
+        style: 'dark' 
+        });
     $("#ggbrowserweb_tip").qtip({
         content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
         position: { target: 'mouse' },
@@ -142,6 +149,7 @@ GGBrowser scripts to be imported
 <table id="table-ggbrowserweb" style="margin: 0; white-space:nowrap;">
       <tr>
           <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence Logo</input>
+          <a id="showSequenceLogo_hint" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a>
       </tr>
       <td>
           <div id="ggbrowser-principal" style="background-color:white"></div>

@@ -348,6 +348,7 @@ var max_local = new Array();
               })
                 corem_name.push("Default")
                 if(corem_name.length > 1){ // if I don't have corem, I don't animate
+                      cycling()
                       drawButton(corem_name, "corem_box");
                       d3.selectAll("input[value=Default]").attr("class", "pressed")
                       //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
