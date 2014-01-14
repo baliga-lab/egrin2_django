@@ -1652,22 +1652,27 @@ window["timer"] = ""
 
 
 function brushStartEgrin(){
-  //clearTimeout(timer)
-  stopAnimation()
+  clearTimeout(timer)
+  //if(!cycling_global){
+  //    stopAnimation()
+  //}
   drawLine();
 
 
 }
 function brushEndEgrin(){
   //clearTimeout(timer)
+  stopAnimation()
   drawLine();
-  if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
-    ani()
-  }
-  else{
+  //if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
+    if(cycling_global){
+      ani()
+    }
+  /*else{
     //clearTimeout(timer)
     stopAnimation()
-  }
+  }*/
+
 
 }
 
@@ -1676,7 +1681,9 @@ function brushed() {
 
 
     //clearTimeout(timer)
-    stopAnimation()
+    if(!cycling_global){
+      stopAnimation()
+    }
     //console.log("brushed");
 
       //console.log("Right click <false> : " + rightClick())
