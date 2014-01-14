@@ -163,6 +163,10 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
               }
               //}
             })
+          .append("svg:title")
+          .text(function(d){
+            return "SHow/Hide GRE "+d+ " data"
+          })
           //.style("stroke-width", "10px")
           //.style("fill", function(d, i) { return color(i); });
           //.attr("stroke", function(d) { return color(d); } ) 
@@ -170,15 +174,15 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           .attr("x", x(left + 100 ) )
           .attr("y", i * 13 - 8 )
           .attr("height",13)
-          .attr("width",50)
+          .attr("width",55)
           .style("fill", "#ACD1E9" )
           .style("opacity", "0.2")
           .attr("transform", "translate(-5, 0)")
 
         // let's write regulator if it exists
         g.append("text")
-          .attr("x", 60 )
-          .attr("y", i * 13 + 1 )
+          .attr("x", 65)
+          .attr("y", i * 13 + 3 )
           .attr("height",30)
           .attr("width",100)
           .text(function(d){
@@ -207,6 +211,18 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
               return 'hand'
             }
           })
+          .append("svg:title")
+          .text(function(d){
+            var tmp__ = ""
+            if(regulator != "") {
+            regulator.forEach(function(e){
+              if(e.gre_name == d){
+                tmp__ = "More info about " + e.tf;
+              }})
+            }
+            return tmp__
+          })
+          
 
         g.append("text")
           .attr("x", x(left + 100 ) )
@@ -214,7 +230,14 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           .attr("height",30)
           .attr("width",100)
           //.attr("fill", function(d) {color(d);})
-          .text(function(d){return d;})
+          .text(function(d){
+            if(d!="All"){
+                return "GRE#"+d.substring(4,100);
+            }
+            else{
+              return "All"
+            }
+          })
           .style("fill", function(d) { return color(d); } )
           //.style("stroke", bordercolor)
           .style("text-decoration","underline")
@@ -240,6 +263,10 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
             if(d != "All"){
               return 'hand'
             }
+          })
+          .append("svg:title")
+          .text(function(d){
+            return "Open "+d+ " detail page"
           })
 
       });
@@ -2248,12 +2275,23 @@ function uncheckAll(){
   }
     function init(){
     // let's set brush
-    //brush.extent([view.left, view.left + 500]);
+
+
     if(gene_strand =="+"){
-      brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);  
+      if( Math.abs(gene_end - gene_start) <  550 ){
+        brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+20]);    
+      }
+      else{
+        brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);    
+      }
     }
     else{
-      brush.extent([parseInt(gene_stop)-400, parseInt(gene_stop)+50]);
+      if( Math.abs(gene_end - gene_start) <  550 ){
+          brush.extent([parseInt(gene_stop)-100, parseInt(gene_stop)+20]);
+      }
+      else{
+          brush.extent([parseInt(gene_stop)-400, parseInt(gene_stop)+50]);
+      }
     }
     
     svg.select(".x.brush").call(brush);
