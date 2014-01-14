@@ -62,38 +62,24 @@
           "sAjaxSource": "{% url 'gre_cres_json' %}{{species}}/{{gre}}"
         });
 		$("#gene_tip").qtip({
-			content: 'Genes determined by hypergeometric test through bicluster membership, reported if BH-corrected qvalue <= 0.05.',
+			content: 'Genes that are influenced by {{ gre.gre_id }}. GRE influence on genes determined by hypergeometric test through bicluster membership. Reported if BH-corrected qvalue <= 0.05.',
           	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },          
+          	show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },         
 		    style: 'dark' 
 		   	});
 		$("#corem_tip").qtip({
-			content: 'Reported corems contain GRE in representative biclusters (i.e. biclusters containing largest fraction of genes in corem, top decile), suggesting that these GREs are responsible for regulating the corem. qval is BH-corrected pval from hypergeometric test.',
+			content: '{{ gre.gre_id }} is considered to influence a corem if it is frequently discovered in biclusters that are representative of the corem (i.e., {{ gre.gre_id }} is frequently discovered in biclusters containg a large fraction of the corem genes). qval is BH-corrected pval from hypergeometric test.',
           	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },          
-		    style: 'dark' 
-		   	});
-		$("#bicluster_tip").qtip({
-			content: 'Biclusters containing a cis-regualtory motif (CRM) mapped to GRE.',
-          	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },         
+          	show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },      
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditions determined by hypergeometric test through bicluster membership, reported if BH-corrected qvalue <= 0.05.',
+			content: 'Environmental contexts (specific conditions) where {{ gre.gre_id }} was discovered in the promoter region of co-regulated genes. Conditions determined by hypergeometric test through bicluster membership, reported if BH-corrected qvalue <= 0.05.',
 			position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },          
-		    style: 'dark' 
-		   	});
-		$("#crm_tip").qtip({
-			content: 'CRM: cis-regulatory motif. Motifs discovered in individual biclusters clustered into GRE. May be depicted as reverse complement. Evalue computed by MEME.',
-			position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },          
+          	show: { when: { event: 'mouseover' } },
+            hide: { when: { event: 'mouseout' } },         
 		    style: 'dark' 
 		   	});
       });
@@ -108,7 +94,7 @@
 		<table id="corems" class="table">
       <thead>
         <tr>
-          <th class="first">Corem ID</th>
+          <th class="first">Corems influenced by {{ gre.gre_id }}</th>
           <th>qval</th>
         </tr>
       </thead>
@@ -116,7 +102,7 @@
       </tbody>
 		</table>
             
-    <blockquote><p>Genes <a id="gene_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Genes influenced by {{ gre.gre_id }}<a id="gene_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
     <table id="genes" class="table">
       <thead>
 				<tr>
@@ -148,7 +134,7 @@
       </tbody>
     </table>
 			
-    <blockquote><p>Conditions <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Environmental context for {{ gre.gre_id }} activity<a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 		<table id="conditions" class="table">
 			<thead>
 				<tr>
@@ -161,7 +147,7 @@
 			</tbody>
     </table>
             
-    <blockquote><p>Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Biclusters containing {{ gre.gre_id }}</p></blockquote>
 		<table id="biclusters" class="table">
       <thead>
         <tr>
@@ -183,7 +169,7 @@
       </tbody>
     </table>
             
-    <blockquote><p>CRMs <a id="crm_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Individual bicluster <i>cis</i>-regulatory motifs that constitute {{ gre.gre_id }}</p></blockquote>
 		<table id="cres" class="table">
       <thead>
         <tr>
