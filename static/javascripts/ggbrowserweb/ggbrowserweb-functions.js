@@ -1,3 +1,81 @@
+
+function stopAnimation(){
+  clearTimeout(timer)
+  d3.selectAll("#cycling_circle").style("fill","white")
+}
+
+
+var cycling_global = true;
+function cycling(){
+
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", 650 )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(-30, 20)");
+
+  legend.selectAll('g').data(["Animate"])
+      .enter()
+      .append('g')
+      .each(function(d, i) {
+        var g = d3.select(this);
+        g.append("circle")
+          .attr("id", "cycling_circle")
+          .attr("cx",660 )
+          .attr("cy", i*13 + 1)
+          .attr("r", 6)
+          .attr("width", 8)
+          .attr("height", 8)
+          .style("fill", "white")
+          .style("stroke", "red" )
+          .on('click', function(c){
+
+            if(cycling_global){cycling_global=false}else{cycling_global=true}
+
+             if (cycling_global){
+                d3.selectAll("#cycling_circle").style("fill","green")
+                ani()
+              }
+              else{
+                cycling_global = false
+                stopAnimation()
+              }
+              //}
+            })
+        g.append("rect")
+          .attr("x", 650 +30 )
+          .attr("y", i * 13 - 6 )
+          .attr("height",13)
+          .attr("width",50)
+          .style("fill", "#ACD1E9" )
+          .style("opacity", "0.2")
+          .attr("transform", "translate(-5, 0)")
+
+        g.append("text")
+          .attr("x", 650 + 30 )
+          .attr("y", i * 13 + 5 )
+          .attr("height",30)
+          .attr("width",100)
+          .text(function(d){return d;})
+          //.style("fill", function(d) { return color(d); } )
+          //.style("text-decoration","underline")
+          .on('click', function(c){
+              ani()
+              })
+          .style('cursor', function(d){
+            if(d != "All"){
+              return 'hand'
+            }
+          })
+
+      });
+}
+
+
+
+
 function legend_chart(){
 getCoremName("/corem_json_list/",species_)
 var haveRegulator = false
@@ -8,8 +86,6 @@ if(species_ == "511145"){
   
   haveRegulator = true
 }
-
-
 var legend = svg.append("g")
     .attr("class", "legend")
     .attr("x", x(left) )
@@ -1231,6 +1307,9 @@ var asyncLoop = function(o){
 
 
 function ani(){
+  //change cycling_circle to green
+  d3.selectAll("#cycling_circle").style("fill", "green")
+
 
   if($('#cycling').attr("onclick") !="ani()"){
     $('#cycling').attr("onclick") = "clearTimeout(timer)"
@@ -1565,7 +1644,8 @@ window["timer"] = ""
 
 
 function brushStartEgrin(){
-  clearTimeout(timer)
+  //clearTimeout(timer)
+  stopAnimation()
   drawLine();
 
 
@@ -1577,7 +1657,8 @@ function brushEndEgrin(){
     ani()
   }
   else{
-    clearTimeout(timer)
+    //clearTimeout(timer)
+    stopAnimation()
   }
 
 }
@@ -1586,7 +1667,8 @@ function brushEndEgrin(){
 function brushed() {
 
 
-    clearTimeout(timer)
+    //clearTimeout(timer)
+    stopAnimation()
     //console.log("brushed");
 
       //console.log("Right click <false> : " + rightClick())
@@ -1941,7 +2023,8 @@ function uncheckAll(){
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
-      clearTimeout(timer)
+      //clearTimeout(timer)
+      stopAnimation()
   }
   else{
     d3.selectAll("input[name=boxes]").property("checked", false);
@@ -1954,7 +2037,8 @@ function uncheckAll(){
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
-      clearTimeout(timer)
+      //clearTimeout(timer)
+      stopAnimation()
   }
   drawLine();
 }
@@ -2262,7 +2346,8 @@ window["checked_global"]  = false;
     redraw();
   }
 function addCorem(){
-  clearTimeout(timer) // just in case, let's stop cycling
+  //clearTimeout(timer) // just in case, let's stop cycling
+  stopAnimation()
   var cor_n = $('#dropdown_corem').val();
   if(cor_n != ""){
     console.log("add corem bt was clicked !" + cor_n)
