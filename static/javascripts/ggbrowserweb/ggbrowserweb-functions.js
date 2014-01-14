@@ -1311,9 +1311,9 @@ function ani(){
   d3.selectAll("#cycling_circle").style("fill", "green")
 
 
-  if($('#cycling').attr("onclick") !="ani()"){
+  /*if($('#cycling').attr("onclick") !="ani()"){
     $('#cycling').attr("onclick") = "clearTimeout(timer)"
-  }
+  }*/
 
 clearTimeout(timer)
 var anim = createArrayToAnimate()
