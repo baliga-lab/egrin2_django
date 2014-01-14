@@ -451,14 +451,14 @@ var max_local = new Array();
                   corem_name.splice(-1,1)
                   alert("There is no data for Corem " +cre_corem["corem_name"][0] + " on this range." )
                   $('#freeze').unblock()
-                  ani()
+                  //ani()
                 }
                 else{
                   drawButton(corem_name, "corem_box");
                   d3.selectAll("input[value=Default]").attr("class", "pressed")
                 //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
                   yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
-                  ani()
+                  //ani()
                   $('#freeze').unblock()
                 }
                 //ani()
