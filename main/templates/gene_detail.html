@@ -82,7 +82,7 @@ GGBrowser scripts to be imported
         style: 'dark' 
         });
     $("#ggbrowserweb_tip").qtip({
-        content: "Condition-dependent promoter architecture of {{ g.sys_name }}. These plots visulize how the relative influence of regulatory sites in a promoter region vary across contexts. For each gene, we report the relative influence of GREs in the environmental context of each corem in which it is a member. The <strong>'Default'</strong> track reports all predicted GREs discovered near {{ g.sys_name }}, regardless of environmental context. Please consult <a href='/static/Downloads/Supplement/supplement_materials.pdf'>Supplementary Methods</a> for a full description of how these visualizations were computed.",
+        content: "Condition-dependent promoter architecture of {{ g.sys_name }}. These plots visulize how the relative influence of regulatory sites in a promoter region vary across contexts. For each gene, we report the relative influence of GREs in the environmental context of each corem to which it belongs. The <strong>'Default'</strong> track reports all predicted GREs discovered near {{ g.sys_name }}, regardless of environmental context. Please consult <a href='/static/Downloads/Supplement/supplement_materials.pdf'>Supplementary Methods</a> for a full description of how these visualizations were computed.",
         position: { target: 'mouse' },
         show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },   
