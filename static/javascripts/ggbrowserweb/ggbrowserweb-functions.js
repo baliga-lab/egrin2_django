@@ -192,7 +192,15 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
             return tmp__;
           })
           .on('click', function(c){
-            window.open('/gres/' + species_ + "/" + c, '_blank')
+            //debugger
+            var tmp__ = ""
+            if(regulator != "") {
+            regulator.forEach(function(e){
+              if(e.gre_name == d){
+                tmp__ = e.regulondb_id;
+              }})
+            }
+            window.open("http://regulondb.ccg.unam.mx/regulon?term="+tmp__+"&format=jsp&organism=ECK12&type=regulon", '_blank')
           })
           .style('cursor', function(d){
             if(d != "All"){
