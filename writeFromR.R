@@ -2,8 +2,8 @@
 # requires egrin/corem env of choice to be loaded
 # e.g.
 
-HALO = F
-ECO = T
+HALO = T
+ECO = F
 PLOTS = F
 
 #source("/docs/git/Link-communities/analyze_communities.R")
@@ -261,14 +261,14 @@ writeInitials <- function(outRoot) {
                        tmp[["gre"]] <- lapply(tmp[["cre"]],function(j){
                          #print(i)
                          j <- out$get.motif.clusters(motif=paste("MOT_",j,sep=""))
-                         if (is.null(j[[1]])) {
+                         if (length(j)==0) {
                           #print("yes")
                            return(0)
-                         } else if (length(j)==0) {
+                         } else if (is.null(j[[1]])) {
                             return(0)
                           } else {
-                            if (j[[1]]%in%as.character(motClusts)) {
-                             return(j[[1]])
+                            if (gsub("MOTC_","",j[[1]])%in%as.character(motClusts)) {
+                             return(gsub("MOTC_","",j[[1]]))
                            } else {
                              return(0)
                            }
@@ -281,7 +281,7 @@ writeInitials <- function(outRoot) {
   bc.genes <- sapply(bc.info,function(i)paste(i$genes,collapse=","))
   bc.conditions <- sapply(bc.info,function(i)paste(i$conditions,collapse=","))
   bc.cres <- sapply(bc.info,function(i)paste(i$cre,collapse=","))
-  bc.gres <- sapply(bc.info,function(i)paste(intersect(gsub("MOTC_","",i$gre),motClusts),collapse=","))
+  bc.gres <- sapply(bc.info,function(i)paste(i$gre,collapse=","))
   # bc, resid, genes, conditions, cres, gres
   # write header
   write(paste(c("bc", "resid", "genes", "conditions", "cres", "gres"),collapse="\t"),
