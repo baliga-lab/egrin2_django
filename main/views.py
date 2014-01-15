@@ -251,11 +251,9 @@ def gre_corems_json(request, species, gre):
     query = GreCoremMembership.objects.filter(gre__gre_id=gre)
     return corems_json_generic(query, species, dtparams)
 
-
-def condition_genes_json(request, species, condition):
+def genes_json_generic(request, species_obj, query):
+    species = species_obj.ncbi_taxonomy_id
     fields = ['species', 'sys_name', 'name', 'accession', 'description', 'start', 'stop', 'strand', 'refseq']
-    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
-    query = Gene.objects.filter(conditions__cond_id=condition)
     dtparams = get_dtparams(request, fields, fields[0])
     num_total = query.count()
     batch = dtparams.ordered_batch(query)
@@ -271,9 +269,17 @@ def condition_genes_json(request, species, condition):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return simplejson.dumps(data)
 
+def condition_genes_json(request, species, condition):
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+    query = Gene.objects.filter(conditions__cond_id=condition)
+    return HttpResponse(genes_json_generic(request, species_obj, query), mimetype='application/json')
 
+def gre_genes_json(request, species, gre):
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+    query = Gene.objects.filter(gre__gre_id=gre)
+    return HttpResponse(genes_json_generic(request, species_obj, query), mimetype='application/json')
 
 def corems(request, species=None):
     # Return info about corems            
@@ -815,7 +821,6 @@ def gres_s(request, template = "gres_s.html", species=None, extra_context=None):
 def gre_detail(request, template = "gre_detail.html",species=None, gre=None,extra_context=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     gre = Gre.objects.get(gre_id=gre,network__species__ncbi_taxonomy_id=species)
-    genes = Gene.objects.filter(gre=gre)
     return render_to_response(template, locals(),context_instance=RequestContext(request))
 
 
