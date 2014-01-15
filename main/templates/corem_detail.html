@@ -78,28 +78,21 @@
 		    style: 'dark' 
 		   	});
 		$("#function_tip").qtip({
-			content: 'Functions enriched for corem. Computed by DAVID.',
+			content: 'Biological functions enriched for genes in a corem. Computed by DAVID.',
           	position: { target: 'mouse' },
           	show: 'click',
           	hide: { when: { event: 'click' } },        
 		    style: 'dark' 
 		   	});
-		$("#bicluster_tip").qtip({
-			content: 'Representative biclusters, i.e. biclusters containing a large fraction of the corem genes',
-          	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },          
-		    style: 'dark' 
-		   	});
 		$("#gre_tip").qtip({
-			content: 'Putative regulatory mechanisms or gene regulatory elements (GREs). The GREs we report were consistently discovered in biclusters containing corem genes, suggesting that they are responsible for regulating genes in the corem. qval is BH-corrected pval from hypergeometric test.',
+			content: 'Putative regulatory mechanisms or gene regulatory elements (GREs) that influence expression of genes in {{ corem.corem_id }}. The GREs we report were consistently discovered in biclusters containing {{ corem.corem_id }} genes, suggesting that they are responsible for regulating genes in {{ corem.corem_id }}. qval is BH-corrected pval from hypergeometric test.',
 			position: { target: 'mouse' },
 			show: 'click',
           	hide: { when: { event: 'click' } },       
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditions in which corem genes have significantly low relative standard deviation. All conditions with resampled pval<=0.05 are reported.',
+			content: 'Conditions in which {{ corem.corem_id }} genes have significantly low relative standard deviation. All conditions with resampled pval<=0.05 are reported.',
 			position: { target: 'mouse' },
 			show: 'click',
           	hide: { when: { event: 'click' } },          
@@ -112,7 +105,7 @@
         <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/corems/{{ corem.corem_id }}.png" background-color="black" width=100% height=100% class="float-center" />
         <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/corems/legend.png" background-color="black" width=100% height=100% class="float-center" />
       </div>
-      <blockquote><p>Genes</p></blockquote>
+      <blockquote><p>Genes in {{ corem.corem_id }}</p></blockquote>
       <table id="genes" class="table">
         <thead>
           <tr>
@@ -129,7 +122,7 @@
         <tbody>
         </tbody>
       </table>
-      <blockquote><p>Functional Enrichment <a id="function_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Functional enrichment<a id="function_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <table id="go" class="table">
         <thead>
           <tr>
@@ -143,7 +136,7 @@
         <tbody>
         </tbody>
       </table>
-      <blockquote><p>Regulatory Mechanisms (GREs) <a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Putative Gene Regulatory Mechanisms (GREs)<a id="gre_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <table id="gres" class="table">
         <thead>
           <tr>
@@ -155,7 +148,7 @@
         <tbody>
         </tbody>
       </table>
-      <blockquote><p>Conditional co-regulation <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Conditional co-regulation of {{ corem.corem_id }}<a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <table id="conditions" class="table">
         <thead>
           <tr>
@@ -166,7 +159,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <blockquote><p>Representative Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+      <blockquote><p>Representative Biclusters</p></blockquote>
       <table id="biclusters" class="table">
         <thead>
           <tr>

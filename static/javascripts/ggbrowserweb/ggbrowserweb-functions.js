@@ -1,3 +1,81 @@
+
+function stopAnimation(){
+  clearTimeout(timer)
+  d3.selectAll("#cycling_circle").style("fill","white")
+}
+
+
+var cycling_global = true;
+function cycling(){
+
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", 650 )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(-30, 20)");
+
+  legend.selectAll('g').data(["Animate"])
+      .enter()
+      .append('g')
+      .each(function(d, i) {
+        var g = d3.select(this);
+        g.append("circle")
+          .attr("id", "cycling_circle")
+          .attr("cx",660 )
+          .attr("cy", i*13 + 1)
+          .attr("r", 6)
+          .attr("width", 8)
+          .attr("height", 8)
+          .style("fill", "white")
+          .style("stroke", "red" )
+          .on('click', function(c){
+
+            if(cycling_global){cycling_global=false}else{cycling_global=true}
+
+             if (cycling_global){
+                d3.selectAll("#cycling_circle").style("fill","green")
+                ani()
+              }
+              else{
+                cycling_global = false
+                stopAnimation()
+              }
+              //}
+            })
+        g.append("rect")
+          .attr("x", 650 +30 )
+          .attr("y", i * 13 - 6 )
+          .attr("height",13)
+          .attr("width",50)
+          .style("fill", "#ACD1E9" )
+          .style("opacity", "0.2")
+          .attr("transform", "translate(-5, 0)")
+
+        g.append("text")
+          .attr("x", 650 + 30 )
+          .attr("y", i * 13 + 5 )
+          .attr("height",30)
+          .attr("width",100)
+          .text(function(d){return d;})
+          //.style("fill", function(d) { return color(d); } )
+          //.style("text-decoration","underline")
+          .on('click', function(c){
+              ani()
+              })
+          .style('cursor', function(d){
+            if(d != "All"){
+              return 'hand'
+            }
+          })
+
+      });
+}
+
+
+
+
 function legend_chart(){
 getCoremName("/corem_json_list/",species_)
 var haveRegulator = false
@@ -8,8 +86,6 @@ if(species_ == "511145"){
   
   haveRegulator = true
 }
-
-
 var legend = svg.append("g")
     .attr("class", "legend")
     .attr("x", x(left) )
@@ -87,6 +163,10 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
               }
               //}
             })
+          .append("svg:title")
+          .text(function(d){
+            return "SHow/Hide GRE "+d+ " data"
+          })
           //.style("stroke-width", "10px")
           //.style("fill", function(d, i) { return color(i); });
           //.attr("stroke", function(d) { return color(d); } ) 
@@ -94,15 +174,15 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           .attr("x", x(left + 100 ) )
           .attr("y", i * 13 - 8 )
           .attr("height",13)
-          .attr("width",50)
+          .attr("width",55)
           .style("fill", "#ACD1E9" )
           .style("opacity", "0.2")
           .attr("transform", "translate(-5, 0)")
 
         // let's write regulator if it exists
         g.append("text")
-          .attr("x", 60 )
-          .attr("y", i * 13 + 1 )
+          .attr("x", 65)
+          .attr("y", i * 13 + 3 )
           .attr("height",30)
           .attr("width",100)
           .text(function(d){
@@ -116,13 +196,33 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
             return tmp__;
           })
           .on('click', function(c){
-            window.open('/gres/' + species_ + "/" + c, '_blank')
+            //debugger
+            var tmp__ = ""
+            if(regulator != "") {
+            regulator.forEach(function(e){
+              if(e.gre_name == d){
+                tmp__ = e.regulondb_id;
+              }})
+            }
+            window.open("http://regulondb.ccg.unam.mx/regulon?term="+tmp__+"&format=jsp&organism=ECK12&type=regulon", '_blank')
           })
           .style('cursor', function(d){
             if(d != "All"){
               return 'hand'
             }
           })
+          .append("svg:title")
+          .text(function(d){
+            var tmp__ = ""
+            if(regulator != "") {
+            regulator.forEach(function(e){
+              if(e.gre_name == d){
+                tmp__ = "More info about " + e.tf;
+              }})
+            }
+            return tmp__
+          })
+          
 
         g.append("text")
           .attr("x", x(left + 100 ) )
@@ -130,7 +230,14 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
           .attr("height",30)
           .attr("width",100)
           //.attr("fill", function(d) {color(d);})
-          .text(function(d){return d;})
+          .text(function(d){
+            if(d!="All"){
+                return "GRE#"+d.substring(4,100);
+            }
+            else{
+              return "All"
+            }
+          })
           .style("fill", function(d) { return color(d); } )
           //.style("stroke", bordercolor)
           .style("text-decoration","underline")
@@ -157,6 +264,10 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
               return 'hand'
             }
           })
+          .append("svg:title")
+          .text(function(d){
+            return "Open "+d+ " detail page"
+          })
 
       });
 
@@ -168,7 +279,7 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
   
 function redrawSeqLogo(names){
     
-    if (  (view.right - view.left) <= 410 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
+    if (  (view.right - view.left) <= 400 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
       
       yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
       
@@ -1231,15 +1342,19 @@ var asyncLoop = function(o){
 
 
 function ani(){
+  //change cycling_circle to green
+  d3.selectAll("#cycling_circle").style("fill", "green")
 
-  if($('#cycling').attr("onclick") !="ani()"){
+
+  /*if($('#cycling').attr("onclick") !="ani()"){
     $('#cycling').attr("onclick") = "clearTimeout(timer)"
-  }
+  }*/
 
 clearTimeout(timer)
 var anim = createArrayToAnimate()
 anim.push("Default")
-console.log("anim = " + anim)
+//anim.sort()
+//console.log("anim = " + anim)
 asyncLoop({
     length : t.length,
     functionToLoop : function(loop, i){
@@ -1566,19 +1681,26 @@ window["timer"] = ""
 
 function brushStartEgrin(){
   clearTimeout(timer)
+  //if(!cycling_global){
+  //    stopAnimation()
+  //}
   drawLine();
 
 
 }
 function brushEndEgrin(){
   //clearTimeout(timer)
+  stopAnimation()
   drawLine();
-  if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
-    ani()
-  }
-  else{
-    clearTimeout(timer)
-  }
+  //if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
+    if(cycling_global){
+      ani()
+    }
+  /*else{
+    //clearTimeout(timer)
+    stopAnimation()
+  }*/
+
 
 }
 
@@ -1586,7 +1708,10 @@ function brushEndEgrin(){
 function brushed() {
 
 
-    clearTimeout(timer)
+    //clearTimeout(timer)
+    if(!cycling_global){
+      stopAnimation()
+    }
     //console.log("brushed");
 
       //console.log("Right click <false> : " + rightClick())
@@ -1941,7 +2066,8 @@ function uncheckAll(){
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
-      clearTimeout(timer)
+      //clearTimeout(timer)
+      stopAnimation()
   }
   else{
     d3.selectAll("input[name=boxes]").property("checked", false);
@@ -1954,7 +2080,8 @@ function uncheckAll(){
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
-      clearTimeout(timer)
+      //clearTimeout(timer)
+      stopAnimation()
   }
   drawLine();
 }
@@ -2149,12 +2276,24 @@ function uncheckAll(){
   }
     function init(){
     // let's set brush
-    //brush.extent([view.left, view.left + 500]);
+
+
     if(gene_strand =="+"){
-      brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);  
+      //if( Math.abs(gene_end - gene_start) <  550 ){
+      //  brush.extent([parseInt(gene_start)-100, parseInt(gene_start)+20]);    
+      //}
+      //else{
+        brush.extent([parseInt(gene_start)-400, parseInt(gene_start)+50]);    
+      //}
     }
     else{
-      brush.extent([parseInt(gene_stop)-400, parseInt(gene_stop)+50]);
+      //if( Math.abs(gene_end - gene_start) <  550 ){
+      //    brush.extent([parseInt(gene_stop)-20, parseInt(gene_stop)+100]);
+     // }
+     // else{
+        console.log("------------>  minus")
+          brush.extent([parseInt(gene_start)-400,parseInt(gene_start)+200]);
+     // }
     }
     
     svg.select(".x.brush").call(brush);
@@ -2261,8 +2400,35 @@ window["checked_global"]  = false;
   
     redraw();
   }
+
+function removeAddedCorem(){
+  var cor_n = $('#dropdown_corem').val();
+  $('<div></div>').appendTo('body')
+                    .html('<div><h6>Are you sure you want to remove '+ cor_n + ' ?</h6></div>')
+                    .dialog({
+                        modal: true, title: 'Remove corem', zIndex: 10000, autoOpen: true,
+                        width: 'auto', resizable: false,
+                        buttons: {
+                            Yes: function () {
+                                // $(obj).removeAttr('onclick');                                
+                                // $(obj).parents('.Parent').remove();
+                                console.log("yes")
+                                $(this).dialog("close");
+                            },
+                            No: function () {
+                              console.log("no")
+                                $(this).dialog("close");
+                            }
+                        },
+                        close: function (event, ui) {
+                            $(this).remove();
+                        }
+                    });
+
+}
 function addCorem(){
-  clearTimeout(timer) // just in case, let's stop cycling
+  //clearTimeout(timer) // just in case, let's stop cycling
+  stopAnimation()
   var cor_n = $('#dropdown_corem').val();
   if(cor_n != ""){
     console.log("add corem bt was clicked !" + cor_n)

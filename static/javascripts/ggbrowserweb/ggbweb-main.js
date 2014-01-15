@@ -134,11 +134,19 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   //debugger;
   var box = d3.select("#" + div).selectAll("input")
   .data(data.sort());
-  box.enter().append("input").attr("class", "btGGB")
+  box.enter()
+  //.append("div").attr("id", "try_close").attr("class", "fake-lightbox")
+  //.append("span").attr("class","close-btn-18").attr("title", "Close").attr("width", "100px")
+  //.text("Close")
+  .append("input").attr("class", "btGGB")
+  //.each(function(a){
   .attr("id", function(d){return d})
   .attr("type","button")
   .attr("name", "bt")
   .attr("value", function (d){return d;} )
+  .style("display","inline-block")
+  .style("position", "relative")
+  //.style("width","100px")
   .on("click", function(d){
     if(d == "Default"){
       d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
@@ -146,6 +154,9 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
      d3.selectAll("input[class=btGGB]").attr("class", "btGGB"); return animateCorem(d)
     }
     })
+    box.append("input").attr("type","button").attr("class", "button1").attr("value", "Button 1")
+  //.style("width","100px")
+  //})
   
 
   //var buttonClicked = d3.selectAll("input[name=bt]").on("click", animateCorem("a"));

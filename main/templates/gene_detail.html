@@ -74,15 +74,22 @@ GGBrowser scripts to be imported
           "sAjaxSource": "{% url 'gene_biclusters_json' %}{{species}}/{{gene}}"
         });
 
+    $("#showSequenceLogo_hint").qtip({
+        content: 'Show the genomic sequence within putative GREs. Sequence displayed only when window size is < 400bp.',
+        position: { target: 'mouse' },
+        show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },   
+        style: 'dark' 
+        });
     $("#ggbrowserweb_tip").qtip({
-        content: 'Promoter architecture calculated by scanning all CRMs clustered within a GRE across the entire genome. Only CRMs with MAST pvalue <= 1e-6 are shown. This was done to reveal potential TF-binding in unconventional locations (e.g. inside operons), which would not have been detected by cMonkey (see GRE table below)',
+        content: "Condition-dependent promoter architecture of {{ g.sys_name }}. These plots visulize how the relative influence of regulatory sites in a promoter region vary across contexts. For each gene, we report the relative influence of GREs in the environmental context of each corem to which it belongs. The <strong>'Default'</strong> track reports all predicted GREs discovered near {{ g.sys_name }}, regardless of environmental context. Please consult Supplementary Methods on the Downloads page for a full description of how these visualizations were computed.",
         position: { target: 'mouse' },
         show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },   
         style: 'dark' 
         });
     $("#gre_tip").qtip({
-      content: 'Putative gene regulatory elements (GREs) discovered in the promoter region. GREs discovered frequently have lower qvals (hypergeometric test).',
+      content: 'Putative gene regulatory elements (GREs) discovered in the promoter region of {{ g.sys_name }}. GREs discovered frequently have lower qvals (hypergeometric test).',
             position: { target: 'mouse' },
             show: { when: { event: 'mouseover' } },
             hide: { when: { event: 'mouseout' } },             
@@ -95,11 +102,11 @@ GGBrowser scripts to be imported
             hide: { when: { event: 'mouseout' } },              
         style: 'dark' 
         });
-    $("#bicluster_tip").qtip({
-      content: 'Biclusters containing this gene.',
+    $("#corem_context_tip").qtip({
+      content: "Add a corem to observe the state of the {{ g.sys_name }} promoter in the environmental and regulatory context of other corems (to which it does not belong).",
             position: { target: 'mouse' },
             show: { when: { event: 'mouseover' } },
-            hide: { when: { event: 'mouseout' } },       
+            hide: { when: { event: 'mouseout' } },              
         style: 'dark' 
         });
     $("#zoom_prom_arch").colorbox({  
@@ -137,11 +144,12 @@ GGBrowser scripts to be imported
     </table>
 
 
-<blockquote><p>{{ g.sys_name }} Promoter Architecture<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();"><img style="background:rgba(250, 250, 250, 0)" src="/static/download.png"></a></p></blockquote>
+<blockquote><p>{{ g.sys_name }} Promoter Architecture<a id="zoom_prom_arch" href="/static/images/promoter_architecture/{{ s.ncbi_taxonomy_id }}/{{ g.sys_name }}.png"> <img style="background:rgba(250, 250, 250, 0)" src="/static/zoom.png" title="Zoom"></a><a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();"><img style="background:rgba(250, 250, 250, 0)" src="/static/download.png" title="Download"></a><a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
 <div id="freeze" style="width: 750px;">
 <table id="table-ggbrowserweb" style="margin: 0; white-space:nowrap;">
       <tr>
-          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence Logo</input>
+          <input type="checkbox" name="showSequenceLogo" value="show" onchange="changeShowSequenceLogo()">Show Sequence</input>
+          <a id="showSequenceLogo_hint" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a>
       </tr>
       <td>
           <div id="ggbrowser-principal" style="background-color:white"></div>
@@ -162,13 +170,13 @@ GGBrowser scripts to be imported
       </td>
 </table>
 <fieldset id="corem_bt" style="border:1px solid;background:white ">
-  <button id="cycling"onclick="ani()">Cycle</button>
-          <legend style="margin-right:0.5em;font:14;padding-top:0.2em;font-weight:bold;font-size:100%;">Corem Context<a id="ggbrowserweb_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></legend>
+          <legend style="margin-right:0.5em;font:14;padding-top:0.2em;font-weight:bold;font-size:100%;">Corem Context<a id="corem_context_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0)" src="/static/help.png" ></a></legend>
           <div id="corem_box">
           </div> 
           <div>
                   <p>Corem:</p><select id="dropdown_corem"></select>
                   <input type="button" value="add" onclick="addCorem(this)">
+                  <input type="button" value="reset" onclick='drawButton(original_corem.slice(0,parseInt(total_corem_)+1), "corem_box")'>
           <div> 
         </fieldset>
 </div>
@@ -192,7 +200,7 @@ window["refseq"] = "{{ g.chromosome.refseq }}"
 <!-- GGBrowserweb ends-->
 
 
-    <blockquote><p>Corem membership</p></blockquote>
+    <blockquote><p>Corems containing {{ g.sys_name }}</p></blockquote>
     <ul>
       {% for corem in corems %}
       <li><a href="{% url 'corems' %}{{ s.ncbi_taxonomy_id }}/{{ corem.corem_id }}">{{ corem.corem_id }}</a></li>
@@ -221,7 +229,7 @@ ggbrowserweb_tip - alter text
       </tbody>
     </table>
             
-    <blockquote><p>Regulated Conditions <a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Conditions in which {{ g.sys_name }} is co-regulated with other genes<a id="condition_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
     <table id="conditions" class="table">
       <thead>
         <tr>
@@ -234,7 +242,7 @@ ggbrowserweb_tip - alter text
       </tbody>
     </table>
             
-    <blockquote><p>Biclusters <a id="bicluster_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+    <blockquote><p>Biclusters containing {{ g.sys_name }}</p></blockquote>
     <table id="biclusters" class="table">
       <thead>
         <tr>
