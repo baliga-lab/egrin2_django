@@ -149,11 +149,13 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   //.style("width","100px")
   .on("click", function(d){
     if(d == "Default"){
-      if(cycling_global){cycling_global=false}else{cycling_global=true}
+      //if(cycling_global){cycling_global=false}else{cycling_global=true}
+      window["cycling_global"]=false
       stopAnimation()
       d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
     } else{
-      if(cycling_global){cycling_global=false}else{cycling_global=true}
+      //if(cycling_global){cycling_global=false}else{cycling_global=true}
+      window["cycling_global"]=false
       stopAnimation()  
      d3.selectAll("input[class=btGGB]").attr("class", "btGGB"); return animateCorem(d)
     }
