@@ -1,6 +1,7 @@
 
 function stopAnimation(){
   clearTimeout(timer)
+  //cycling_global = false
   d3.selectAll("#cycling_circle").style("fill","white")
 }
 

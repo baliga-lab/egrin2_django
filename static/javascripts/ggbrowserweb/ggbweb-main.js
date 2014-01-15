@@ -139,7 +139,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   //.append("span").attr("class","close-btn-18").attr("title", "Close").attr("width", "100px")
   //.text("Close")
   .append("input").attr("class", "btGGB")
-  //.each(function(a){
+  //.each(function(a){   
   .attr("id", function(d){return d})
   .attr("type","button")
   .attr("name", "bt")
@@ -149,8 +149,12 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   //.style("width","100px")
   .on("click", function(d){
     if(d == "Default"){
+      if(cycling_global){cycling_global=false}else{cycling_global=true}
+      stopAnimation()
       d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
-    } else{  
+    } else{
+      if(cycling_global){cycling_global=false}else{cycling_global=true}
+      stopAnimation()  
      d3.selectAll("input[class=btGGB]").attr("class", "btGGB"); return animateCorem(d)
     }
     })
