@@ -73,34 +73,34 @@
 		$("#expression_tip").qtip({
 			content: 'Standardized relative expression of all genes in corem in conditions where genes in the corem are co-regulated (see Conditions below for details). Color blocks denote related experimental conditions (determined by array annotations, key below).',
           	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },         
+          	show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },            
 		    style: 'dark' 
 		   	});
 		$("#function_tip").qtip({
 			content: 'Biological functions enriched for genes in a corem. Computed by DAVID.',
           	position: { target: 'mouse' },
-          	show: 'click',
-          	hide: { when: { event: 'click' } },        
+          	show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },       
 		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
 			content: 'Putative regulatory mechanisms or gene regulatory elements (GREs) that influence expression of genes in {{ corem.corem_id }}. The GREs we report were consistently discovered in biclusters containing {{ corem.corem_id }} genes, suggesting that they are responsible for regulating genes in {{ corem.corem_id }}. qval is BH-corrected pval from hypergeometric test.',
 			position: { target: 'mouse' },
-			show: 'click',
-          	hide: { when: { event: 'click' } },       
+			show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },        
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditions in which {{ corem.corem_id }} genes have significantly low relative standard deviation. All conditions with resampled pval<=0.05 are reported.',
+			content: 'Conditions in which {{ corem.corem_id }} genes have significantly low relative standard deviation (|&#956;/&#963;|). All conditions with resampled pval&#8804;0.05 are reported.',
 			position: { target: 'mouse' },
-			show: 'click',
-          	hide: { when: { event: 'click' } },          
+			show: { when: { event: 'mouseover' } },
+        hide: { when: { event: 'mouseout' } },        
 		    style: 'dark' 
 		   	});
         });
       </script>
-			<blockquote><p>Expression <a id="expression_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
+			<blockquote><p>{{ corem.corem_id }} Co-expression<a id="expression_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></p></blockquote>
       <div>
         <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/corems/{{ corem.corem_id }}.png" background-color="black" width=100% height=100% class="float-center" />
         <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/corems/legend.png" background-color="black" width=100% height=100% class="float-center" />
