@@ -153,7 +153,10 @@ urlpatterns = patterns('main.views',
     url(r'^condition_gres_json/$', 'condition_gres_json',name='condition_gres_json'),
     url(r'^condition_gres_json/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$',
         'condition_gres_json', name='condition_gres_json'),
-    
+
+    url(r'^condition_genes_json/$', 'condition_genes_json', name='condition_genes_json'),
+    url(r'^condition_genes_json/(?P<species>[^/]*)/(?P<condition>[^/]*)/?$', 'condition_genes_json', name='condition_genes_json'),
+
     ##############################################################################
     # OTHER
     ##############################################################################
