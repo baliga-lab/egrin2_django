@@ -176,7 +176,6 @@ def conditions(request, species=None):
 def condition_detail(request, species=None, condition=None):
     s = Species.objects.get(ncbi_taxonomy_id=species)
     condition = Condition.objects.get(cond_id = condition,network__species=s)
-    genes = Gene.objects.filter(conditions=condition)
     return render_to_response('condition_detail.html', locals())
 
 def contact(request):
@@ -251,6 +250,30 @@ def gre_corems_json(request, species, gre):
     dtparams = get_dtparams(request, fields, fields[0])
     query = GreCoremMembership.objects.filter(gre__gre_id=gre)
     return corems_json_generic(query, species, dtparams)
+
+
+def condition_genes_json(request, species, condition):
+    fields = ['species', 'sys_name', 'name', 'accession', 'description', 'start', 'stop', 'strand', 'refseq']
+    species_obj = Species.objects.get(ncbi_taxonomy_id=species)
+    query = Gene.objects.filter(conditions__cond_id=condition)
+    dtparams = get_dtparams(request, fields, fields[0])
+    num_total = query.count()
+    batch = dtparams.ordered_batch(query)
+    genes = [[species_detail_link(species, species_obj.name),
+              gene_detail_link(species, item.sys_name, item.sys_name),
+              item.name,
+              ncbi_accession_link(item.accession),
+              item.description, item.start, item.stop, item.strand,
+              ncbi_chromosome_link(item.chromosome.refseq)]
+             for item in batch]
+    data = {
+        'sEcho': dtparams.sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': genes
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+
 
 def corems(request, species=None):
     # Return info about corems            
