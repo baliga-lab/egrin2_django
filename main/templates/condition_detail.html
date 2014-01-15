@@ -60,7 +60,7 @@
         });            
       });
     </script>
-    <blockquote><p>Corem Activity</p></blockquote>
+    <blockquote><p>Corems co-regulated in {{ condition.cond_name }}</p></blockquote>
 		<table id="corems" class="table">
       <thead>
         <tr>
@@ -72,7 +72,7 @@
       </tbody>
     </table>
             
-    <blockquote><p>Genes</p></blockquote>
+    <blockquote><p>Genes co-regulated in {{ condition.cond_name }}</p></blockquote>
 		<table id="genes" class="table">
       <thead>
 				<tr>
@@ -91,7 +91,7 @@
       </tbody>
     </table>
 
-    <blockquote><p>GREs</p></blockquote>
+    <blockquote><p>GREs with regulatory activity in {{ condition.cond_name }}</p></blockquote>
     <table id="gres" class="table">
       <thead>
         <tr>
@@ -104,7 +104,7 @@
       </tbody>
     </table>
             
-    <blockquote><p>Biclusters</p></blockquote>
+    <blockquote><p>Biclusters containing {{ condition.cond_name }}</p></blockquote>
     <table id="bcs" class="table">
       <thead>
         <tr>

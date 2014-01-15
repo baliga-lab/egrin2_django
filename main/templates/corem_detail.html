@@ -78,21 +78,21 @@
 		    style: 'dark' 
 		   	});
 		$("#function_tip").qtip({
-			content: 'Biological functions enriched for genes in a corem. Computed by DAVID.',
+			content: 'Biological functions enriched for genes in {{ corem.corem_id }}. Computed by DAVID.',
           	position: { target: 'mouse' },
           	show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },       
 		    style: 'dark' 
 		   	});
 		$("#gre_tip").qtip({
-			content: 'Putative regulatory mechanisms or gene regulatory elements (GREs) that influence expression of genes in {{ corem.corem_id }}. The GREs we report were consistently discovered in biclusters containing {{ corem.corem_id }} genes, suggesting that they are responsible for regulating genes in {{ corem.corem_id }}. qval is BH-corrected pval from hypergeometric test.',
+			content: 'Gene regulatory elements (GREs) that influence expression of genes in {{ corem.corem_id }}. The GREs we report were consistently discovered in biclusters containing {{ corem.corem_id }} genes, suggesting that they are responsible for their co-regulation. qval is BH-corrected pval from hypergeometric test.',
 			position: { target: 'mouse' },
 			show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },        
 		    style: 'dark' 
 		   	});
 		$("#condition_tip").qtip({
-			content: 'Conditions in which {{ corem.corem_id }} genes have significantly low relative standard deviation (|&#956;/&#963;|). All conditions with resampled pval&#8804;0.05 are reported.',
+			content: 'Conditions in which {{ corem.corem_id }} genes have significantly low relative standard deviation (|&#963;/&#956;|). All conditions with resampled pval&#8804;0.05 are reported.',
 			position: { target: 'mouse' },
 			show: { when: { event: 'mouseover' } },
         hide: { when: { event: 'mouseout' } },        
