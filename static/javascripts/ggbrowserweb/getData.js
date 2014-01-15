@@ -220,10 +220,36 @@ var max_local = new Array();
                 else{
                   //alert("no data for this gene.")
                   $('#freeze').unblock()
+                  //$.growlUI('Attention', 'Sorry. We are currently updating our <i>Halobacterium</i>  database. '+gene_name+' is currently unavailable. Dynamic promoter architectures will be available for all  <i>Halobacterium</i> genes by 1/27/2014.'); 
+                  
+                  $.blockUI({ 
+            message: 'Sorry. We are currently updating our <i>Halobacterium</i>  database. '+gene_name+' is currently unavailable. Dynamic promoter architectures will be available for all  <i>Halobacterium</i> genes by 1/27/2014.', 
+            fadeIn: 700, 
+            fadeOut: 700, 
+            timeout: 10000, 
+            showOverlay: false, 
+            centerY: true, 
+            css: { 
+                width: '350px', 
+                top: '10px', 
+                left: '', 
+                right: '10px', 
+                border: 'none', 
+                padding: '5px', 
+                backgroundColor: '#000', 
+                '-webkit-border-radius': '10px', 
+                '-moz-border-radius': '10px', 
+                opacity: .6, 
+                color: '#fff' 
+            } 
+        });
+
+
                   $('#freeze').block({   
                     cursorReset: 'default',
                     //cursor:'default',
-                    message: '<h1>Unavailable dynamic data set for '+gene_name+' at this moment.</h1>', 
+                    centerY: 0,
+                    message: gene_name + '<h1>unavailable data.</h1>', 
                     css: { 
                     border: 'none', 
                     padding: '35px', 
