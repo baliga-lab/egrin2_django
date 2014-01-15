@@ -734,7 +734,9 @@ getSequenceAnnotationData("/genes_json_annotation/" + species_ + "/",left, right
 
 
 // for the special case of E. Coli
-
+function resetView(){
+  getCre("/cres_in_range_json_gene_all/", left, right, 6, species_, gene_, refseq);
+}
 
 init();
 
