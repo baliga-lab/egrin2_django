@@ -46,7 +46,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
        
       .append("rect")
       //.attr("id", "rectClip")
-        .attr("width", width)
+        .attr("width", width-15)
         .attr("height", height)
         ;
         
@@ -149,11 +149,13 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
   //.style("width","100px")
   .on("click", function(d){
     if(d == "Default"){
+      cyclingLegend(d)
       //if(cycling_global){cycling_global=false}else{cycling_global=true}
       window["cycling_global"]=false
       stopAnimation()
       d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
     } else{
+      cyclingLegend(d)
       //if(cycling_global){cycling_global=false}else{cycling_global=true}
       window["cycling_global"]=false
       stopAnimation()  
@@ -669,7 +671,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
     focus.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (height-110) + ")")
+            .attr("transform", "translate(-15," + (height-110) + ")")
             .call(xAxis);
 
         focus.append("g")
@@ -682,9 +684,21 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
         focus.append("g")
         .attr("class", "y axis")
         .attr("id", "max_local")
-            .attr("transform", "translate(" + width + ",-110)")
+            .attr("transform", "translate(" + (width-15) + ",-110)")
         .call(yAxisMaxLocal);
-      
+
+        // yLabel
+        focus.append("text")
+            .attr("class", "y label")
+            .attr("transform", "rotate(-90)")
+            .attr("text-anchor", "end")
+            .attr("x", 0 - (height / 2) + 50)
+            .attr("y", 0 - margin.right + 695)
+            //.attr("dy", ".175em")
+            .attr("dy", "1em")
+            //.attr("transform", "translate(" + 0 + ",0)")
+            .text("GRE counts")
+
         
     context.append("g")
             .attr("class", "x axis")
@@ -699,8 +713,8 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
         .attr("id", "t")
             .call(brush)
           .selectAll("rect")
-            .attr("y", -6)
-        //.attr("width", width - 40)
+            .attr("y", -2)
+          //.attr("width", width - 40)
             .attr("height", height2+5)
         //.attr("clip-path", "url(#clip2)")
         ; 

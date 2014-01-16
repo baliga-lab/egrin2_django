@@ -1,14 +1,38 @@
 
 function stopAnimation(){
   clearTimeout(timer)
-  //cycling_global = false
+  
   d3.selectAll("#cycling_circle").style("fill","white")
+  //cyclingLegend(string)
+}
+
+function cyclingLegend(string){
+
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", 650 )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(-30, 20)");
+
+
+    svg.selectAll('#cycling_legend').remove();
+  var l = legend.selectAll('#cycling_legend').data([string])
+  l.enter()
+          .append("text")
+          .attr("id", "cycling_legend")
+          .attr("x", 650 )
+          .attr("y", 20 )
+          .attr("height",130)
+          .attr("width",200)
+          .attr("font-weight", "bold")
+          .text(function(d){return "Data : "+d;})
 }
 
 
 var cycling_global = true;
 function cycling(){
-
 var legend = svg.append("g")
     .attr("class", "legend")
     .attr("x", 650 )
@@ -867,9 +891,10 @@ function redrawSeqLogo(names){
           }
           
         })
-    //.on('click', function(c){
-    //  window.open('http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank')
-    //  ;})
+        .on('click', function(c){
+          window.open(url_ + c.sys_name, '_blank')
+          d3.select('#geneAnnotation').selectAll("p").remove();
+        ;})
     //.text(formatLabel)
     .text(function(d){ 
       if(d.start < d.end){
@@ -936,8 +961,9 @@ function redrawSeqLogo(names){
           
         })
     .on('click', function(c){
-      window.open('http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank')
-      ;})
+        window.open(url_ + c.sys_name, '_blank')
+        d3.select('#geneAnnotation').selectAll("p").remove();
+    ;})
     //.text(formatLabel)
     .text(function(d){ 
       if(d.start < d.end){
@@ -1064,12 +1090,9 @@ function redrawSeqLogo(names){
   
     .attr("class", "hint--bottom")
     .on('click', function(c){
-      //window.open('http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank')
-
-      window.open(url_ + c.sys_name, '_blank')
-    d3.select('#geneAnnotation').selectAll("p").remove();
-    //d3.selectAll('#geneAnnotation').append("p").text(c.attributes + ' :  http://www.ncbi.nlm.nih.gov/gene/?term=' + c.attributes.split(";")[1].split("=")[1], '_blank');
-      ;})
+        window.open(url_ + c.sys_name, '_blank')
+        d3.select('#geneAnnotation').selectAll("p").remove();
+    ;})
     .style('cursor', 'hand')
     .append("svg:title")  
     .text(function(d){ return (d.attributes)})
@@ -1334,7 +1357,7 @@ var asyncLoop = function(o){
     var loop = function(){
       //if(eval(dontstop)) {
         i++;
-        if(i == anim.length){i=0; }
+        if(i == anim.length){i=0 }
         o.functionToLoop(loop, i);
       }
     //} 
@@ -1360,14 +1383,21 @@ asyncLoop({
     length : t.length,
     functionToLoop : function(loop, i){
        window["timer"] =  setTimeout(function(){
-            //document.write('Iteration ' + i + ' <br>');
-            console.log("******* i = "+i)
-            if(anim[i] != "Default"){
-              animateCorem(anim[i])
-            }
-            else {
-              resetLineChartData()
-            }
+                  console.log("******* i = "+i)
+              //if(corem_name.length > i ){
+              //  animateCorem(anim[0])
+              //  stopAnimation()
+              //  abort()
+              //  console.log('clear and stop animation')
+              //}
+                  if(anim[i] != "Default"){
+                    animateCorem(anim[i])
+                    cyclingLegend(anim[i])
+                  }
+                  else {
+                    resetLineChartData()
+                    cyclingLegend(anim[i])
+                  }
             loop();
         },2000);
     },
