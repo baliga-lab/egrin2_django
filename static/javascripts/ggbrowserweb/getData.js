@@ -196,6 +196,7 @@ var max_local = new Array();
                 drawLineChart();
                 removeAll();
                 legend_chart();
+                cyclingLegend("Default")
                 //view.left = parseInt(gene_start)-300
                 //view.right = parseInt(gene_start)+50
                 //drawLine()
@@ -249,7 +250,7 @@ var max_local = new Array();
                     cursorReset: 'default',
                     //cursor:'default',
                     centerY: 0,
-                    message: gene_name + '<h1>unavailable data.</h1>', 
+                    message: gene_name + '<h1>will be available on 1/27/2014.</h1>', 
                     css: { 
                     border: 'none', 
                     padding: '35px', 
