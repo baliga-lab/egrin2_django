@@ -945,9 +945,42 @@ def gene_biclusters_json(request, species=None, gene=None):
 def gre_biclusters_json(request, species=None, gre=None):
     fields = ['bc_id', 'residual', 'num_genes', 'num_conds']
     dtparams = get_dtparams(request, fields, fields[0])
-    gre = Gre.objects.get(gre_id=gre, network__species__ncbi_taxonomy_id=species)
-    query = Bicluster.objects.filter(gres=gre)
-    return biclusters_json_generic(query, species, dtparams)
+
+    # 1. grab number of biclusters
+    cur = connection.cursor()
+    cur.execute("select count(distinct bcr.bicluster_id) from main_cre c join main_gre g on c.gre_id = g.id join main_bicluster_cres bcr on c.id = bcr.cre_id where g.gre_id = %s", [gre])
+    num_total = cur.fetchone()[0]
+    cur.close()
+
+    # 2. grab the bicluster batch
+    cur = connection.cursor()
+    cur.execute("select distinct b.id, b.bc_id, b.residual from main_cre c join main_gre g on c.gre_id = g.id join main_bicluster_cres bcr on c.id = bcr.cre_id join main_bicluster b on b.id = bcr.bicluster_id where g.gre_id = %s order by b.id limit %s offset %s", [gre, dtparams.display_length, dtparams.display_start])
+    biclusters = [(id, bc_id, float(residual)) for id, bc_id, residual in cur.fetchall()]
+    bicluster_ids = [b[0] for b in biclusters]
+    bid_list = ','.join(map(str, bicluster_ids))
+    cur.close()
+
+    # 3. grab gene counts
+    cur = connection.cursor()
+    cur.execute("select bicluster_id, count(gene_id) from main_bicluster_genes where bicluster_id in (" + bid_list + ") group by bicluster_id")
+    gene_counts = [num_genes for bid, num_genes in cur.fetchall()]
+    cur.close()
+
+    # 4. grab condition counts
+    cur = connection.cursor()
+    cur.execute("select bicluster_id, count(condition_id) from main_bicluster_conditions where bicluster_id in (" + bid_list + ") group by bicluster_id")
+    cond_counts = [num_conds for bid, num_conds in cur.fetchall()]
+    cur.close()
+    
+    biclusters = [[bicluster_detail_link(species, b[1], b[1]),
+                   b[2], gene_counts[i], cond_counts[i]]
+                  for i, b in enumerate(biclusters)]
+    data = {
+        'sEcho': dtparams.sEcho,
+        'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
+        'aaData': biclusters
+        }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
 def bicluster_detail(request, species=None, bicluster=None):

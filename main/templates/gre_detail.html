@@ -148,14 +148,6 @@
         </tr>
       </thead>
       <tbody>
-        {% for o in biclusters %}
-        <tr class="{% cycle 'row-a' 'row-b' %}">
-          <td class="first"><a href="{% url 'biclusters' %}{{ s.ncbi_taxonomy_id }}/{{ o.bc_id }}">{{ o.bc_id }}</a></td>
-          <td>{{ o.residual }}</td>
-          <td>{{ o.genes.count }}</td>
-          <td>{{ o.conditions.count }}</td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
             
