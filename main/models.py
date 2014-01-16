@@ -237,7 +237,7 @@ class CrePos(models.Model):
 def cres_in_gene_all(gene_name):
     
     g = Gene.objects.get(sys_name=gene_name)
-    print "gene --> ", g
+    print "gene --> ", g , "gene_id", g.id
     cur = connection.cursor()
     cur.execute('select json0 from cres_in_gene where gene_id = %s', [g.id])
     res = cur.fetchone()

@@ -135,7 +135,7 @@ var max_local = new Array();
             color: '#fff' }
         });//css: { border: '3px solid rgba(250, 250, 250, 0); ' }
 
-        $.ajax( {
+       var call_ =  $.ajax( {
               type:'Get',
 
               url: url + gene_name + "/"
@@ -145,7 +145,11 @@ var max_local = new Array();
               // getting basepairs information
               getBasepair_range("/basepair_json_range/"+specie, start, stop, this.refseq);
               
+              if(json != "") {
               window["cre"] = JSON.parse(json);
+
+              
+
               cre[0].All = cre[1];
               
               //window["mot_names"] = "All"
@@ -155,49 +159,28 @@ var max_local = new Array();
 
               window["max_"] = new Array();
               
-              mot_names.forEach(function(d, i){
-                window["temp_"+d] = new Array();
-                window["temp_pp_"+d] = {};
-                window["pp_"+d] = new Array();
-                window["pp_original_"+d] = new Array();
-                window["max_temp_"+d] = new Array();
-                
-                //console.log("do something for "+ d);
-                //drawLineChart()
-                //window["pp_"+d] = cre[0][mot_names[i]];
-                
-                
-                cre[0][mot_names[i]].forEach(function(q){
-                  eval("temp_"+d).push(new Populate(d, q[0], q[1], basepair[0].basepairs.substring(  (q[0] - start)-1, (q[0] - start)  ) ));  
-                  eval("max_temp_"+d).push(q[1]);
-                  //window["ppp_"+d] = eval("pp_"+d).push(new values(eval("pp_"+d)))
-                })
-                //debugger;
-
-                eval("max_").push(d3.max(eval("max_temp_"+d)));
-                eval("temp_pp_"+d).values = eval("temp_"+d);
-                eval("pp_"+d).push(eval("temp_pp_"+d));
-
-
-                //if(d != "All" && d != "eco_0"){  
-                    //debugger;
-                    window["array_zero"] = 0;
-                    var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop, "")
-                    array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
-                    eval("pp_"+d)[0].values = array_zero
-                    eval("pp_original_"+d).push(array_zero);
-                //}
-                /*else{
-                  window["pp_original_"+d] = (eval("temp_pp_"+d));  
-                }*/
-                
+                    mot_names.forEach(function(d, i){
+                      window["temp_"+d] = new Array();
+                      window["temp_pp_"+d] = {};
+                      window["pp_"+d] = new Array();
+                      window["pp_original_"+d] = new Array();
+                      window["max_temp_"+d] = new Array();
+                        cre[0][mot_names[i]].forEach(function(q){
+                          eval("temp_"+d).push(new Populate(d, q[0], q[1], basepair[0].basepairs.substring(  (q[0] - start)-1, (q[0] - start)  ) ));  
+                          eval("max_temp_"+d).push(q[1]);
+                          //window["ppp_"+d] = eval("pp_"+d).push(new values(eval("pp_"+d)))
+                        })
+                        eval("max_").push(d3.max(eval("max_temp_"+d)));
+                        eval("temp_pp_"+d).values = eval("temp_"+d);
+                        eval("pp_"+d).push(eval("temp_pp_"+d));
+                        window["array_zero"] = 0;
+                        var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop, "")
+                        array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
+                        eval("pp_"+d)[0].values = array_zero
+                        eval("pp_original_"+d).push(array_zero);
+                      
 
               });
-
-
-
-
-              //max_local = d3.max(max_);
 
                 // binding data to draw seqLogo
                   mot_names.forEach(function(d){
@@ -230,6 +213,55 @@ var max_local = new Array();
                 //console.log("highier")
                 getCre_per_corem("/cres_in_range_json_gene_corem/",  right, left,  4, specie,gene_name, this.refseq); 
                 //getCre_per_corem("/cres_in_range_json_gene_corem/" + specie + "/", gene_name);
+              }
+              
+
+              } // end if checking json != ""
+                else{
+                  //alert("no data for this gene.")
+                  $('#freeze').unblock()
+                  //$.growlUI('Attention', 'Sorry. We are currently updating our <i>Halobacterium</i>  database. '+gene_name+' is currently unavailable. Dynamic promoter architectures will be available for all  <i>Halobacterium</i> genes by 1/27/2014.'); 
+                  
+                  $.blockUI({ 
+            message: 'Sorry. We are currently updating our <i>Halobacterium</i>  database. '+gene_name+' is currently unavailable. Dynamic promoter architectures will be available for all  <i>Halobacterium</i> genes by 1/27/2014.', 
+            fadeIn: 700, 
+            fadeOut: 700, 
+            timeout: 10000, 
+            showOverlay: false, 
+            centerY: true, 
+            css: { 
+                width: '350px', 
+                top: '10px', 
+                left: '', 
+                right: '10px', 
+                border: 'none', 
+                padding: '5px', 
+                backgroundColor: '#000', 
+                '-webkit-border-radius': '10px', 
+                '-moz-border-radius': '10px', 
+                opacity: .6, 
+                color: '#fff' 
+            } 
+        });
+
+
+                  $('#freeze').block({   
+                    cursorReset: 'default',
+                    //cursor:'default',
+                    centerY: 0,
+                    message: gene_name + '<h1>unavailable data.</h1>', 
+                    css: { 
+                    border: 'none', 
+                    padding: '35px', 
+                    backgroundColor: '#000', 
+                    '-webkit-border-radius': '10px', 
+                    '-moz-border-radius': '10px', 
+                    opacity: 0.8, 
+                    color: '#fff',
+                    cursor:'default'  }
+                  });
+                  call_.abort();
+                  //break
               }
 
 

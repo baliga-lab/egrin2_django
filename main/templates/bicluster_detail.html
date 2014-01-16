@@ -47,12 +47,12 @@
         });
       });
     </script>
-    <blockquote><p>Expression</p></blockquote>
+    <blockquote><p>{{ bc.bc_id }} Co-expression</p></blockquote>
     <div>
       <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/bcs/{{ bc.bc_id }}.png" background-color="black" width=100% height=100% class="float-center" />
       <img src="/static/images/expression/{{ s.ncbi_taxonomy_id }}/corems/legend.png" background-color="black" width=100% height=100% class="float-center" />
     </div>
-    <blockquote><p>Genes</p></blockquote>
+    <blockquote><p>Genes in {{ bc.bc_id }}</p></blockquote>
     <table id="genes" class="table">
       <thead>
         <tr>
@@ -83,7 +83,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <blockquote><p>Conditions</p></blockquote>
+    <blockquote><p>Conditions in {{ bc.bc_id }}</p></blockquote>
     <table id="conditions" class="table">
       <thead>
         <tr>
@@ -101,7 +101,7 @@
       </tbody>
     </table>
                 
-    <blockquote><p><i>cis</i>-regulatory motifs</p></blockquote>
+    <blockquote><p><i>De novo</i> detected <i>cis</i>-regulatory motifs</p></blockquote>
     <table id="cres" class="table">
       <thead>
         <tr>
@@ -121,7 +121,7 @@
       </tbody>
     </table>
                 
-    <blockquote><p>GREs</p></blockquote>
+    <blockquote><p>GREs assigned to {{ bc.bc_id }}</p></blockquote>
     <table id="gres" class="table">
       <thead>
         <tr>
@@ -139,7 +139,7 @@
       </tbody>
     </table>
                 
-    <blockquote><p>Corems</p></blockquote>
+    <blockquote><p>Corems associated with {{ bc.bc_id }}</p></blockquote>
     <table id="corems" class="table">
       <thead>
         <tr>
