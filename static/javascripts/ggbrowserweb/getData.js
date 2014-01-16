@@ -393,7 +393,7 @@ var max_local = new Array();
                       drawButton(corem_name, "corem_box");
                       d3.selectAll("input[value=Default]").attr("class", "pressed")
                       //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
-                      yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+                      yFont.domain([0,getScaleBasedOnSelection()]);
                       ani()
                       $('#freeze').unblock()
                 }
@@ -501,7 +501,7 @@ var max_local = new Array();
                   drawButton(corem_name, "corem_box");
                   d3.selectAll("input[value=Default]").attr("class", "pressed")
                 //d3.selectAll("input[id=ec512157]").attr("class", "pressed")
-                  yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+                  yFont.domain([0,getScaleBasedOnSelection()]);
                   if(cycling_global == true){ani()}
                   $('#freeze').unblock()
                 }

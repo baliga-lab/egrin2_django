@@ -482,7 +482,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       var max_local = 100;
       yLine = d3.scale.linear().range([height, 150]).domain([0,max_local]); // 100 because I need to have room for other tracks
       yExpression = d3.scale.linear().range([height, 0]).domain([-5,5]);
-      var yFont = d3.scale.linear().range([0, 310]).domain([0,getMaxLocal(getNameWithoutUnchecked())]); // fix font for seqLogo
+      var yFont = d3.scale.linear().range([0, 310]).domain([0,getScaleBasedOnSelection()]); // fix font for seqLogo
       
   var xAxis = d3.svg.axis()
     .scale(x)
@@ -551,13 +551,13 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
         //var checkBox = d3.select("input[value=\"grouped\"]").property("checked", changed)
         function changed(){
           if(this.checked){
-          console.log("changed : " + this.value);
+          //console.log("changed : " + this.value);
           svg.selectAll("#seqLogo")
           .style("display", null);
         
         }
         else {
-          console.log(this)
+          //console.log(this)
           svg.selectAll("#seqLogo")
           .style("display", "none")
         }
@@ -599,14 +599,14 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
   var yPos_ = 0;    
   mot_names.forEach(function(d){
-    console.log('drawing Motif Heatmap');
+    //console.log('drawing Motif Heatmap');
   //  var yPos = 0;
-    console.log('yPos : ' + yPos_);
+    //console.log('yPos : ' + yPos_);
     ////drawHeatmapMotif(d, eval("max_"+ d)[0].values, yPos);
     //drawOverlapMotif(d, eval("segment_"+ d)["MotifSegment"], yPos_, 0);
     //drawOverlapMotif(d, eval("segment_"+ d), yPos_, 0);
     yPos_ = yPos_ + (100/mot_names.length);
-    console.log('yPos : ' + yPos_);
+    //console.log('yPos : ' + yPos_);
   });    
     
 

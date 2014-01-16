@@ -14,7 +14,7 @@ var legend = svg.append("g")
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
-    .attr("transform", "translate(-30, 20)");
+    .attr("transform", "translate(-490, 20)");
 
 
     svg.selectAll('#cycling_legend').remove();
@@ -30,16 +30,114 @@ var legend = svg.append("g")
           .text(function(d){return "Data : "+d;})
 }
 
-
-var cycling_global = true;
-function cycling(){
+// Let's create selection local option for yAxis scale
+var selection_scale_global = false;
+function selection_scale_label(){
 var legend = svg.append("g")
     .attr("class", "legend")
     .attr("x", 650 )
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
-    .attr("transform", "translate(-30, 20)");
+
+    .attr("transform", "translate(-15, 20)");
+
+  legend.selectAll('g').data(["Dynamic y-axis scaling"])
+      .enter()
+      .append('g')
+      .each(function(d, i) {
+        var g = d3.select(this);
+        g.append("rect")
+          .attr("id", "selection_scale")
+          .attr("x",600 )
+          .attr("y", i*13 -3)
+          //.attr("r", 6)
+          .attr("width", 8)
+          .attr("height", 8)
+          .style("fill", "white")
+          .style("stroke", "red" )
+          .on('click', function(c){
+            if(selection_scale_global){selection_scale_global=false}else{selection_scale_global=true}
+             if (selection_scale_global){
+                d3.selectAll("#selection_scale").style("fill","green")
+                drawLine()
+              }
+              else{
+                selection_scale_global = false
+                d3.selectAll("#selection_scale").style("fill","white")
+                drawLine()
+              }
+            })
+          .append("svg:title")
+          .text(function(d){ return "This selector changes the Y axis scale according to the zoom range selection (based on Default data set)."})
+
+        /*g.append("rect")
+          .attr("x", 650 +30 )
+          .attr("y", i * 13 - 6 )
+          .attr("height",13)
+          .attr("width",50)
+          .style("fill", "#ACD1E9" )
+          .style("opacity", "0.2")
+          .attr("transform", "translate(-5, 0)")*/
+
+        g.append("text")
+          .attr("x", 615 )
+          .attr("y", i * 13 + 5 )
+          .attr("height",30)
+          .attr("width",100)
+          .text(function(d){return d;})
+          //.style("fill", function(d) { return color(d); } )
+          //.style("text-decoration","underline")
+          //.attr("transform", "rotate(-90)")
+          .on('click', function(c){
+            if(selection_scale_global){selection_scale_global=false}else{selection_scale_global=true}
+             if (selection_scale_global){
+                d3.selectAll("#selection_scale").style("fill","green")
+                drawLine()
+              }
+              else{
+                selection_scale_global = false
+                d3.selectAll("#selection_scale").style("fill","white")
+                drawLine()
+              }
+            })
+          .style('cursor', function(d){
+            if(d != "All"){
+              return 'hand'
+            }
+          })
+          .append("svg:title")
+          .text(function(d){ return "This selector changes the Y axis scale according to the zoom range selection (based on Default data set)."})
+
+
+      });
+}
+
+
+// this function checks whether or not we need to use selection max or window max
+function getScaleBasedOnSelection(){
+  if(selection_scale_global){
+    return getMaxGivenSelection(getNameWithoutUnchecked())
+  }
+  else{
+    return getMaxLocal(getNameWithoutUnchecked())
+  }
+
+}
+
+
+
+
+var cycling_global = true;
+function cycling(){
+  selection_scale_label()
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", 650 )
+    .attr("y", 245)
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", "translate(-500, 20)");
 
   legend.selectAll('g').data(["Animate"])
       .enter()
@@ -56,9 +154,7 @@ var legend = svg.append("g")
           .style("fill", "white")
           .style("stroke", "red" )
           .on('click', function(c){
-
             if(cycling_global){cycling_global=false}else{cycling_global=true}
-
              if (cycling_global){
                 d3.selectAll("#cycling_circle").style("fill","green")
                 ani()
@@ -67,7 +163,6 @@ var legend = svg.append("g")
                 cycling_global = false
                 stopAnimation()
               }
-              //}
             })
         g.append("rect")
           .attr("x", 650 +30 )
@@ -87,13 +182,23 @@ var legend = svg.append("g")
           //.style("fill", function(d) { return color(d); } )
           //.style("text-decoration","underline")
           .on('click', function(c){
-              ani()
-              })
+            if(cycling_global){cycling_global=false}else{cycling_global=true}
+             if (cycling_global){
+                d3.selectAll("#cycling_circle").style("fill","green")
+                ani()
+              }
+              else{
+                cycling_global = false
+                stopAnimation()
+              }
+            })
+
           .style('cursor', function(d){
             if(d != "All"){
               return 'hand'
             }
           })
+
 
       });
 }
@@ -306,7 +411,7 @@ function redrawSeqLogo(names){
     
     if (  (view.right - view.left) <= 400 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
       
-      yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      yFont.domain([0,getScaleBasedOnSelection()]);
       
       var sequence = focus.selectAll("#" + names).remove();
       //debugger;    
@@ -529,7 +634,7 @@ function redrawSeqLogo(names){
     //redrawExpressionData();
     //redrawExpressionAsPath();
     drawLine();
-    console.log("resetView()")
+    //console.log("resetView()")
       }
 
 
@@ -662,11 +767,11 @@ function redrawSeqLogo(names){
         
         
         if( !(  final_left >= view.left && final_right <= view.right  ) ){
-          console.log("gene not inside region");
+          //console.log("gene not inside region");
           
           if(final_left >= view.left) {
             //debugger;
-            console.log("right is out, let's sum")
+            //console.log("right is out, let's sum")
             view.left = view.left + 1500;
             view.right = view.right + 1500;
             //getMotifData_all_rank(d3.round(view.right/w) + 0.5);
@@ -679,20 +784,20 @@ function redrawSeqLogo(names){
             //debugger;
             if( !(  final_left >= view.left )   ){
               //debugger;
-              console.log("left is out, let's dim")
+              //console.log("left is out, let's dim")
               view.left = view.left - 1500;
               view.right = view.right - 1500;
               //getMotifData_all_rank(d3.round(temp_r/w) - 1.0);            
             }
             else{
               //debugger;
-              console.log("left is out, let's substract")
+              //console.log("left is out, let's substract")
               //getMotifData_all_rank(d3.round(view.right/w) - 0.5);            
             }
           }
         }
         else{
-          console.log("gene is in between");
+          //console.log("gene is in between");
           //getMotifData_all_rank(d3.round(view.right/w));
         }
         
@@ -839,15 +944,15 @@ function redrawSeqLogo(names){
 
   // if checkbox has changed
   function change() {
-    console.log(this)
+    //console.log(this)
   //  if (this.value === "grouped") showSeqLogo();
   }
 
   function showSeqLogo(){
-    console.log("showSeqLogo");
+    //console.log("showSeqLogo");
   }
   function drawGeneLabels(){
-    console.log("***label");
+    //console.log("***label");
   // Labels for genes
 
 
@@ -871,7 +976,7 @@ function redrawSeqLogo(names){
     .attr('y', function(d){ 
       if(d.strand =='+') return genetrack.plus + 15; else return genetrack.minus + 15;
     })
-.attr("x", function(d,i) { console.log(d.name);
+.attr("x", function(d,i) { //console.log(d.name);
       if(d.start < d.end){
         //console.log("start > end");
         return x(d.start + 3);    
@@ -1037,7 +1142,7 @@ function redrawSeqLogo(names){
     
       //getData();
       
-    console.log("inside drawGenes");
+    //console.log("inside drawGenes");
       var genes1 = focus.selectAll("#dois").data(g);
       
       /*.data(genes.filter(function(d, i) { 
@@ -1207,7 +1312,7 @@ function redrawSeqLogo(names){
 
 
 function drawLineEspecialForAxisTransition(){
-  console.log("special")
+  //console.log("special")
   mot_names.forEach(function(d){
     if((window[d + "checked"] == true)) {
   focus.select(".motifs_"+d).selectAll(".line-")
@@ -1247,7 +1352,7 @@ function drawLineEspecialForAxisTransition(){
 
 
 function drawLine(){
-  console.log("drawLine")
+  //console.log("drawLine")
   //console.log("inside drawLine()");
   //getMotifMax(view.left, view.right, "MOT_10");
 
@@ -1255,11 +1360,11 @@ function drawLine(){
   
   //var temp__ = getMaxLocal(getNameWithoutUnchecked());
   
-  //yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]); 
-  
+  yLine.domain([0,getScaleBasedOnSelection()]); 
+  svg.selectAll("#max_local").transition().call(yAxisMaxLocal); 
   //var t = svg.transition().duration(750);
   //t.selectAll
-  //svg.selectAll("#max_local").transition().call(yAxisMaxLocal); 
+  
   
   mot_names.forEach(function(d){
     //debugger;
@@ -1353,7 +1458,7 @@ var asyncLoop = function(o){
     anim.push("Default")
     var i=-1,
         length = o.length;
-    console.log("length ----------------------->" +length)
+    //console.log("length ----------------------->" +length)
     var loop = function(){
       //if(eval(dontstop)) {
         i++;
@@ -1383,7 +1488,7 @@ asyncLoop({
     length : t.length,
     functionToLoop : function(loop, i){
        window["timer"] =  setTimeout(function(){
-                  console.log("******* i = "+i)
+                  //console.log("******* i = "+i)
               //if(corem_name.length > i ){
               //  animateCorem(anim[0])
               //  stopAnimation()
@@ -1427,7 +1532,7 @@ asyncLoop({
   //var eco = array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
   
   if(!reset){
-    console.log("inside reset")
+    //console.log("inside reset")
   //debugger;
   eval("pp_" + name)[0].values = array_zero
   }
@@ -1555,9 +1660,9 @@ function animateCorem(coremName){
   })
 
   mot_names.forEach(function(d){
-    console.log("animating --> Corem: " + coremName + " GRE : "+ d)
+    //console.log("animating --> Corem: " + coremName + " GRE : "+ d)
     animatedLineChart(eval("pp_corem_" + coremName)[0].values, d, false)
-    console.log("transitioning seqLogo : GRE : "+ d)
+    //console.log("transitioning seqLogo : GRE : "+ d)
     transitionExample(eval("pp_" + d)[0].values, d)
   })
 }
@@ -1567,7 +1672,7 @@ function animateCorem(coremName){
   function drawLineChart(){
 
     //max_local = d3.max(max_temp_All);
-    yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    yLine.domain([0,getScaleBasedOnSelection()]);
     //debugger;
     //##### Don't display All track at first 
     d3.selectAll("input[id=All]").property("checked", false);
@@ -1580,7 +1685,7 @@ function animateCorem(coremName){
 
 
 
-    console.log("drawLineChart")
+    //console.log("drawLineChart")
   
     svg.selectAll('.line-').remove();
     mot_names.forEach(function(d){ //.filter(function(a){if(a!="All"){return a}})
@@ -1627,7 +1732,7 @@ function animateCorem(coremName){
   function removeAll(){
     svg.select(".motifs_All").style("display", "none")
     window["Allchecked"] = false
-    yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    yLine.domain([0,getScaleBasedOnSelection()]);
     svg.selectAll("#max_local").call(yAxisMaxLocal);
     drawLine()
   }
@@ -1670,7 +1775,7 @@ function animateCorem(coremName){
        // voltar  drawLineChart();
             }
       else{
-        console.log("bookmark OUTSIDE data range");
+        //console.log("bookmark OUTSIDE data range");
         
         
       }
@@ -1696,7 +1801,7 @@ function animateCorem(coremName){
     var selection = brushFocus.extent();
     var i = bookmark_data.length;
     if(selection[1] - selection[0] !==0) {
-      console.log(selection);
+      //console.log(selection);
       //bookmark_data[i] = ['Name', 'Chr', d3.round(selection[0]), d3.round(selection[1]), 'Strand', 'Sequence', 'Annotation'];
       bookmark_data.push(new BookmarkDTOObj('name', 'chr', d3.round(selection[0]), d3.round(selection[1]), 'strand', 'sequence', 'annotation')); 
       
@@ -1715,6 +1820,8 @@ function brushStartEgrin(){
   //if(!cycling_global){
   //    stopAnimation()
   //}
+  yLine.domain([0,getScaleBasedOnSelection()]);
+  svg.selectAll("#max_local").call(yAxisMaxLocal); 
   drawLine();
 
 
@@ -1722,6 +1829,8 @@ function brushStartEgrin(){
 function brushEndEgrin(){
   //clearTimeout(timer)
   stopAnimation()
+  yLine.domain([0,getScaleBasedOnSelection()]);
+  svg.selectAll("#max_local").call(yAxisMaxLocal); 
   drawLine();
   //if( (brush.extent()[1] - brush.extent()[0]) <= 1500){
     if(cycling_global){
@@ -1791,7 +1900,7 @@ function brushed() {
       }
   }
   function brushedFocusStart(){
-    console.log("stype:none<brush>");
+    //console.log("stype:none<brush>");
     //d3.select(".brushFocus").style('pointer-events', 'none').call(brushFocus);
     //qq;//.call(brushFocus);
     //svg.select(".brushFocus").call(brushFocus);
@@ -1815,7 +1924,7 @@ function brushed() {
   svg.selectAll('#overlap_').remove();
   svg.selectAll('#overlapGene_').remove();
   svg.selectAll("#genes_fix").remove();
-    if(mot_names.length === 0 ) {console.log('removing all representations');
+    if(mot_names.length === 0 ) {//console.log('removing all representations');
     //svg.selectAll('#overlap_').remove();
     //svg.selectAll('#overlapGene_').remove();
     }
@@ -1951,11 +2060,11 @@ function brushed() {
       
       
   //max_local = getMaxLocal(getNameWithoutUnchecked());
-  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  yLine.domain([0,getScaleBasedOnSelection()]);
   svg.selectAll("#max_local").call(yAxisMaxLocal); 
   svg.select("#max_local").transition().call(yAxisMaxLocal);
   //svg.selectAll("#max_local").call(yAxisMaxLocal); 
-  console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+  //console.log("max_local now -->" + getScaleBasedOnSelection())
   //console.log("changed2 called : max_local:"+max_local);
   redrawSeqLogo(this.id)// necessary for when I set checkbox to checked, then it shows again seqlogo
   //drawLine();
@@ -1978,10 +2087,10 @@ function brushed() {
       .style("display", "none");
 
 
-      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      yLine.domain([0,getScaleBasedOnSelection()]);
     svg.select("#max_local").transition().call(yAxisMaxLocal);
     //svg.selectAll("#max_local").call(yAxisMaxLocal); 
-    console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+    //console.log("max_local now -->" + getScaleBasedOnSelection())
     
 
       //drawLine();
@@ -2014,11 +2123,11 @@ function brushed() {
       
       
   //max_local = getMaxLocal(getNameWithoutUnchecked());
-  yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+  yLine.domain([0,getScaleBasedOnSelection()]);
   svg.selectAll("#max_local").call(yAxisMaxLocal); 
   svg.select("#max_local").transition().call(yAxisMaxLocal);
   //svg.selectAll("#max_local").call(yAxisMaxLocal); 
-  console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+  //console.log("max_local now -->" + getScaleBasedOnSelection())
   //console.log("changed2 called : max_local:"+max_local);
   redrawSeqLogo(nameClicked)// necessary for when I set checkbox to checked, then it shows again seqlogo
   //drawLine();
@@ -2041,10 +2150,10 @@ function brushed() {
       .style("display", "none");
 
 
-      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      yLine.domain([0,getScaleBasedOnSelection()]);
     svg.select("#max_local").transition().call(yAxisMaxLocal);
     //svg.selectAll("#max_local").call(yAxisMaxLocal); 
-    console.log("max_local now -->" + getMaxLocal(getNameWithoutUnchecked()))
+    //console.log("max_local now -->" + getScaleBasedOnSelection())
     
 
       //drawLine();
@@ -2080,6 +2189,18 @@ motif_checked.forEach(function(d) {
 });
 return(d3.max(max_temp));
 }
+function getMaxGivenSelection(motif_checked){
+var max_temp = new Array();
+
+motif_checked.forEach(function(d) {
+  var filteredData = new Array();
+  filteredData.push(eval("pp_original_"+ d)[0].filter(function(f){if(f.START >= view.left && f.START <= view.right){return (f)}}))
+  filteredData.forEach(function(q)  {
+    max_temp.push(d3.max(q.map(function(w) {return (w.MAX);})));
+  ;})
+});
+return(d3.max(max_temp));
+}
 
 
 
@@ -2093,7 +2214,7 @@ function uncheckAll(){
         ;
         redrawSeqLogo(d);
       });
-      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      yLine.domain([0,getScaleBasedOnSelection()]);
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
@@ -2107,7 +2228,7 @@ function uncheckAll(){
         ;
         redrawSeqLogo(d);
       });
-      yLine.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+      yLine.domain([0,getScaleBasedOnSelection()]);
       svg.selectAll("#max_local").call(yAxisMaxLocal); 
       svg.select("#max_local").transition().call(yAxisMaxLocal);
       drawLine();
@@ -2322,7 +2443,7 @@ function uncheckAll(){
       //    brush.extent([parseInt(gene_stop)-20, parseInt(gene_stop)+100]);
      // }
      // else{
-        console.log("------------>  minus")
+        //console.log("------------>  minus")
           brush.extent([parseInt(gene_start)-400,parseInt(gene_start)+200]);
      // }
     }
@@ -2352,7 +2473,7 @@ window["checked_global"]  = false;
   }
     function transitionExample(data, name){
 
-    yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    yFont.domain([0,getScaleBasedOnSelection()]);
     var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right;}));
     m.exit().remove();
     m.transition()
@@ -2443,11 +2564,11 @@ function removeAddedCorem(){
                             Yes: function () {
                                 // $(obj).removeAttr('onclick');                                
                                 // $(obj).parents('.Parent').remove();
-                                console.log("yes")
+                                //console.log("yes")
                                 $(this).dialog("close");
                             },
                             No: function () {
-                              console.log("no")
+                              //console.log("no")
                                 $(this).dialog("close");
                             }
                         },
@@ -2462,7 +2583,7 @@ function addCorem(){
   stopAnimation()
   var cor_n = $('#dropdown_corem').val();
   if(cor_n != ""){
-    console.log("add corem bt was clicked !" + cor_n)
+    //console.log("add corem bt was clicked !" + cor_n)
     getCre_added_corem("/cres_in_range_given_corem/"+ species_ + "/", left, right, 6, species_, cor_n, refseq);
   }
   else{
