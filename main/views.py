@@ -992,5 +992,5 @@ def bicluster_detail(request, species=None, bicluster=None):
     conds = Condition.objects.filter(bicluster=bc)
     corems = Corem.objects.filter(bicluster=bc)
     cres = Cre.objects.filter(bicluster=bc)
-    gres = Gre.objects.filter(bicluster=bc).exclude(gre_id=s.short_name+"_0")
+    gres = [cre.gre for cre in cres]
     return render_to_response('bicluster_detail.html', locals())
