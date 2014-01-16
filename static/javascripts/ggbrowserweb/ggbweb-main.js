@@ -46,7 +46,7 @@ var genomeInfo = JSON.parse('{"id":189,"start":1,"name":"","type":"genes","end":
        
       .append("rect")
       //.attr("id", "rectClip")
-        .attr("width", width-15)
+        .attr("width", width)
         .attr("height", height)
         ;
         
@@ -465,7 +465,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
 
   var yLogo = d3.scale.linear().range([430, 100]).domain([0,max_local]);
 
-  var x = d3.scale.linear().range([0, width]).domain([view.left, view.right]),
+  var x = d3.scale.linear().range([0, width-15]).domain([view.left, view.right]),
       x2 = d3.scale.linear().range([0, width]).domain([view.left, view.right]),
       x3 = d3.scale.linear().range([0, width]).domain([genomeInfo.start, genomeInfo.end]),
       y = d3.scale.linear().range([height, 0]),
@@ -671,7 +671,7 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
     
     focus.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(-15," + (height-110) + ")")
+            .attr("transform", "translate(0," + (height-110) + ")")
             .call(xAxis);
 
         focus.append("g")
