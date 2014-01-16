@@ -357,7 +357,7 @@ class Bicluster(models.Model):
     genes = models.ManyToManyField(Gene, verbose_name = "Gene members")
     conditions = models.ManyToManyField(Condition, verbose_name = "Condition members")
     cres = models.ManyToManyField(Cre, verbose_name = "CRE members")
-    #gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
+    gres = models.ManyToManyField(Gre, verbose_name = "GRE members")
     corems = models.ManyToManyField("Corem", verbose_name = "Corem")
     
     def expMatrix(self):
