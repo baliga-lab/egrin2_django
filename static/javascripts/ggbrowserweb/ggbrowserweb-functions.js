@@ -7,17 +7,18 @@ function stopAnimation(){
 }
 
 function cyclingLegend(string){
-
+svg.selectAll('.legend_cycling').remove()
 var legend = svg.append("g")
-    .attr("class", "legend")
+    //.attr("id","g_cyclibg_legend")
+    .attr("class", "legend_cycling")
     .attr("x", 650 )
     .attr("y", 245)
     .attr("height", 100)
     .attr("width", 100)
     .attr("transform", "translate(-490, 20)");
 
-
-    svg.selectAll('#cycling_legend').remove();
+    
+    //svg.selectAll('#cycling_legend').remove();
   var l = legend.selectAll('#cycling_legend').data([string])
   l.enter()
           .append("text")
