@@ -62,11 +62,17 @@ var legend = svg.append("g")
              if (selection_scale_global){
                 d3.selectAll("#selection_scale").style("fill","green")
                 drawLine()
+                mot_names.forEach(function(d){ 
+                  redrawSeqLogo(d);
+                });
               }
               else{
                 selection_scale_global = false
                 d3.selectAll("#selection_scale").style("fill","white")
                 drawLine()
+                mot_names.forEach(function(d){ 
+                  redrawSeqLogo(d);
+                });
               }
             })
           .append("svg:title")
@@ -95,11 +101,17 @@ var legend = svg.append("g")
              if (selection_scale_global){
                 d3.selectAll("#selection_scale").style("fill","green")
                 drawLine()
+                mot_names.forEach(function(d){ 
+                    redrawSeqLogo(d);
+                });
               }
               else{
                 selection_scale_global = false
                 d3.selectAll("#selection_scale").style("fill","white")
                 drawLine()
+                mot_names.forEach(function(d){ 
+                    redrawSeqLogo(d);
+                });
               }
             })
           .style('cursor', function(d){
@@ -407,11 +419,11 @@ var legend_header = svg.selectAll(".legend").data(["","View", "GREs", "TF"]).ent
 
 
 
-  
 function redrawSeqLogo(names){
     
     if (  (view.right - view.left) <= 400 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
       
+      //yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
       yFont.domain([0,getScaleBasedOnSelection()]);
       
       var sequence = focus.selectAll("#" + names).remove();
@@ -428,7 +440,66 @@ function redrawSeqLogo(names){
       
     eval("_"+names)
     .selectAll("#" + names)
-     .data(function(d){  return d.values.filter(function(f) {  return f.START >= view.left && f.START <= view.right ;});})
+     //.data(function(d){  return [d];}, function(e){e.START})
+     //.data(function(d){ return [d].filter(function(f) {  return f.START >= view.left && f.START <= view.right  ;});}, function(e){return e.START})
+     //.data(function(d){return d[0].filter(function(f) {  return f.START >= view.left && f.START <= view.right  ;});}, function(e){ return  e.START}) // funcionando
+     .data(function(d){  return d.values.filter(function(f) {  return f.START >= view.left && f.START <= view.right });})
+      .enter().append("text")
+        .attr("id", names)
+        .attr("clip-path", "url(#clip)")
+        //.attr("y",function(e,i) { return yLogo(0); })
+        .attr("y", 270)
+        .attr("x", function(d) { return x(d.START); })
+        //.attr("fill", "white")
+        .text( function(e) { return e.LETTER; } )//e.LETTER
+        .attr("class", function(e) { return "letter-" + e.LETTER; } )
+        .style( "text-anchor", "start" )
+        .style( "font", "corrier" )
+//        .style("text-size-adjust", "inherit")
+        .attr( "textLength", xSeqLogo.rangeBand() )//(xSeqLogo.rangeBand()) / 2
+        //.attr("transform", "translate(0, 195)")
+//          .attr( "textLength", 10)
+        .attr( "lengthAdjust", "spacingAndGlyphs" )
+        //.attr( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)) )* capHeightAdjust;; } )
+        //.style( "font-size", function(e) { return   (ySeqLogo(normalize(-e.MAX)))* capHeightAdjust;; } )
+        //.attr("transform", "translate(0, -120)")
+        .attr( "font-size", function(e) {return   yFont(e.MAX) } )
+        .style("opacity", 0.8)
+        //.style( "font-size", function(e) { return  yLogo(e.MAX)* capHeightAdjust ; } )
+
+        //.attr( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
+        //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust; } )
+
+        
+        ;
+
+  } else{
+    eval("_"+names)
+    .selectAll("#" + names).remove();  
+  }
+}  
+/*function redrawSeqLogo(names){
+    
+    if (  (view.right - view.left) <= 400 && (window[names + "checked"] == true) && (checked_global == true) && (names != "All") ) { 
+      
+      //resetLineChartData()
+      //yFont.domain([0,getScaleBasedOnSelection()]);
+      
+      var sequence = focus.selectAll("#" + names).remove();
+      //debugger;    
+      //debugger;
+      //normalize.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
+      //yLogo.domain([0,getScaleBasedOnSelection()]);
+      //yLogo.domain = yLine.domain
+      yLogo.domain(yLine.domain())
+      yLogo.range([100,430])
+      //yLogo.domain([0,eval("pp_" + names).map(function(d) { return  d3.max((d.values.map(function(e) { return (e.MAX);} )));})]);
+      //console.log(yLogo.domain());
+      xSeqLogo.domain(d3.range(view.left,view.right,1))
+      
+    eval("_"+names)
+    .selectAll("#" + names)
+     .data(function(d){  return [d].filter(function(f) {  return f.START >= view.left && f.START <= view.right && f.LETTER !="" ;});}, function(e){return e.START})
      //.data(function(d){ debugger; return d.values.filter(function(f) {  return f.POSITION >= view.left && f.POSITION <= view.right  ;});})
       .enter().append("text")
         .attr("id", names)
@@ -463,7 +534,7 @@ function redrawSeqLogo(names){
     eval("_"+names)
     .selectAll("#" + names).remove();  
   }
-}
+}*/
 
   function changeLabelForMotifAtt(){
     //console.log("change");
@@ -2472,9 +2543,12 @@ window["checked_global"]  = false;
     }
     //console.log(checked_global);
   }
-    function transitionExample(data, name){
+    
 
-    yFont.domain([0,getScaleBasedOnSelection()]);
+
+  function transitionExample(data, name){
+
+    yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
     var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right;}));
     m.exit().remove();
     m.transition()
@@ -2495,6 +2569,37 @@ window["checked_global"]  = false;
       
       //console.log(ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)));
   }
+
+
+    /*function transitionExample(data, name){
+
+       if (  (view.right - view.left) <= 400 && (window[name + "checked"] == true) && (checked_global == true) && (name != "All") ) {   
+
+    yFont.domain([0,getScaleBasedOnSelection()]);
+    var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right && f.LETTER !="";}), function(e){return e.START});
+    m.exit().remove();
+    m.enter().append("text")
+      
+      .attr("y", 270)
+      .attr("x", function(d) { return x(d.START); })
+      .text( function(e) { return e.LETTER; } )
+      .attr("class", function(e) { return "letter-" + e.LETTER; } )
+      .style( "text-anchor", "start" )
+      .style( "font", "corrier" )
+      .attr( "textLength", xSeqLogo.rangeBand() )//(xSeqLogo.rangeBand()) / 2
+      .attr( "lengthAdjust", "spacingAndGlyphs" )
+      .style("opacity", 0.8)      
+      .transition()
+      .attr( "font-size", function(e) { return   yFont(e.MAX) } )
+      
+    //.style( "font-size", function(e) { return ( ySeqLogo(normalize(e.INIT)) - ySeqLogo(normalize(e.FINAL)) ) * capHeightAdjust+10; } );
+    //setInterval(function(){transitionExample2()},3000);
+      
+      } else{
+        //eval("_"+names)
+        //.selectAll("#" + names).remove();  
+    }
+  }*/
   
   
   function transitionExample2(){

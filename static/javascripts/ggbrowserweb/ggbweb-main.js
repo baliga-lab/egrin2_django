@@ -154,12 +154,18 @@ var url_ = url_gene + ncbi_taxonomy + "/";//{% url 'genes' %}{{ s.ncbi_taxonomy_
       window["cycling_global"]=false
       stopAnimation()
       d3.selectAll("input[class=btGGB]").attr("class", "btGGB");return resetLineChartData()
+     // mot_names.forEach(function(d){ 
+     //   redrawSeqLogo(d);
+     // });
     } else{
       cyclingLegend(d)
       //if(cycling_global){cycling_global=false}else{cycling_global=true}
       window["cycling_global"]=false
       stopAnimation()  
      d3.selectAll("input[class=btGGB]").attr("class", "btGGB"); return animateCorem(d)
+     //mot_names.forEach(function(d){ 
+      //  redrawSeqLogo(d);
+      //});
     }
     })
     box.append("input").attr("type","button").attr("class", "button1").attr("value", "Button 1")
