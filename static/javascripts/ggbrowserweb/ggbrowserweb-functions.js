@@ -2548,7 +2548,8 @@ window["checked_global"]  = false;
 
   function transitionExample(data, name){
 
-    yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
+    yFont.domain([0,getScaleBasedOnSelection()]);
+    //yFont.domain([0,getMaxLocal(getNameWithoutUnchecked())]);
     var m = svg.selectAll("#" + name).data(data.filter(function(f) {  return f.START >= view.left && f.START <= view.right;}));
     m.exit().remove();
     m.transition()
