@@ -163,6 +163,7 @@ var max_local = new Array();
                       window["temp_"+d] = new Array();
                       window["temp_pp_"+d] = {};
                       window["pp_"+d] = new Array();
+                      window["pp_logo_"+d] = new Array();
                       window["pp_original_"+d] = new Array();
                       window["max_temp_"+d] = new Array();
                         cre[0][mot_names[i]].forEach(function(q){
@@ -173,6 +174,7 @@ var max_local = new Array();
                         eval("max_").push(d3.max(eval("max_temp_"+d)));
                         eval("temp_pp_"+d).values = eval("temp_"+d);
                         eval("pp_"+d).push(eval("temp_pp_"+d));
+                        eval("pp_logo_"+d).push(eval("temp_"+d));
                         window["array_zero"] = 0;
                         var array_zero = createPosArray(eval("pp_"+d)[0].values, start, stop, "")
                         array_zero.sort(function(a,b) {return d3.ascending(a.START, b.START)})
@@ -185,7 +187,9 @@ var max_local = new Array();
                 // binding data to draw seqLogo
                   mot_names.forEach(function(d){
                   window["_"+d] = focus.selectAll(".sequence-column" + d)
-                  .data(eval("pp_"+d))
+                  //.data(eval("pp_"+d)) 
+                  .data(eval("pp_"+d)) 
+                  //.data(eval("pp_"+d)[0].values.filter(function(f){return f.START >= left && f.START <= right && f.LETTER !=""}), function(e){return e.START})
                   .enter()
                   .append("g")
                   .attr("class", "sequence-column");
