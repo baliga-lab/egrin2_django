@@ -122,7 +122,7 @@ def conditions_json(request, species):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 def conditions_json_generic(query, species, dtparams):
     num_total = query.count()
@@ -135,7 +135,7 @@ def conditions_json_generic(query, species, dtparams):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': conds
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def corem_conditions_json(request, species, corem):
@@ -223,7 +223,7 @@ on q1.corem_id = q3.corem_id""" % (settings.TABLE_PREFIX, settings.TABLE_PREFIX,
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': corems
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def corems_json_generic(query, species, dtparams):
@@ -236,7 +236,7 @@ def corems_json_generic(query, species, dtparams):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': corems
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
     
 def condition_corems_json(request, species, condition):
@@ -274,12 +274,12 @@ def genes_json_generic(request, species_obj, query):
 def condition_genes_json(request, species, condition):
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     query = Gene.objects.filter(conditions__cond_id=condition)
-    return HttpResponse(genes_json_generic(request, species_obj, query), mimetype='application/json')
+    return HttpResponse(genes_json_generic(request, species_obj, query), content_type='application/json')
 
 def gre_genes_json(request, species, gre):
     species_obj = Species.objects.get(ncbi_taxonomy_id=species)
     query = Gene.objects.filter(gre__gre_id=gre)
-    return HttpResponse(genes_json_generic(request, species_obj, query), mimetype='application/json')
+    return HttpResponse(genes_json_generic(request, species_obj, query), content_type='application/json')
 
 def corems(request, species=None):
     # Return info about corems            
@@ -319,7 +319,7 @@ def corem_go_json(request, species=None, corem=None):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': gos
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 def downloads(request):
     s = Species.objects.all()
@@ -347,7 +347,7 @@ def genes_json(request, species):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 
@@ -370,7 +370,7 @@ def genes_json_annotation(request, species):
     data = {
         'SequenceAnnotation': some_data_to_dump
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 # including chr to filter query - dsalvanha
 def genes_json_annotation_range(request, species, start, stop, refseq):
@@ -399,7 +399,7 @@ def genes_json_annotation_range(request, species, start, stop, refseq):
     data = {
         'SequenceAnnotation': some_data_to_dump
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def basepair_jsons_range(request, species, start, stop, refseq_):
@@ -424,7 +424,7 @@ def basepair_jsons_range(request, species, start, stop, refseq_):
     data = {
         'Basepairs_range': some_data_to_dump
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 def corem_genes_json(request, species=None, corem=None):
     """corem-specific gene list"""
@@ -447,7 +447,7 @@ def corem_genes_json(request, species=None, corem=None):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': genes
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 def genes(request, species=None):
     # Return info about the genes
@@ -500,7 +500,7 @@ def coremToJSON(request,species=None):
     } for g in corem]
     #print "########### ",some_data_to_dump
 
-    return HttpResponse(simplejson.dumps(some_data_to_dump), mimetype='application/json')  
+    return HttpResponse(simplejson.dumps(some_data_to_dump), content_type='application/json')  
 
 def regulatorsToJSON(request,species=None):
     # get info about all regulators
@@ -526,9 +526,9 @@ def regulatorsToJSON(request,species=None):
     } for g in gre_]
     #print "########### ",some_data_to_dump
 
-    return HttpResponse(simplejson.dumps(some_data_to_dump), mimetype='application/json')    
+    return HttpResponse(simplejson.dumps(some_data_to_dump), content_type='application/json')    
     #return render_to_response('regulators.html', locals())
-    #return HttpResponse(simplejson.dumps(data), mimetype='application/json')    
+    #return HttpResponse(simplejson.dumps(data), content_type='application/json')    
 
 def regulators(request,species=None):
     # get info about all regulators
@@ -650,7 +650,7 @@ def gres_json_generic(query, species, dtparams):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': gres
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 def cres_in_range_json(request, species, start, stop, top, gene_name, refseq): #dsalvanha
     network = Network.objects.get(species__ncbi_taxonomy_id = species);
@@ -676,17 +676,17 @@ def cres_in_range_json(request, species, start, stop, top, gene_name, refseq): #
         everything = cres_in_range(network.id, chr_id[0].id, int(start), int(stop), top_)
 
     result = everything
-    return HttpResponse(simplejson.dumps(result), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(result), content_type='application/json')
 
 #cres_in_gene_all
 def cres_in_range_json_gene_all(request,gene_name): #dsalvanha 13/Jan/14
     #print "gene_name =-___-----------> ", genebla
     data = cres_in_gene_all(gene_name=gene_name)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 def cres_in_range_json_gene_corem(request, gene_name): #dsalvanha 13/Jan/14
     data = cres_in_gene_corems(gene_name=gene_name)
-    return HttpResponse(data, mimetype='application/json')            
+    return HttpResponse(data, content_type='application/json')            
 
 
 
@@ -729,7 +729,7 @@ def cres_in_range_json_list(request, species, start, stop, top, gene_name, refse
 
 
     # this function is used to add CoremData to visualization - dsalvanha Jan/9
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')    
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')    
 
 def cres_in_range_given_corem(request, species, start, stop, top, coremName, refseq): #dsalvanha Jan/9 
     network = Network.objects.get(species__ncbi_taxonomy_id=species)
@@ -773,7 +773,7 @@ def cres_in_range_given_corem(request, species, start, stop, top, coremName, ref
     #cre_ids = [b.bc_id for b in c.bicluster_set.all() for c in g.corem_set.all()]
     #cre_ids = [c.bicluster_set.all() for c.bc_id in g.corem_set.all()]
 
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')    
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')    
 
 def corem_gres_json(request, species, corem):
     fields = ['gre__gre_id', 'p_val']
@@ -846,7 +846,7 @@ def gre_cres_json(request, species, gre):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': cres
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def biclusters(request, species=None):
@@ -899,7 +899,7 @@ def biclusters_json(request, species=None):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def biclusters_json_generic(query, species, dtparams):
@@ -914,7 +914,7 @@ def biclusters_json_generic(query, species, dtparams):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def corem_biclusters_json(request, species=None, corem=None):
@@ -980,7 +980,7 @@ def gre_biclusters_json(request, species=None, gre=None):
         'iTotalRecords': num_total, 'iTotalDisplayRecords': num_total,
         'aaData': biclusters
         }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
 
 
 def bicluster_detail(request, species=None, bicluster=None):

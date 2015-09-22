@@ -356,8 +356,8 @@ def add_cre(organism, conn):
 
                 # make Cre_pos objects we zip together a list of
                 # start, stop, pval tuples
-                cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','))
-                for start, stop, pval in cre_pos:
+                cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','), row[7].split(','))
+                for start, stop, pval, refseq in cre_pos:
                     if start != 'NA' and stop != 'NA':  # only insert valid positions
                         try:
                             # The integer start/stop positions might be represented in
@@ -669,37 +669,106 @@ def add_gre_regulator(organism, conn):
 
                 # gene, gre_id, pval
                 row = line.strip("\n").split("\t")
-                gre_id = gre_map['%s_%s' % (organism, row[0])]
-                regulators = [regulator for regulator in row[1].split(",") if len(regulator) > 0]
-                scores = [to_decimal(score) for score in row[2].split(',') if len(score) > 0]
-                for index in xrange(len(regulators)):
-                    cur.execute(gre_tf_query, [NETWORK[organism], regulators[index],
-                                               gre_id, scores[index]])
+                key = '%s_%s' % (organism, row[0])
+                if key in gre_map:
+                    gre_id = gre_map[key]
+                    regulators = [regulator for regulator in row[1].split(",") if len(regulator) > 0]
+                    scores = [to_decimal(score) for score in row[2].split(',') if len(score) > 0]
+                    for index in xrange(len(regulators)):
+                        cur.execute(gre_tf_query, [NETWORK[organism], regulators[index],
+                                                   gre_id, scores[index]])
             conn.commit()
         except:
             traceback.print_exc(file=sys.stdout)
             conn.rollback()
         cur.close()
 
+def add_corem_cres(conn, organism, path):
+    def get_cre_id(cre_id):
+        cur = conn.cursor()
+        cur.execute('select id from ' + APP_PREFIX + 'cre where cre_id = %s', [cre_id])
+        row = cur.fetchone()
+        if row:
+            result = row[0]
+        else:
+            result = None
+        cur.close()
+        return result
+
+    with open(path) as infile:
+        infile.readline()
+        for line in infile:
+            cur = conn.cursor()
+            row = line.split('\t')
+            corem_id = '%s%s' % (COREM_PREFIX[organism], row[0])
+            cur.execute('select id from ' + APP_PREFIX + 'corem where corem_id = %s', [corem_id])
+            c_id = cur.fetchone()[0]
+            cur.close()
+            cre_ids = map(get_cre_id, [ organism + '_' + strid for strid in row[9].split(',')])
+            cre_ids = filter(lambda x: x != None, cre_ids)
+            print c_id, cre_ids
+            for cre_id in cre_ids:
+                cur = conn.cursor()
+                cur.execute('insert into ' + APP_PREFIX + 'corem_cres (corem_id,cre_id) values (%s,%s)', [c_id, cre_id])
+                cur.close()
+            conn.commit()
+
+def add_crepos_chromosomes(conn, organism, filename):
+    with open(filename) as infile:
+        line = infile.readline()
+        cur = conn.cursor()
+        cur.execute('select id, refseq from main_chromosome')
+        chroms = { refseq: id for id, refseq in cur.fetchall()}
+        for line in infile:
+            row = line.strip().split('\t')
+            parent_id = "%s_%s" % (organism, row[0])
+            cre_id = "%s_%s" % (organism, row[0])
+            gre_id = "%s_%s" % (organism, row[1])
+            cre_pos = zip(row[4].split(','), row[5].split(','), row[6].split(','), row[7].split(','))
+            cur.execute("select id from main_cre where cre_id = %s", [cre_id])
+            cre_pk = cur.fetchone()[0]
+            print "ID found: ", cre_pk
+            for start, stop, pval, refseq in cre_pos:
+                if refseq != 'NA':
+                    chrom_id = chroms[refseq]
+                    cur.execute('update main_crepos set chromosome_id = %s where cre_id = %s and start = %s and stop = %s', [chrom_id, cre_pk, start, stop])
+            conn.commit()
+
 if __name__ == '__main__':
     print "EGRIN2 data import"
     conn = psycopg2.connect("dbname=egrin2 user=dj_ango password=django")
-    add_go(conn)
-    for organism in ['eco','hal']:
+    #add_go(conn)
+    """
+    #for organism in ['eco','hal']:
         print "organism: ", organism
-        add_microbes_online_genes(organism, conn)
-        add_rsat_genes(organism, conn)
-        add_conditions(organism, conn)
-        add_gene_expressions(organism, conn, check_missing=True)
-        add_gre(organism, conn)
+        #add_microbes_online_genes(organism, conn)
+        #add_rsat_genes(organism, conn)
+        #add_conditions(organism, conn)
+        #add_gene_expressions(organism, conn, check_missing=True)
+        #add_gre(organism, conn)
         add_cre(organism, conn)
-        add_biclusters(organism, conn)
-        add_corems(organism, conn)
-        augment_conditions(organism, conn, check_biclusters=False,
-                           connect_corems=True, connect_genes=True,
-                           connect_gres=True)
-        augment_genes(organism, conn)
-        if organism == 'eco':
-            add_gre_regulator(organism, conn)
+        #add_biclusters(organism, conn)
+        #add_corems(organism, conn)
+        #augment_conditions(organism, conn, check_biclusters=False,
+        #                   connect_corems=True, connect_genes=True,
+        #                   connect_gres=True)
+        #augment_genes(organism, conn)
+        #if organism == 'eco':
+        #    add_gre_regulator(organism, conn)
+    """
 
+    #add_corem_cres(conn, 'eco', 'fixtures/ecoli_corems.txt')
+    #add_crepos_chromosomes(conn, 'hal', '/home/weiju/Projects/ISB/egrin2_django/tmp/website/fixtures/64091/hal_cre.txt')
+    add_crepos_chromosomes(conn, 'eco', '/home/weiju/Projects/ISB/egrin2_django/tmp/website/fixtures/511145/ecoli_cre.txt')
     conn.close()
+
+
+"""
+create table main_corem_cres (id integer primary key, corem_id integer not null references main_corem, cre_id integer not null references main_cre);
+create sequence main_corem_cres_id_seq start with 1 increment by 1 no minvalue no maxvalue cache 1;
+alter sequence main_corem_cres_id_seq owned by main_corem_cres.id;
+alter table only main_corem_cres alter column id set default nextval('main_corem_cres_id_seq'::regclass);
+grant all privileges on table main_corem_cres to dj_ango;
+grant all privileges on sequence main_corem_cres_id_seq to dj_ango;
+alter table main_crepos add column chromosome_id integer references main_chromosome;
+"""
