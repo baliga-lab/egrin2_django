@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from endless_pagination.decorators import page_template
 from django.template import RequestContext
 from django.http import HttpResponse
-from django.utils import simplejson
+import simplejson
 from django.core.urlresolvers import reverse
 
 from django.db import connection, transaction

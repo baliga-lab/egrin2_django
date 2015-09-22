@@ -1,6 +1,6 @@
 import urllib2
 import urllib
-from django.utils import simplejson
+import simplejson
 from django.conf import settings
 
 def make_query_string(q):
