@@ -2,7 +2,7 @@
 {% load url from future %}
 {% block title %}EGRIN 2.0{% endblock %}
 {% block nav %}
-<!-- navigation starts-->	
+<!-- navigation starts-->
 	<div  id="nav">
 		<ul>
 			<li id="current"><a href="{% url 'index' %}">Home</a></li>
@@ -10,28 +10,22 @@
 			<li><a href="{% url 'search' %}">Search</a></li>
 			<li><a href="{% url 'downloads' %}">Downloads</a></li>
 			<li><a href="{% url 'contact' %}">Support</a></li>
-			<li><a href="{% url 'about' %}">About</a></li>	
+			<li><a href="{% url 'about' %}">About</a></li>
 		</ul>
-	<!-- navigation ends-->	
-	</div>	
+	<!-- navigation ends-->
+	</div>
 {% endblock %}
 {% block javascript %}
-	
-	
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
-
 {% endblock %}
-{% block content %}			
+{% block content %}
 	<!-- content-wrap starts -->
 	<div id="content-wrap">
-	
 		<div id="main">
-
-			<h3><strong>EGRIN 2.0 is a systems-level model that delineates the complex relationship between environment, gene regulation, and phenotype in prokaryotes</strong></h3>
-            
+		  <h3><strong>EGRIN 2.0 is a systems-level model that delineates the complex relationship between environment, gene regulation, and phenotype in prokaryotes</strong></h3>
+          <a href="http://msb.embopress.org/content/10/7/740">Brooks, A.N., Reiss, D.J., Allard, A., Wu, W.J., Salvanha, D.M., Plaisier, C.L., Chandrasekaran, S., Pan, M., Kaur, A. and Baliga, N.S., 2014. A system-level model for the microbial regulatory genome. Molecular systems biology, 10(7), pp.740-740.</a>
 			<a name="Why EGRIN 2.0?"></a>
 			<h2><a href="index" title="">Why EGRIN 2.0?</a></h2>
-					
             <p>A foremost challenge in systems biology is to understand how just a few transcription factors (TFs) in a microbial genome generate a wide array of nuanced responses to varied environmental challenges. <strong>EGRIN 2.0</strong> is a new model for the complete gene regulatory network (GRN) of a prokaryote. This model is reverse engineered directly from gene expression data and genomic sequence, and hence the methodology to generate EGRIN 2.0 is applicable to any prokaryotic organism.</p>
 
             <div id = "accordion">
@@ -46,9 +40,8 @@
             		<p>
 					We have inferred comprehesive models for two prokaryotic organisms: a bacterium (<i><a href="/networks/511145">Escherichia coli K-12</a></i>) and an archaeon (<i><a href="/networks/64091">Halobacterium salinarum NRC-1</a></i>).
 					</p>
-            	</div>  
+                </div>
 			</div>
-
 			<p><code>This website facilitates <strong><a href="{% url 'search' %}">targeted</a></strong> and <strong><a href="{% url 'browse' %}">exploratory</a></strong> investigation of the model's predictions.</code></p>
 
             <h2>Highlights from the paper</h2>
@@ -80,7 +73,6 @@
 							<td><a href="/static/Downloads/Figures/fig3_wcaption.pdf">Figure 3</a></td>
 						</tr>
 					</table>
-            		
             	<h3>Corems<a id="corem_tip" href="#" onclick="return false;"><img style="background:rgba(250, 250, 250, 0); border:0px" src="/static/help.png" ></a></h3>
             		<table>
 						<tr>
@@ -120,44 +112,37 @@
 						</tr>
 					</table>
             <p></p>
-								
-			<br />		
-		<!-- main ends -->	
+			<br />
+		<!-- main ends -->
 		</div>
         <div id="sidebar">
-			
-			<h3>Search for a gene</h3>	
+			<h3>Search for a gene</h3>
 			<form action="{% url 'search' %}" class="searchform">
 				<p>
 				<input name="search_query" class="textbox" type="text" />
   				<input name="search" class="button" value="Search" type="submit" />
-				</p>			
-			</form>	
-			
+				</p>
+			</form>
             <h3>Updates</h3>
             <p><i>Diego's newly added genome browser allows visulalization of GRE activity at gene promoters! Go to any <a href="/genes/511145/b0032">gene</a> page to check it out.</i></p>
             <p class="post-info">Posted by <a href="http://www.aaron-brooks.org">Aaron</a></p><br/>
-                    		
 			<h3>Links Out</h3>
-			<ul class="sidemenu">				
+			<ul class="sidemenu">
 				<li><a href="https://www.systemsbiology.org/">Institute for Systems Biology</a></li>
                 <li><a href="http://www.microbesonline.org/">MicrobesOnline</a></li>
                 <li><a href="http://regprecise.lbl.gov/RegPrecise/index.jsp">RegPrecise</a></li>
                 <li><a href="http://regulondb.ccg.unam.mx/">RegulonDB</a></li>
-            </ul>	
-						
-		<!-- sidebar ends -->		
-		</div>	
+            </ul>
+		<!-- sidebar ends -->
+		</div>
 <script>
-	
 			$("#corem_tip").qtip({
 				content: 'A <strong>corem</strong> or <i>conditionally co-regulated module</i> is a set of genes that are <strong>co-regulated</strong> in <strong>specific environments</strong>. Often (but not always) genes in a corem share common regulatory mechanisms (<i>GREs</i>). A gene can belong to multiple corems. Corems were discovered by applying <strong>EGRIN 2.0</strong> to large gene expression data sets.',
-	          	position: { target: 'mouse' },
-	          	show: { when: { event: 'mouseover' } },
-	          	hide: { when: { event: 'mouseout' } },          
-			    style: 'dark'          
-			   	});	
-		
+	        position: { target: 'mouse' },
+	        show: { when: { event: 'mouseover' } },
+	        hide: { when: { event: 'mouseout' } },
+			style: 'dark'
+			});
 </script>
 <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -180,6 +165,5 @@ $(document).ready(function() {
 	      	heightStyle: "content"
 	    });
 		});
-</script>	
+</script>
 {% endblock %}
-        
